@@ -9,14 +9,6 @@
 #include "../../Systems/Light.h"
 #include "../../Systems/Camera/CameraManager.h"
 
-#include <d3dx11tex.h>
-
-#ifdef _DEBUG
-#pragma comment(lib, "d3dx11d.lib")
-#else
-#pragma comment(lib, "d3dx11.lib")
-#endif
-
 /* @biref	コンストラクタ
  * @param	(dx11)	親のポインタ		*/
 Dx11RenderTarget::Dx11RenderTarget(DirectX11* dx11) :
@@ -47,9 +39,6 @@ HRESULT Dx11RenderTarget::Init(void)
 	// バックバッファの情報を取得
 	renderTargetView_[static_cast<int>(List::DEFAULT)] = directX11_->GetRenderTargetView();
 	depthStencilView_ = directX11_->GetDepthStencilView();
-
-	// スクリーンショット用にコピー
-	renderTargetView_[static_cast<int>(List::SCREEN_SHOT)] = directX11_->GetRenderTargetView();
 
 	HRESULT hr;
 	hr = CreateNormalRenderTarget(List::COLOR);
@@ -396,43 +385,6 @@ void Dx11RenderTarget::DrawShadowMap(void)
 		wrapper->DrawQuad(VECTOR2(10.0f + 100 + (i * 210), Windows::HEIGHT - 10 - 100.0f), VECTOR2(200, 200));
 		i++;
 	}
-}
-
-/* @brief	スクリーンショットの作成
- * @param	(filename)	ファイル名
- * @return	なし						*/
-void Dx11RenderTarget::CreateScreenshot(const string& filename)
-{
-	int n = static_cast<int>(List::SCREEN_SHOT);
-	if (shaderResourceView_[n]) { ReleasePtr(shaderResourceView_[n]); }
-
-	const auto& dev = directX11_->GetDevice();
-
-	ID3D11Resource* buf;
-	renderTargetView_[n]->GetResource(&buf);
-	D3D11_RESOURCE_DIMENSION type;
-	buf->GetType(&type);
-	if (type != D3D11_RESOURCE_DIMENSION_TEXTURE2D) { return; }
-
-	D3D11_TEXTURE2D_DESC td;
-	static_cast<ID3D11Texture2D*>(buf)->GetDesc(&td);
-	td.SampleDesc.Count = 1;
-	td.SampleDesc.Quality = 0;
-	td.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	ID3D11Texture2D* tempTexture;
-	dev->CreateTexture2D(&td, NULL, &tempTexture);
-
-	const auto& pContext = directX11_->GetDeviceContext();
-	// マルチサンプリングをしている場合
-	pContext->ResolveSubresource(tempTexture, 0, buf, 0, DXGI_FORMAT_R8G8B8A8_UNORM);
-	// マルチサンプリングを使用していない場合
-	//	pContext->CopyResource(tempTexture, screenShot_.pBuffer);
-	const auto temp = D3DX11SaveTextureToFile(pContext, tempTexture, D3DX11_IFF_BMP, filename.c_str());
-
-	// 吐き出したテクスチャを読み込み
-	std::wstring name(filename.begin(), filename.end());
-	ID3D11Resource* descOriginal;
-	DirectX::CreateWICTextureFromFile(directX11_->GetDevice(), name.c_str(), &descOriginal, &shaderResourceView_[n]);
 }
 
 void Dx11RenderTarget::GuiUpdate(void)

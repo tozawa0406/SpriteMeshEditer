@@ -4,8 +4,6 @@
 #include "../../../Object/Object.h"
 #include "../../../Object/ObjectManager.h"
 
-#include "../../../../../Sources/Object/GameObject/GameObject.h"
-
 /* @fn		コンストラクタ
  * @brief	変数の初期化			*/
 Collider3DBase::Collider3DBase(Object* obj, Type type)

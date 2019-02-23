@@ -8,7 +8,6 @@
 #include "../Windows/Windows.h"
 #include "../Graphics/Graphics.h"
 #include "../Scene/SceneManager.h"
-#include "Screenshot.h"
 
 Systems* Systems::system_;
 
@@ -40,7 +39,6 @@ HRESULT Systems::Init(void)
 	if (!Create<ColliderRendererManager> ((int)SystemsNum::COLLISIONDRAW  , "当たり判定描画"	)) { return E_FAIL; }
 	if (!Create<ParticleManager>		 ((int)SystemsNum::PARTICLE		  , "パーティクル"		)) { return E_FAIL; }
 	if (!Create<SceneManager>			 ((int)SystemsNum::SCENE          , "シーン"			)) { return E_FAIL; }
-	if (!Create<Screenshot>				 ((int)SystemsNum::SCREENSHOT     , "スクリーンショット")) { return E_FAIL; }
 
 	return S_OK;
 }

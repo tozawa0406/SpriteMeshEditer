@@ -49,7 +49,6 @@ class Systems
 		COLLISION2D,
 		COLLISION3D,
 		SCENE,
-		SCREENSHOT,
 		MAX
 	};
 

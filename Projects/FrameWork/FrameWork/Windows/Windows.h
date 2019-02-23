@@ -19,9 +19,9 @@ class Systems;
 class Windows
 {
 	//! @def	ウィンドウの名前
-	static constexpr char*	CLASS_NAME		= "Dragon Hunter";
+	static constexpr char*	CLASS_NAME		= "editer";
 	//! @def	ウィンドウの名前
-	static constexpr char*	WINDOW_NAME		= "Dragon Hunter";
+	static constexpr char*	WINDOW_NAME		= "editer";
 	//! @def	ウィンドウスタイル
 	static constexpr int	WINDOW_STYLE	= WS_OVERLAPPEDWINDOW ^ WS_MAXIMIZEBOX;
 	//! グラフィックスのタイプ(ダイアログで指定(今回はしない))
@@ -29,13 +29,13 @@ class Windows
 
 public:
 	//! @def	フルスクリーン設定
-	static constexpr bool FULL_SCREEN	= true;
+	static constexpr bool FULL_SCREEN	= false;
 	//! @def	FPSの設定
 	static constexpr int  FPS			= 60;
 	//! @def	ウィンドウ横サイズ
-	static constexpr int  WIDTH			= 1280;
+	static constexpr int  WIDTH			= 1920;
 	//! @def	ウィンドウ縦サイズ
-	static constexpr int  HEIGHT		= 720;
+	static constexpr int  HEIGHT		= 1080;
 
 	/* @brief	コンストラクタ		*/
 	Windows(void);

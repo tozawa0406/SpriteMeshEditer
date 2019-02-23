@@ -11,7 +11,6 @@
 #include "../../Scene/SceneManager.h"
 #include "../DebugSetting/GuiManager.h"
 #include "MoveCamera.h"
-#include "AtObjCamera.h"
 
 // コンストラクタ
 CameraManager::CameraManager(SceneManager* parent) : parent_(parent), mainCamera_(0), cameraNum_(0), look_(false), frame_(0)
@@ -148,25 +147,6 @@ void CameraManager::CreateMatrix(void)
 	mtxView_ = CreateViewMatrix(main->GetPos(), main->GetAt(), main->GetUp());
 	//プロジェクション行列の作成
 	mtxProj_ = CreateProjectionMatrix(Camera::FOV, Windows::WIDTH / (float)Windows::HEIGHT, Camera::C_NEAR, Camera::C_FAR);
-}
-
-// 追従カメラの作成
-Camera* CameraManager::CreateAtObjCamera(Object* obj, int i, VECTOR3 pos)
-{
-	// カメラの個数が最大数なら
-	if (i >= MAX_CAMERA) { return nullptr; }
-
-	// 追従カメラの作成
-	AtObjCamera* temp = new AtObjCamera(this, i, pos, obj);
-	// 作成したものを配列に入れる
-	if (camera_[i] != nullptr)
-	{
-		DeletePtr(camera_[i]);
-	}
-	camera_[i] = temp;
-	cameraNum_++;
-
-	return temp;
 }
 
 // 追従カメラの削除

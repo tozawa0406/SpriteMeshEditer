@@ -30,39 +30,16 @@ void TitleScene::Init(SceneList sceneNum)
 {
 	BaseScene::Init(sceneNum);
 
-	// タイトル
-	title_.Init(UI_PRIORITY, static_cast<int>(Resources::Texture::Title::TITLE));
-	title_.SetSize(VECTOR2(1024, 577) * 0.75f);
-	title_.SetPosition(TITLE_POSITION);
-
-	// 「please press」
-	press_.Init(UI_PRIORITY, "Please Press", UI_TEXT_SIZE);
-	press_.SetPosition(PRESS_POSITION);
-	press_.SetColor(COLOR(0, 0, 0, 1));
-
-	// 各種ボタン
-	button_.Init(UI_PRIORITY, "Enter 〇 B", UI_TEXT_SIZE);
-	button_.SetPosition(VECTOR2(PRESS_POSITION.x + ADJUST_POSITION_X, PRESS_POSITION.y));
-	button_.SetColor(COLOR(0, 0, 0));
-
 	// 背景
 	back_.Init(UI_PRIORITY - 1, static_cast<int>(Resources::Texture::Base::WHITE));
 	back_.SetPosition(VECTOR2(Half(Windows::WIDTH), Half(Windows::HEIGHT)));
 	back_.SetSize(VECTOR2(Windows::WIDTH, Windows::HEIGHT));
 	back_.SetColor(COLOR::RGBA(150, 150, 150));
 
-	if (const auto& sound = GetSound())
-	{
-		sound->Play((int)Resources::Sound::Title::BGM_TITLE);
-	}
 }
 
 void TitleScene::Uninit(void)
 {
-	if (const auto& sound = GetSound())
-	{
-		sound->Stop((int)Resources::Sound::Title::BGM_TITLE);
-	}
 	title_.Uninit();
 	back_.Uninit();
 	button_.Uninit();

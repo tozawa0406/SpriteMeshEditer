@@ -2,10 +2,7 @@
 #include <FrameWork/Scene/SceneManager.h>
 
 #include "01_TitleScene.h"
-#include "02_CampScene.h"
-#include "03_ButtleScene.h"
 #include "04_PauseScene.h"
-#include "05_ResultScene.h"
 
 EachScene::EachScene(void)
 {
@@ -41,7 +38,6 @@ int EachScene::ChangePause(int returnPause)
 	case 1:
 		return 0;
 	case 2:
-		return static_cast<int>(SceneList::CAMP);
 	case 3:
 		return static_cast<int>(SceneList::TITLE);
 	}
@@ -58,17 +54,6 @@ BaseScene* EachScene::CreateScene(SceneManager* manager, SceneList sceneNum)
 	case SceneList::TITLE:
 		temp = new TitleScene;
 		break;
-	case SceneList::CAMP:
-		temp = new CampScene;
-		break;
-	case SceneList::BUTTLE:
-		temp = new ButtleScene;
-		break;
-	case SceneList::RESULT:
-		temp = new ResultScene;
-		break;
-	default:
-		break;
 	}
 
 	if (temp) 
@@ -83,16 +68,6 @@ BaseScene* EachScene::CreateScene(SceneManager* manager, SceneList sceneNum)
 BaseScene* EachScene::CreatePause(SceneManager* manager, SceneList sceneNum)
 {
 	BaseScene* temp = nullptr;
-
-	switch (sceneNum)
-	{
-	case SceneList::CAMP:
-	case SceneList::BUTTLE:
-		temp = new Pause;
-		break;
-	default:
-		break;
-	}
 
 	if (temp) 
 	{

@@ -107,9 +107,6 @@
     <ClInclude Include="FrameWork\Scene\SceneManager.h">
       <Filter>FrameWork\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="FrameWork\Systems\Camera\AtObjCamera.h">
-      <Filter>FrameWork\Systems\Camera</Filter>
-    </ClInclude>
     <ClInclude Include="FrameWork\Systems\Camera\Camera.h">
       <Filter>FrameWork\Systems\Camera</Filter>
     </ClInclude>
@@ -197,9 +194,6 @@
     <ClInclude Include="FrameWork\Systems\Renderer\Sprite\Texture.h">
       <Filter>FrameWork\Systems\Renderer\Sprite</Filter>
     </ClInclude>
-    <ClInclude Include="FrameWork\Systems\Renderer\MeshField.h">
-      <Filter>FrameWork\Systems\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="FrameWork\Systems\Renderer\ObjectRenderer.h">
       <Filter>FrameWork\Systems\Renderer</Filter>
     </ClInclude>
@@ -236,9 +230,6 @@
     <ClInclude Include="FrameWork\Systems\DebugSetting\GuiManager.h">
       <Filter>FrameWork\Systems\DebugSetting</Filter>
     </ClInclude>
-    <ClInclude Include="FrameWork\Systems\Renderer\SkyDome.h">
-      <Filter>FrameWork\Systems\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="FrameWork\Systems\DebugSetting\ImGUI\imconfig.h">
       <Filter>FrameWork\Systems\DebugSetting\ImGUI</Filter>
     </ClInclude>
@@ -271,9 +262,6 @@
     </ClInclude>
     <ClInclude Include="FrameWork\Systems\DebugSetting\ImGUI\imgui_impl_win32.h">
       <Filter>FrameWork\Systems\DebugSetting\ImGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="FrameWork\Systems\Camera\MoveCamera.h">
-      <Filter>FrameWork\Systems\Camera</Filter>
     </ClInclude>
     <ClInclude Include="FrameWork\Systems\Collider\Collider3D\Collider3DManager.h">
       <Filter>FrameWork\Systems\Collider\Collider3D</Filter>
@@ -311,9 +299,6 @@
     <ClInclude Include="FrameWork\Graphics\DirectX11\WICTextureLoader.h">
       <Filter>FrameWork\Graphics\DirectX11</Filter>
     </ClInclude>
-    <ClInclude Include="FrameWork\Systems\Screenshot.h">
-      <Filter>FrameWork\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="FrameWork\Graphics\Utility\Font.h">
       <Filter>FrameWork\Graphics\Utility</Filter>
     </ClInclude>
@@ -344,6 +329,9 @@
     <ClInclude Include="FrameWork\Windows\resource.h">
       <Filter>FrameWork\Window</Filter>
     </ClInclude>
+    <ClInclude Include="FrameWork\Systems\Camera\MoveCamera.h">
+      <Filter>FrameWork\Systems\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FrameWork\Define\Matrix.cpp">
@@ -363,9 +351,6 @@
     </ClCompile>
     <ClCompile Include="FrameWork\Scene\SceneManager.cpp">
       <Filter>FrameWork\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="FrameWork\Systems\Camera\AtObjCamera.cpp">
-      <Filter>FrameWork\Systems\Camera</Filter>
     </ClCompile>
     <ClCompile Include="FrameWork\Systems\Camera\Camera.cpp">
       <Filter>FrameWork\Systems\Camera</Filter>
@@ -451,9 +436,6 @@
     <ClCompile Include="FrameWork\Systems\Renderer\Sprite\Texture.cpp">
       <Filter>FrameWork\Systems\Renderer\Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="FrameWork\Systems\Renderer\MeshField.cpp">
-      <Filter>FrameWork\Systems\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="FrameWork\Systems\Renderer\ObjectRenderer.cpp">
       <Filter>FrameWork\Systems\Renderer</Filter>
     </ClCompile>
@@ -487,9 +469,6 @@
     <ClCompile Include="FrameWork\Systems\DebugSetting\GuiManager.cpp">
       <Filter>FrameWork\Systems\DebugSetting</Filter>
     </ClCompile>
-    <ClCompile Include="FrameWork\Systems\Renderer\SkyDome.cpp">
-      <Filter>FrameWork\Systems\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="FrameWork\Systems\DebugSetting\ImGUI\imgui.cpp">
       <Filter>FrameWork\Systems\DebugSetting\ImGUI</Filter>
     </ClCompile>
@@ -504,9 +483,6 @@
     </ClCompile>
     <ClCompile Include="FrameWork\Systems\DebugSetting\ImGUI\imgui_impl_win32.cpp">
       <Filter>FrameWork\Systems\DebugSetting\ImGUI</Filter>
-    </ClCompile>
-    <ClCompile Include="FrameWork\Systems\Camera\MoveCamera.cpp">
-      <Filter>FrameWork\Systems\Camera</Filter>
     </ClCompile>
     <ClCompile Include="FrameWork\Systems\Collider\Collider3D\Collider3DManager.cpp">
       <Filter>FrameWork\Systems\Collider\Collider3D</Filter>
@@ -538,9 +514,6 @@
     <ClCompile Include="FrameWork\Graphics\DirectX11\WICTextureLoader.cpp">
       <Filter>FrameWork\Graphics\DirectX11</Filter>
     </ClCompile>
-    <ClCompile Include="FrameWork\Systems\Screenshot.cpp">
-      <Filter>FrameWork\Systems</Filter>
-    </ClCompile>
     <ClCompile Include="FrameWork\Graphics\Utility\Font.cpp">
       <Filter>FrameWork\Graphics\Utility</Filter>
     </ClCompile>
@@ -561,6 +534,9 @@
     </ClCompile>
     <ClCompile Include="FrameWork\Graphics\Utility\CascadeManager.cpp">
       <Filter>FrameWork\Graphics\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameWork\Systems\Camera\MoveCamera.cpp">
+      <Filter>FrameWork\Systems\Camera</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

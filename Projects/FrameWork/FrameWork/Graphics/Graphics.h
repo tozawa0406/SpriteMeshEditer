@@ -28,9 +28,9 @@ public:
 	};	
 
 	//! @def	横解像度
-	static constexpr int WIDTH  = 1280;
+	static constexpr int WIDTH  = 1920;
 	//! @def	縦解像度
-	static constexpr int HEIGHT = 720;
+	static constexpr int HEIGHT = 1080;
 
 	/* @brief	Windowsクラスの取得			*/
 	inline Windows*			GetWindow(void)			{ return window_;		}

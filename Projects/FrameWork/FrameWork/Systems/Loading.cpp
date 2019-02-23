@@ -49,7 +49,7 @@ HRESULT Loading::Init(void)
 	display_[2].SetColor(COLOR(c, c, c, 1));
 	display_[2].SetEnable(false);
 
-	display_[3].Init(253, (int)Resources::Texture::Base::LOAD);
+	display_[3].Init(253, (int)Resources::Texture::Base::WHITE);
 	auto p = display_[0].GetPosition();
 	p.y -= 100;
 	display_[3].SetPosition(p);
@@ -57,7 +57,6 @@ HRESULT Loading::Init(void)
 	display_[3].SetRotationOffset(VECTOR2(75, 75));
 	display_[3].SetColor(COLOR(1, 1, 1, 1));
 	display_[3].SetEnable(false);
-	display_[3].SetSplit(VECTOR2(3, 1));
 	display_[3].SetPattern(0);
 
 	loadingPercent_ = new Score(systems_->GetSceneManager(), false, 3);

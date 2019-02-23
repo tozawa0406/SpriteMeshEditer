@@ -35,57 +35,22 @@ namespace Resources
 
 		enum class Title : int8
 		{
-			BGM_TITLE = (int)Base::MAX,
-
-			MAX
+			MAX = (int)Base::MAX
 		};
 
 		enum class Camp : int8
 		{
-			BGM_GAME = (int)Base::MAX,
-
-			UNITYCHAN_WALK,
-			UNITYCHAN_DRINK,
-			UNITYCHAN_AVOIDANCE,
-			UNITYCHAN_DRAWN,
-			UNITYCHAN_ATTACK01,
-			UNITYCHAN_ATTACK02,
-			UNITYCHAN_ATTACK03,
-			UNITYCHAN_HIT,
-			UNITYCHAN_HEAL,
-			UNITYCHAN_BREATH,
-			WAPON_ATTACK,
-
-			MAX
+			MAX = (int)Base::MAX
 		};
 
 		enum class Buttle : int8
 		{
-			BGM_GAME = (int)Base::MAX,
-
-			UNITYCHAN_WALK,
-			UNITYCHAN_DRINK,
-			UNITYCHAN_AVOIDANCE,
-			UNITYCHAN_DRAWN,
-			UNITYCHAN_ATTACK01,
-			UNITYCHAN_ATTACK02,
-			UNITYCHAN_ATTACK03,
-			UNITYCHAN_HIT,
-			UNITYCHAN_HEAL,
-			UNITYCHAN_BREATH,
-			WAPON_ATTACK,
-			WAPON_HIT,
-
-			DRAGON_ROAR,
-
-			MAX
+			MAX = (int)Base::MAX
 		};
 
 		enum class Result : int8
 		{
-			BGM_RESULT = (int)Base::MAX,
-
-			MAX
+			MAX = (int)Base::MAX
 		};
 
 		const SOUNDPARAM baseFileName[(int)Base::MAX]
@@ -94,49 +59,22 @@ namespace Resources
 			{ SEDirectoryName + "enter.wav"		, 0 },
 			{ SEDirectoryName + "cancel.wav"	, 0 },
 		};
-		const SOUNDPARAM titleFileName[(int)Title::MAX - (int)Base::MAX]
-		{
-			{ BGMDirectoryName + "Title/bgm_maoudamashii_fantasy08.wav", 255 },
-		};
-		const SOUNDPARAM campFileName[(int)Camp::MAX - (int)Base::MAX]
-		{
-			{ BGMDirectoryName + "Game/bgm_maoudamashii_orchestra24.wav"	, 255 },
 
-			{ SEDirectoryName + "unitychan/walk.wav"						,  0 },
-			{ SEDirectoryName + "unitychan/drink.wav"						,  0 },
-			{ SEDirectoryName + "unitychan/avoidance.wav"					,  0 },
-			{ SEDirectoryName + "unitychan/drawn.wav"						,  0 },
-			{ SEDirectoryName + "unitychan/attack01.wav"					,  0 },
-			{ SEDirectoryName + "unitychan/attack02.wav"					,  0 },
-			{ SEDirectoryName + "unitychan/attack03.wav"					,  0 },
-			{ SEDirectoryName + "unitychan/hit.wav"							,  0 },
-			{ SEDirectoryName + "unitychan/heal.wav"						,  0 },
-			{ SEDirectoryName + "unitychan/breath.wav"						,  0 },
-			{ SEDirectoryName + "unitychan/attack.wav"						,  0 },
-		};
-		const SOUNDPARAM buttleFileName[(int)Buttle::MAX - (int)Base::MAX]
-		{
-			{ BGMDirectoryName + "Game/bgm_maoudamashii_orchestra24.wav"	, 255 },
+		//const SOUNDPARAM titleFileName[(int)Title::MAX - (int)Base::MAX]
+		//{
+		//};
 
-			{ SEDirectoryName + "unitychan/walk.wav"						,  0 },
-			{ SEDirectoryName + "unitychan/drink.wav"						,  0 },
-			{ SEDirectoryName + "unitychan/avoidance.wav"					,  0 },
-			{ SEDirectoryName + "unitychan/drawn.wav"						,  0 },
-			{ SEDirectoryName + "unitychan/attack01.wav"					,  0 },
-			{ SEDirectoryName + "unitychan/attack02.wav"					,  0 },
-			{ SEDirectoryName + "unitychan/attack03.wav"					,  0 },
-			{ SEDirectoryName + "unitychan/hit.wav"							,  0 },
-			{ SEDirectoryName + "unitychan/heal.wav"						,  0 },
-			{ SEDirectoryName + "unitychan/breath.wav"						,  0 },
-			{ SEDirectoryName + "unitychan/attack.wav"						,  0 },
-			{ SEDirectoryName + "unitychan/attackHit.wav"					,  0 },
+		//const SOUNDPARAM campFileName[(int)Camp::MAX - (int)Base::MAX]
+		//{
+		//};
 
-			{ SEDirectoryName + "monster1.wav"								,  0 },
-		};
-		const SOUNDPARAM resultFileName[(int)Result::MAX - (int)Base::MAX]
-		{
-			{ BGMDirectoryName + "Result/bgm_maoudamashii_orchestra14.wav"	, 255 },
-		};
+		//const SOUNDPARAM buttleFileName[(int)Buttle::MAX - (int)Base::MAX]
+		//{
+		//};
+
+		//const SOUNDPARAM resultFileName[(int)Result::MAX - (int)Base::MAX]
+		//{
+		//};
 	};
 }
 

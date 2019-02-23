@@ -86,7 +86,6 @@ HRESULT Sound::Load(int sceneNum)
 	int size = 0, max = 0;
 	const auto& fileName = systems_->GetResource().LoadSound(static_cast<SceneList>(sceneNum), size, max);
 
-	if (!fileName) { return E_FAIL; }
 	for (int i = 0; i < max; ++i)
 	{
 		if (i < static_cast<int>(Resources::Sound::Base::MAX)) { continue; }

@@ -16,7 +16,6 @@
 //	クラス宣言
 //-----------------------------------------------------------------------------
 class MoveCamera;
-class AtObjCamera;
 class MobileSuits;
 class CameraManager
 {
@@ -47,8 +46,6 @@ public:
 	// デバッグカメラへの移行
 	void DebugMove(void);
 
-	// 追従カメラの作成
-	Camera* CreateAtObjCamera(Object* obj, int i, VECTOR3 pos = VECTOR3(0, 10, -20));
 	// 追従カメラの削除
 	void	     DestroyObjCamera(Camera* obj);
 

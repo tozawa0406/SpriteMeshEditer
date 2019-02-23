@@ -42,24 +42,19 @@ void CascadeManager::ComputeShadowMatrixPSSM(void)
 	{
 		if (const auto& sceneManager = systems->GetSceneManager())
 		{
-			SceneList n = sceneManager->GetSceneNum();
-			if (n == SceneList::CAMP || n == SceneList::BUTTLE)
+			if (const auto& scene = sceneManager->GetScene())
 			{
-				if (const auto& scene = sceneManager->GetScene())
+				if (const auto& light = scene->GetLight())
 				{
-					if (const auto& light = scene->GetLight())
-					{
-						info = light->GetLightInfo();
-					}
-					else { return; }
+					info = light->GetLightInfo();
 				}
 				else { return; }
-				if (const auto& cameraManager = sceneManager->GetCameraManager())
-				{
-					camera = cameraManager->GetCamera();
-				}
 			}
 			else { return; }
+			if (const auto& cameraManager = sceneManager->GetCameraManager())
+			{
+				camera = cameraManager->GetCamera();
+			}
 		}
 	}
 	cameraPosition_ = camera->GetPos();

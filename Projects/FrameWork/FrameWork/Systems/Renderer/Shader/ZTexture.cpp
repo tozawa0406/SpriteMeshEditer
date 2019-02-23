@@ -47,19 +47,15 @@ HRESULT ZTexture::BeginDraw(void)
 	VECTOR3 up = camera->GetUp();
 
 	const auto& sceneManager = manager_->GetSystems()->GetSceneManager();
-	const auto& sceneNum = sceneManager->GetSceneNum();
-	if (sceneNum == SceneList::CAMP || sceneNum == SceneList::BUTTLE)
+	const auto& scene = sceneManager->GetScene();
+	if (scene)
 	{
-		const auto& scene = sceneManager->GetScene();
-		if (scene)
-		{
-			const auto& light = scene->GetLight();
+		const auto& light = scene->GetLight();
 
-			if (light)
-			{
-				view_ = CreateViewMatrix(light->GetLightInfo().position, light->GetLightInfo().at, up);
-				proj_ = CreateProjectionMatrix(Camera::FOV, Windows::WIDTH / Windows::HEIGHT, 60, 350);
-			}
+		if (light)
+		{
+			view_ = CreateViewMatrix(light->GetLightInfo().position, light->GetLightInfo().at, up);
+			proj_ = CreateProjectionMatrix(Camera::FOV, Windows::WIDTH / Windows::HEIGHT, 60, 350);
 		}
 	}
 	graphics->GetRenderTarget()->BeginDrawShadow(0);

@@ -12,14 +12,8 @@
  //! @enum	オブジェクトのタグ
 enum class ObjectTag : int8
 {
-	UKOWN = -1,
-	PLAYER = 0,
-	UI,
-	BILLBOARD,
-	STATIC,
-	ENEMY,
-	WAPON,
-	EVENT,
+	UKOWN	= -1,
+	STATIC	= 0,
 	MAX
 };
 

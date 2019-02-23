@@ -1,8 +1,6 @@
 #include "Collider3DOBB.h"
 #include "../../../Object/Object.h"
 
-#include "../../../../../Sources/Object/GameObject/GameObject.h"
-
 Collider3D::OBB::OBB(Object* obj) : Collider3DBase(obj, Type::OBB)
 	, velocity_(VECTOR3(0))
 {
@@ -19,12 +17,12 @@ void Collider3D::OBB::Update(void)
 {
 	if (object_)
 	{
-		if (object_->GetTag() == ObjectTag::PLAYER ||
-			object_->GetTag() == ObjectTag::ENEMY)
-		{
-			auto gameObject = static_cast<GameObject*>(object_);
-			velocity_ = gameObject->GetVelocity();
-		}
+		//if (object_->GetTag() == ObjectTag::PLAYER ||
+		//	object_->GetTag() == ObjectTag::ENEMY)
+		//{
+		//	auto gameObject = static_cast<GameObject*>(object_);
+		//	velocity_ = gameObject->GetVelocity();
+		//}
 		transform_ = object_->GetTransform();
 	}
 	renderer_.enable = IsEnable();

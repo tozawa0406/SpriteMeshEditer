@@ -18,7 +18,6 @@ public:
 	enum class List : uint8
 	{
 		DEFAULT = 0,
-		SCREEN_SHOT,
 		COLOR,
 		POSITION,
 		NORMAL,
@@ -63,9 +62,6 @@ public:
 	virtual void Draw(List num, VECTOR2 position, VECTOR2 size) = 0;
 	/* @brief	デバッグ用描画処理	*/
 	virtual void DrawShadowMap(void) = 0;
-
-	/* @brief	スクリーンショットの生成			*/
-	virtual void CreateScreenshot(const string& filename) = 0;
 
 	/* @brief	デバッグ用に描画するレンダーターゲットの設定
 	 * @param	(num)	描画したいレンダーターゲットの種類

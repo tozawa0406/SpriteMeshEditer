@@ -38,8 +38,6 @@ public:
 	void Draw(List num, VECTOR2 position, VECTOR2 size) override;
 	void DrawShadowMap(void) override;
 
-	void CreateScreenshot(const string& filename) override;
-
 	inline ID3D11ShaderResourceView*	GetShaderResourceView(List num) { return shaderResourceView_[static_cast<int>(num)]; }
 
 private:

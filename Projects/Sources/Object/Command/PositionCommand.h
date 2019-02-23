@@ -1,15 +1,15 @@
-#ifndef _SET_POSITION_COMMAND_H_
-#define _SET_POSITION_COMMAND_H_
+#ifndef _POSITION_COMMAND_H_
+#define _POSITION_COMMAND_H_
 
 #include "ICommand.h"
 
-class SetPositionCommand : public ICommand
+class PositionCommand : public ICommand
 {
 public:
 	/* @brief	コンストラクタ		*/
-	SetPositionCommand(void);
+	PositionCommand(void);
 	/* @brief	デストラクタ		*/
-	~SetPositionCommand(void);
+	~PositionCommand(void);
 
 	/* @breif	処理		*/
 	virtual void Invoke(void)	override;
@@ -25,4 +25,4 @@ private:
 	VECTOR3 newPosition_;
 };
 
-#endif // _SET_POSITION_COMMAND_H_
+#endif // _POSITION_COMMAND_H_

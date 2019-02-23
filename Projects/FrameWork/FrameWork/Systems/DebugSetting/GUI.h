@@ -18,7 +18,8 @@ class GUI
 public:
 	GUI(Systems* systems, Object* obj, string name = "");
 	~GUI(void);
-	virtual void GuiUpdate(void) {};
+	virtual void GuiUpdate(void) {}
+	virtual void ConsoleWindow(void) {}
 
 protected:
 	string name;

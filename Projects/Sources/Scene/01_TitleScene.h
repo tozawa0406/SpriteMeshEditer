@@ -40,6 +40,8 @@ public:
 	 * @return	‚È‚µ				*/
 	void GuiUpdate(void) override;
 
+	void ConsoleWindow(void) override;
+
 private:
 	//! ƒeƒXƒg
 	SpriteRenderer* test_;

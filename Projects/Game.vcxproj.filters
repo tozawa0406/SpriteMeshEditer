@@ -50,10 +50,16 @@
     <ClCompile Include="Sources\Object\LoadAddTexture.cpp">
       <Filter>Source\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Object\Command\SetPositionCommand.cpp">
+    <ClCompile Include="Sources\Object\Command\Client.cpp">
       <Filter>Source\Object\Command</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Object\Command\Client.cpp">
+    <ClCompile Include="Sources\Object\Command\PositionCommand.cpp">
+      <Filter>Source\Object\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Command\RotationCommand.cpp">
+      <Filter>Source\Object\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Command\ScaleCommand.cpp">
       <Filter>Source\Object\Command</Filter>
     </ClCompile>
   </ItemGroup>
@@ -94,10 +100,16 @@
     <ClInclude Include="Sources\Object\Command\ICommand.h">
       <Filter>Source\Object\Command</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Object\Command\SetPositionCommand.h">
+    <ClInclude Include="Sources\Object\Command\Client.h">
       <Filter>Source\Object\Command</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Object\Command\Client.h">
+    <ClInclude Include="Sources\Object\Command\PositionCommand.h">
+      <Filter>Source\Object\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Command\RotationCommand.h">
+      <Filter>Source\Object\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Command\ScaleCommand.h">
       <Filter>Source\Object\Command</Filter>
     </ClInclude>
   </ItemGroup>

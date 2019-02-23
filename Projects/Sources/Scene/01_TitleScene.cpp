@@ -1,7 +1,7 @@
 #include "01_TitleScene.h"
 #include <FrameWork/Scene/SceneManager.h>
 
-#include "../Object/Command/SetPositionCommand.h"
+#include "../Object/Command/PositionCommand.h"
 
 TitleScene::TitleScene(void) : GUI(Systems::Instance(), nullptr, "SceneTitle")
 	, client_(nullptr)
@@ -63,4 +63,9 @@ void TitleScene::GuiUpdate(void)
 	}
 
 	client_->Update();
+}
+
+void TitleScene::ConsoleWindow(void)
+{
+	client_->ConsoleWindow();
 }

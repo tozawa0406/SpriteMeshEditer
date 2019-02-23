@@ -55,6 +55,9 @@ HRESULT GuiManager::Init(void)
 
 	ImGui::StyleColorsDark();
 
+	ImGuiIO& io = ImGui::GetIO();
+	io.Fonts->AddFontFromFileTTF("Resource/Data/ProggyClean.ttf", 32.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
+
 	obj_.clear();
 #endif
 	return S_OK;
@@ -98,10 +101,6 @@ void GuiManager::GuiUpdate(void)
 	if (!draw_) { return; }
 
 	draw_ = false;
-	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-	ImGui::SetNextWindowPos(ImVec2(30, 30));
-	ImGui::SetNextWindowSize(ImVec2(100, 200));
-
 	if (window->GetGraphicsType() == Graphics::Type::DirectX9)
 	{
 	}
@@ -115,36 +114,62 @@ void GuiManager::GuiUpdate(void)
 	{
 		return;
 	}
+	float padding = 50;
 
-	const auto& graphics = window->GetGraphics();
-	if (!graphics) { return; }
-	graphics->GuiUpdate();
-	if (const auto& wrapper = graphics->GetWrapper())
-	{
-		wrapper->GuiUpdate();
-	}
-	if (const auto& target = graphics->GetRenderTarget())
-	{
-		target->GuiUpdate();
-	}
+	ImGui::SetNextWindowPos(ImVec2(padding, padding), ImGuiSetCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(450, 500), ImGuiSetCond_Once);
 
-	// FPS•`‰æ
-	ImGui::Text("FPS : %.2f", window->GetFps());
-
-	for (auto& obj : obj_)
+	if (ImGui::Begin("Editer"))
 	{
-		if (obj)
+		const auto& graphics = window->GetGraphics();
+		if (!graphics) { return; }
+		graphics->GuiUpdate();
+		if (const auto& wrapper = graphics->GetWrapper())
 		{
-			obj->GuiUpdate();
+			wrapper->GuiUpdate();
 		}
+		if (const auto& target = graphics->GetRenderTarget())
+		{
+			target->GuiUpdate();
+		}
+
+		// FPS•`‰æ
+		ImGui::Text("FPS : %.2f", window->GetFps());
+
+		for (auto& obj : obj_)
+		{
+			if (obj)
+			{
+				obj->GuiUpdate();
+			}
+		}
+
+		if (systems_)
+		{
+			if (const auto& texture = systems_->GetTexture())
+			{
+				texture->GuiUpdate();
+			}
+		}
+		ImGui::End();
 	}
 
-	if (systems_)
+	float w = Windows::WIDTH - padding * 2;
+	float h = 250;
+	ImGui::SetNextWindowPos(ImVec2(Half(Windows::WIDTH) - Half(w), (Windows::HEIGHT - padding) - h), ImGuiSetCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(w, h), ImGuiSetCond_Once);
+
+	if (ImGui::Begin("Console"))
 	{
-		if (const auto& texture = systems_->GetTexture())
+		for (auto& obj : obj_)
 		{
-			texture->GuiUpdate();
+			if (obj)
+			{
+				obj->ConsoleWindow();
+			}
 		}
+
+		ImGui::End();
 	}
 
 #endif

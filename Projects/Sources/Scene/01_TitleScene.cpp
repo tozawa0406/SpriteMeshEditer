@@ -1,8 +1,10 @@
 #include "01_TitleScene.h"
 #include <FrameWork/Scene/SceneManager.h>
 
+#include "../Object/Command/SetPositionCommand.h"
+
 TitleScene::TitleScene(void) : GUI(Systems::Instance(), nullptr, "SceneTitle")
-	, frameCnt_(0)
+	, client_(nullptr)
 {
 }
 
@@ -14,20 +16,26 @@ void TitleScene::Init(SceneList sceneNum)
 {
 	BaseScene::Init(sceneNum);
 
-	// ”wŒi
-	back_.Init(0, static_cast<int>(Resources::Texture::Base::WHITE));
-	back_.SetPosition(VECTOR2(Half(Windows::WIDTH), Half(Windows::HEIGHT)));
-	back_.SetSize(VECTOR2(Windows::WIDTH, Windows::HEIGHT));
-	back_.SetColor(COLOR::RGBA(150, 150, 150));
+	test_ = new SpriteRenderer;
+	if (test_)
+	{
+		test_->Init(systems_, static_cast<int>(Resources::Texture::Base::WHITE), &trans_);
+	}
+	trans_.scale = VECTOR3(5);
 
+	client_ = new Client;
+	if (client_)
+	{
+		client_->SetCtrl(GetCtrl(0));
+		client_->SetReciver(&trans_);
+		client_->Init();
+	}
 }
 
 void TitleScene::Uninit(void)
 {
-	title_.Uninit();
-	back_.Uninit();
-	button_.Uninit();
-	press_.Uninit();
+	UninitDeletePtr(client_);
+	DeletePtr(test_);
 }
 
 SceneList TitleScene::Update(void)
@@ -36,52 +44,23 @@ SceneList TitleScene::Update(void)
 	const auto& ctrl = GetCtrl(0);
 	if (!ctrl) { return SceneList::NOTCHANGE; }
 
-	// “ü—Í”»’è
-	JudgeCtrlType(*ctrl);
-	// “_–Å
-	Flashing();
-
 	// ‘JˆÚˆ—
-	return EndScene(*ctrl);
-}
-
-void TitleScene::Flashing(void)
-{
-	// ƒtƒŒ[ƒ€ƒJƒEƒ“ƒ^
-	frameCnt_++;
-}
-
-void TitleScene::JudgeCtrlType(Controller& ctrl)
-{
-	switch (static_cast<Controller::CtrlNum>(ctrl.GetCtrlNum()))
-	{
-	case Controller::CtrlNum::Key:
-		button_.SetString("Enter");
-		break;
-	case Controller::CtrlNum::PS4:
-		button_.SetString("Z");
-		break;
-	case Controller::CtrlNum::X:
-		button_.SetString("B");
-		break;
-	}
-}
-
-SceneList TitleScene::EndScene(Controller& ctrl)
-{
-	// “ü—Í
-	if (ctrl.Trigger(Input::GAMEPAD_CIRCLE, DIK_RETURN))
-	{		
-		if (const auto& sound = GetSound())
-		{
-			sound->Play(static_cast<int>(Resources::Sound::Base::SE_ENTER));
-		}
-		return SceneList::NEXT;
-	}
-
 	return SceneList::NOTCHANGE;
 }
 
 void TitleScene::GuiUpdate(void)
 {
+	if (!client_) { return; }
+
+	if (ImGui::Button("Undo"))
+	{
+		client_->Undo();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Redo"))
+	{
+		client_->Redo();
+	}
+
+	client_->Update();
 }

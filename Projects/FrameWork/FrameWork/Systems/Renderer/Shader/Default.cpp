@@ -47,9 +47,13 @@ HRESULT DefaultShader::SetParam(const MATRIX& mtx, const COLOR& color, VECTOR4 t
 	VECTOR4 t = { color.r, color.g, 1, 1 };
 	cbuf.diffuse = t;
 
+	cbuf.lightPosition = VECTOR4(0);
 	const auto& scene = systems->GetSceneManager()->GetScene();
-	const auto& lp = scene->GetLight()->GetLightInfo().position;
-	cbuf.lightPosition = VECTOR4(lp.x, lp.y, lp.z, 1);
+	if (const auto& light = scene->GetLight())
+	{
+		const auto& info = light->GetLightInfo().position;
+		cbuf.lightPosition = VECTOR4(info.x, info.y, info.z, 1);
+	}
 
 	const ZTexture* depth = (ZTexture*)manager_->GetShader(Shader::ENUM::ZTEXTURE);
 	cbuf.lightView = depth->GetLightView();

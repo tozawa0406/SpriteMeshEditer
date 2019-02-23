@@ -21,6 +21,9 @@
     <Filter Include="Source\Scene">
       <UniqueIdentifier>{3c00dc18-912c-462f-9a47-13fac996df8f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Object\Command">
+      <UniqueIdentifier>{63dfb7db-911d-4ee0-b83a-03c0f2e74af1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\main.cpp">
@@ -46,6 +49,12 @@
     </ClCompile>
     <ClCompile Include="Sources\Object\LoadAddTexture.cpp">
       <Filter>Source\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Command\SetPositionCommand.cpp">
+      <Filter>Source\Object\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Command\Client.cpp">
+      <Filter>Source\Object\Command</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -81,6 +90,15 @@
     </ClInclude>
     <ClInclude Include="Sources\Object\LoadAddTexture.h">
       <Filter>Source\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Command\ICommand.h">
+      <Filter>Source\Object\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Command\SetPositionCommand.h">
+      <Filter>Source\Object\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Command\Client.h">
+      <Filter>Source\Object\Command</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

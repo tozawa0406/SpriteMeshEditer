@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\main.cpp" />
+    <ClCompile Include="Sources\Object\Command\Client.cpp" />
+    <ClCompile Include="Sources\Object\Command\SetPositionCommand.cpp" />
     <ClCompile Include="Sources\Object\LoadAddTexture.cpp" />
     <ClCompile Include="Sources\Object\Search.cpp" />
     <ClCompile Include="Sources\Scene\00_EachScene.cpp" />
@@ -29,6 +31,9 @@
     <ClCompile Include="Sources\Scene\ResourceInfoManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\Object\Command\Client.h" />
+    <ClInclude Include="Sources\Object\Command\ICommand.h" />
+    <ClInclude Include="Sources\Object\Command\SetPositionCommand.h" />
     <ClInclude Include="Sources\Object\LoadAddTexture.h" />
     <ClInclude Include="Sources\Object\ObjectTag.h" />
     <ClInclude Include="Sources\Object\Search.h" />

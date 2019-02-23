@@ -5,7 +5,7 @@
 
 /* @fn		コンストラクタ
  * @brief	変数の初期化			*/
-Debug::Debug(Systems* systems) : Interface(systems), debug_(false), debugPause_(false), gui_(nullptr)
+Debug::Debug(Systems* systems) : Interface(systems), debug_(true), debugPause_(false), gui_(nullptr)
 {
 }
 

@@ -325,17 +325,4 @@ int Controller::AxisJudge(WORD& gamepad, WORD& axis)
 
 void Controller::GuiUpdate(void)
 {
-	ImGui::Text("device Data1 %lu", inst_.Data1);
-	ImGui::Text("device Data2 %o", inst_.Data2);
-	ImGui::Text("device Data3 %o", inst_.Data3);
-	ImGui::Text("device Data4 %c", inst_.Data4);
-
-	ImGui::Text("product Data1 %lu", temp_.Data1);
-	ImGui::Text("product Data2 %o", temp_.Data2);
-	ImGui::Text("product Data3 %o", temp_.Data3);
-	ImGui::Text("product Data4 %c", temp_.Data4);
-	if (ctrlNum_ != Key && ctrlNum_ != NOT_CONECT)
-	{
-		ctrl_->GuiUpdate();
-	}
 }

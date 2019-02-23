@@ -389,18 +389,4 @@ void Dx11RenderTarget::DrawShadowMap(void)
 
 void Dx11RenderTarget::GuiUpdate(void)
 {
-	if (ImGui::Button("shadowMap"))
-	{
-		drawShadowMap_ = !drawShadowMap_;
-	}
-
-	if (cascade_) { cascade_->GuiUpdate(); }
-
-	//if (ImGui::Button("def")) { SetDebugDraw(RenderTarget::List::MAX); }
-	//ImGui::SameLine();
-	//if (ImGui::Button("clr")) { SetDebugDraw(RenderTarget::List::COLOR); }
-	//ImGui::SameLine();
-	//if (ImGui::Button("pos")) { SetDebugDraw(RenderTarget::List::POSITION); }
-	//ImGui::SameLine();
-	//if (ImGui::Button("nrm")) { SetDebugDraw(RenderTarget::List::NORMAL); }
 }

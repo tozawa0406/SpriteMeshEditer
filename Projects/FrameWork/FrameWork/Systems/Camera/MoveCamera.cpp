@@ -175,14 +175,4 @@ void MoveCamera::Input(void)
 // GUI
 void MoveCamera::GuiUpdate(void)
 {
-	ImGui::Text("pos x:y:z  %.2f:%.2f:%.2f", pos_.x, pos_.y, pos_.z);
-	ImGui::Text("at  x:y:z  %.2f:%.2f:%.2f", at_.x, at_.y, at_.z);
-	if (parent_->GetMainNum() < 0)
-	{
-		ImGui::Text("main debug");
-	}
-	else
-	{
-		ImGui::Text("main %d", parent_->GetMainNum());
-	}
 }

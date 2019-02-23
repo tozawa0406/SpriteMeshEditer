@@ -10,7 +10,9 @@
 #include "../../../Scene/BaseScene.h"
 #include "../../Loading.h"
 
-Texture::Texture(Systems* systems) : Interface(systems), sceneNum_(-1)
+Texture::Texture(Systems* systems) : Interface(systems)
+	, sceneNum_(-1)
+	, loadAdd_(nullptr)
 {
 }
 
@@ -35,11 +37,22 @@ HRESULT Texture::Init(void)
 	}
 	else { return E_FAIL; }
 
+	loadAdd_ = new LoadAddTexture(systems_);
+	if (loadAdd_)
+	{
+		loadAdd_->Init();
+	}
+
 	return S_OK;
 }
 
 void Texture::Uninit(void)
 {
+	if (loadAdd_)
+	{
+		loadAdd_->Uninit();
+	}
+	DeletePtr(loadAdd_);
 	Release(true);
 }
 
@@ -51,6 +64,11 @@ int Texture::SetUpLoading(Loading* loading, int sceneNum)
 	if (!systems_) { return 0; }
 	int size = 0, max = 0;
 	systems_->GetResource().LoadTexture(static_cast<SceneList>(sceneNum), size, max);
+
+	if (loadAdd_)
+	{
+		size += loadAdd_->SetUpLoading(loading, sceneNum);
+	}
 
 	return size;
 }
@@ -80,12 +98,23 @@ HRESULT Texture::Load(int sceneNum)
 	}
 	else { return E_FAIL; }
 
+	if (loadAdd_)
+	{
+		loadAdd_->Load(sceneNum_);
+	}
+
 	return S_OK;
 }
 
 void Texture::Release(bool uninit)
 {
 	if (!systems_) { return; }
+
+	if (loadAdd_)
+	{
+		loadAdd_->Release(uninit);
+	}
+
 	int size = 0, max = 0;
 	systems_->GetResource().LoadTexture(static_cast<SceneList>(sceneNum_), size, max);
 
@@ -107,4 +136,12 @@ void Texture::Release(bool uninit)
 VECTOR2 Texture::GetTextureSize(int texNum) const
 {
 	return systems_->GetGraphics()->GetWrapper()->GetTextureSize(texNum);
+}
+
+void Texture::GuiUpdate(void)
+{
+	if (loadAdd_)
+	{
+		loadAdd_->GuiUpdate();
+	}
 }

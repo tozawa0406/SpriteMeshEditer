@@ -41,6 +41,12 @@
     <ClCompile Include="Sources\Scene\DontDestroyOnLoad.cpp">
       <Filter>Source\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Object\Search.cpp">
+      <Filter>Source\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\LoadAddTexture.cpp">
+      <Filter>Source\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Object\ObjectTag.h">
@@ -69,6 +75,12 @@
     </ClInclude>
     <ClInclude Include="Sources\Scene\DontDestroyOnLoad.h">
       <Filter>Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Search.h">
+      <Filter>Source\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\LoadAddTexture.h">
+      <Filter>Source\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

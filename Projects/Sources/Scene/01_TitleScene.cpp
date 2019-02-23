@@ -1,22 +1,6 @@
 #include "01_TitleScene.h"
 #include <FrameWork/Scene/SceneManager.h>
 
-//! @def	UI描画準
-static constexpr int UI_PRIORITY = 200;
-//! @def	UI文字サイズ
-static constexpr int UI_TEXT_SIZE = 40;
-//! @def	タイトル位置
-static const VECTOR2 TITLE_POSITION = VECTOR2(Half(Windows::WIDTH), Half(Windows::HEIGHT) - 50);
-//! @def	press描画の位置
-static const VECTOR2 PRESS_POSITION = VECTOR2(Half(Windows::WIDTH) - 165, Windows::HEIGHT * 0.9f - UI_TEXT_SIZE);
-//! @def	pree描画のサイズ
-static const VECTOR2 PRESS_SIZE = VECTOR2(Quarter(Windows::WIDTH), Half(Windows::HEIGHT * 0.1f));
-//! @def	UIボタンの描画位置調整
-static constexpr float ADJUST_POSITION_X = 6 * UI_TEXT_SIZE + UI_TEXT_SIZE * 0.5f;
-
-//! @def	点滅間隔
-static constexpr float FLASHING_RANGE = 60;
-
 TitleScene::TitleScene(void) : GUI(Systems::Instance(), nullptr, "SceneTitle")
 	, frameCnt_(0)
 {
@@ -31,7 +15,7 @@ void TitleScene::Init(SceneList sceneNum)
 	BaseScene::Init(sceneNum);
 
 	// 背景
-	back_.Init(UI_PRIORITY - 1, static_cast<int>(Resources::Texture::Base::WHITE));
+	back_.Init(0, static_cast<int>(Resources::Texture::Base::WHITE));
 	back_.SetPosition(VECTOR2(Half(Windows::WIDTH), Half(Windows::HEIGHT)));
 	back_.SetSize(VECTOR2(Windows::WIDTH, Windows::HEIGHT));
 	back_.SetColor(COLOR::RGBA(150, 150, 150));
@@ -65,16 +49,6 @@ void TitleScene::Flashing(void)
 {
 	// フレームカウンタ
 	frameCnt_++;
-	if (frameCnt_ > FLASHING_RANGE * 2) { frameCnt_ = 0; }
-	
-	// αの設定
-	float a = (frameCnt_ < FLASHING_RANGE) ? frameCnt_ / FLASHING_RANGE : 2 - frameCnt_ / FLASHING_RANGE;
-	auto c = press_.GetColor();
-	c.a = a;
-	press_.SetColor(c);
-	c = button_.GetColor();
-	c.a = a;
-	button_.SetColor(c);
 }
 
 void TitleScene::JudgeCtrlType(Controller& ctrl)
@@ -110,5 +84,4 @@ SceneList TitleScene::EndScene(Controller& ctrl)
 
 void TitleScene::GuiUpdate(void)
 {
-	ImGui::Text("a : %.2f", (frameCnt_ < FLASHING_RANGE) ? frameCnt_ / FLASHING_RANGE : 2 - frameCnt_ / FLASHING_RANGE);
 }

@@ -251,13 +251,4 @@ MATRIX CascadeManager::CreateOrthographic(const float width, const float height,
 
 void CascadeManager::GuiUpdate(void)
 {
-	if (ImGui::Button("Color")) { isCascadeColor_ = !isCascadeColor_; }
-	ImGui::SameLine();
-	if (isCascadeColor_) { ImGui::Text("true"); }
-	else { ImGui::Text("false"); }
-
-	if (ImGui::Button("Soft")) { isSoft_ = !isSoft_; }
-	ImGui::SameLine();
-	if (isSoft_) { ImGui::Text("true"); }
-	else { ImGui::Text("false"); }
 }

@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\main.cpp" />
+    <ClCompile Include="Sources\Object\LoadAddTexture.cpp" />
+    <ClCompile Include="Sources\Object\Search.cpp" />
     <ClCompile Include="Sources\Scene\00_EachScene.cpp" />
     <ClCompile Include="Sources\Scene\01_TitleScene.cpp" />
     <ClCompile Include="Sources\Scene\04_PauseScene.cpp" />
@@ -27,7 +29,9 @@
     <ClCompile Include="Sources\Scene\ResourceInfoManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\Object\LoadAddTexture.h" />
     <ClInclude Include="Sources\Object\ObjectTag.h" />
+    <ClInclude Include="Sources\Object\Search.h" />
     <ClInclude Include="Sources\Scene\00_EachScene.h" />
     <ClInclude Include="Sources\Scene\01_TitleScene.h" />
     <ClInclude Include="Sources\Scene\04_PauseScene.h" />

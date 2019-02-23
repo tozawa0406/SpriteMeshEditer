@@ -110,7 +110,6 @@ void GuiManager::GuiUpdate(void)
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
-		ImGui::Text("using Graphics : DirectX11");
 	}
 	else
 	{
@@ -129,170 +128,25 @@ void GuiManager::GuiUpdate(void)
 		target->GuiUpdate();
 	}
 
-	if (ImGui::BeginMenu("Menu"))
-	{
-		// サブジェクト
-		bool oldSub = guiSubject_;
-		ImGui::MenuItem("Subject", NULL, &guiSubject_);
-		// 切り替え
-		if (guiSubject_ && guiSubject_ != oldSub) { guiObject_ = false; }
-
-		// オブジェクト
-		bool oldObj = guiObject_;
-		ImGui::MenuItem("Object", NULL, &guiObject_);
-		// 切り替え
-		if (guiObject_ && guiObject_ != oldObj) { guiSubject_ = false; }
-		ImGui::EndMenu();
-	}
-
-	// シーン
-	if (const auto& sceneManager = systems_->GetSceneManager())
-	{
-		ImGui::Text("scene    : %d", sceneManager->GetSceneNum());
-	}
-	if (frame_)
-	{
-		ImGui::SameLine();
-		ImGui::Text("  WaitSelect");
-	}
-
-	// コントローラの状態
-	if (const auto& input = systems_->GetInput())
-	{
-		if (const auto& ctrl = input->GetCtrl(0))
-		{
-			ImGui::Text("Ctrl");
-			ImGui::SameLine();
-			switch (ctrl->GetCtrlNum())
-			{
-			case Controller::CtrlNum::X:
-				ImGui::Text(": X");
-				break;
-			case Controller::CtrlNum::PS4:
-				ImGui::Text(": PS4");
-				break;
-			case Controller::CtrlNum::Key:
-				ImGui::Text(": Keyboard");
-				break;
-			case Controller::CtrlNum::NOT_CONECT:
-				ImGui::Text(": NON");
-				break;
-			}
-		}
-	}
-
 	// FPS描画
 	ImGui::Text("FPS : %.2f", window->GetFps());
-	
-	// デバッグポーズ
-	if (ImGui::Button((!debug_->GetDebugPause()) ? "Pause" : "Reseume"))
-	{
-		debug_->SetDebugPause(!debug_->GetDebugPause());
-	}
-	ImGui::SameLine();
 
-	if (guiObject_)
+	for (auto& obj : obj_)
 	{
-		if (ImGui::Button("LookObject"))
+		if (obj)
 		{
-			lookObject_ = !lookObject_;
+			obj->GuiUpdate();
 		}
-		ImGui::SameLine();
-		ImGui::Text(debug_->BoolToString(lookObject_).c_str());
 	}
 
-	int num = 1;
-	string windowName;
-
-	ImGui::Text("drawNum %d", drawNum_);	
-	drawNum_ = 0;
-
-	std::vector<string> nameTag;
-
-	int size = static_cast<int>(obj_.size());
-	for (int i = 0; i < size; ++i)
+	if (systems_)
 	{
-		ImGui::SetNextWindowSize(ImVec2(WINDOW_WIDTH, WINDOW_HEIGHT));
-		
-		// オブジェクト
-		if (!guiObject_)
+		if (const auto& texture = systems_->GetTexture())
 		{
-			if (obj_[i]->obj != nullptr)
-			{
-				obj_[i]->window = false;
-			}
-		}
-		// サブジェクト
-		else if (!guiSubject_)
-		{
-			if (obj_[i]->obj == nullptr)
-			{
-				obj_[i]->window = false;
-			}
-		}
-
-		// ボタンの処理
-		if ((obj_[i]->obj != nullptr && guiObject_) || (obj_[i]->obj == nullptr && guiSubject_))
-		{
-			int j, nameSize = static_cast<int>(nameTag.size());
-			for (j = 0; j < nameSize; ++j)
-			{
-				if (obj_[i]->tag == nameTag[j]) { break; }
-			}
-			if (nameTag.size() == 0 || j == nameSize)
-			{
-				nameTag.push_back(obj_[i]->tag);
-				if (ImGui::BeginMenu(nameTag[j].c_str()))
-				{
-					num = 1;
-					int objSize = static_cast<int>(obj_.size());
-					for (int k = 0; k < objSize; ++k)
-					{
-						if (nameTag[j] == obj_[k]->tag)
-						{
-							bool old = obj_[k]->window;	
-							char a[10];
-							sprintf_s(a, 10, "%d", num);
-							windowName = a;
-							windowName += "_" + obj_[i]->name;
-
-							ImGui::MenuItem(windowName.c_str(), NULL, &obj_[k]->window);
-							if (obj_[k]->window != old && obj_[i]->obj != nullptr) { frame_++; }
-							num++;
-						}
-					}
-					ImGui::EndMenu();
-				}
-			}
-		}
-		//  各自の処理
-		if (obj_[i]->window)
-		{
-			int number = 1;
-			for (int j = i - 1; j >= 0; --j)
-			{
-				if (obj_[i]->tag == obj_[j]->tag)
-				{
-					number++;
-				}
-			}
-			// windowの設定
-			ImVec2 nextPos = { Windows::WIDTH - ((float)(drawNum_ / 5) + 1) * (WINDOW_WIDTH + WINDOW_MARGIN_X),
-				WINDOW_MARGIN_Y + (float)(drawNum_ % 5) * (WINDOW_HEIGHT + WINDOW_MARGIN_Y) };
-			ImGui::SetNextWindowPos(nextPos, ImGuiSetCond_Always);
-
-			char a[10];
-			sprintf_s(a, 10, "%d", number);
-			windowName = a;
-			windowName += "_" + obj_[i]->name;
-			if (ImGui::Begin(windowName.c_str(), &obj_[i]->window))
-			{
-				obj_[i]->GuiUpdate();
-				ImGui::End();
-				drawNum_++;
-			}
+			texture->GuiUpdate();
 		}
 	}
+
 #endif
 }
 

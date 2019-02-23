@@ -10,6 +10,8 @@
 #include "../../../Define/Define.h"
 #include "../../BaseManager.h"
 
+#include "../../../../../Sources/Object/LoadAddTexture.h"
+
 class Loading;
 class Texture : public Interface
 {
@@ -22,6 +24,8 @@ public:
 	void	Release(bool uninit = false);
 	VECTOR2 GetTextureSize(int texNum) const;
 
+	void GuiUpdate(void);
+
 private:
 	Texture(Systems* systems);
 	HRESULT Init(void)	 override;
@@ -29,6 +33,8 @@ private:
 
 	int sceneNum_;
 	Loading* loading_;
+
+	LoadAddTexture* loadAdd_;
 };
 
 #endif // _TEXTURE_H_

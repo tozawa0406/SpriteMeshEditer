@@ -36,7 +36,9 @@ void Client::Update(void)
 	if (!ctrl_) { return; }
 
 	ImGui::InputFloat3("position", reciver_->position, 1);
-	ImGui::InputFloat3("rotation", reciver_->rotation, 1);
+	VECTOR3 rot = reciver_->rotation / 0.01744444f;
+	ImGui::InputFloat3("rotation", rot, 1);
+	reciver_->rotation = rot * 0.01744444f;
 	ImGui::InputFloat3("scale", reciver_->scale, 1);
 
 	if (ctrl_->Press(Input::GAMEPAD_CIRCLE, DIK_RETURN))

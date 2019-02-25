@@ -450,6 +450,16 @@ void Dx11Wrapper::Draw(const SpriteRenderer* obj, const Shader* shader)
 
 	MATRIX mtx = mtx.Identity();
 	if (obj->billbord) { mtx *= inverse_; }
+
+	// ƒeƒNƒXƒ`ƒƒ‚Ì‘å‚«‚³Šg‘å
+	float ratio = 0.05f;	// Šg‘å”ä—¦
+	const auto& s = texture_[0][obj->texNum].size * ratio;
+	mtx.Scaling(VECTOR3(s.x, s.y, 1));
+
+	VECTOR2 pivot = VECTOR2(0.5f - obj->pivot.x, 0.5f - (1 - obj->pivot.y));
+	mtx.Translation(VECTOR3(s.x * pivot.x, s.y * pivot.y, 0));
+
+	// Transform
 	mtx.Create(obj->GetTransform());
 
 	if (!shader || (shader->GetVertexShader() == 0 && shader->GetPixelShader() == 0))

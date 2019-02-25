@@ -3,10 +3,12 @@
 #include "PositionCommand.h"
 #include "RotationCommand.h"
 #include "ScaleCommand.h"
+#include "PivotCommand.h"
 
 Client::Client(void) :
 	reciver_(nullptr)
 	, beforeData_(VECTOR3(0), VECTOR3(0), VECTOR3(1))
+	, beforeData2_(VECTOR2(0))
 	, ctrl_(nullptr)
 {
 }
@@ -22,6 +24,10 @@ void Client::Init(void)
 		beforeData_.position	= reciver_->position;
 		beforeData_.rotation	= reciver_->rotation;
 		beforeData_.scale		= reciver_->scale;
+	}
+	if (reciver2_)
+	{
+		beforeData2_ = reciver2_->pivot;
 	}
 }
 
@@ -41,6 +47,8 @@ void Client::Update(void)
 	reciver_->rotation = rot * 0.01744444f;
 	ImGui::InputFloat3("scale", reciver_->scale, 1);
 
+	ImGui::InputFloat2("pivot", reciver2_->pivot, 1);
+
 	if (ctrl_->Press(Input::GAMEPAD_CIRCLE, DIK_RETURN))
 	{
 		if (beforeData_.position != reciver_->position)
@@ -49,6 +57,7 @@ void Client::Update(void)
 			if(command)
 			{
 				command->SetReciver(reciver_);
+				command->SetSpriteRenderer(reciver2_);
 				command->SetPosition(beforeData_.position, reciver_->position);
 				SetNewCommand(command);
 				beforeData_.position = reciver_->position;
@@ -62,6 +71,7 @@ void Client::Update(void)
 			if (command)
 			{
 				command->SetReciver(reciver_);
+				command->SetSpriteRenderer(reciver2_);
 				command->SetRotation(beforeData_.rotation, reciver_->rotation);
 				SetNewCommand(command);
 				beforeData_.rotation = reciver_->rotation;
@@ -75,11 +85,26 @@ void Client::Update(void)
 			if (command)
 			{
 				command->SetReciver(reciver_);
+				command->SetSpriteRenderer(reciver2_);
 				command->SetScale(beforeData_.scale, reciver_->scale);
 				SetNewCommand(command);
 				beforeData_.scale = reciver_->scale;
 
 				AddMessage("\"Scale reflected change\" in transform");
+			}
+		}
+		if (beforeData2_ != reciver2_->pivot)
+		{
+			PivotCommand* command = new PivotCommand;
+			if (command)
+			{
+				command->SetReciver(reciver_);
+				command->SetSpriteRenderer(reciver2_);
+				command->SetPivot(beforeData2_, reciver2_->pivot);
+				SetNewCommand(command);
+				beforeData2_ = reciver2_->pivot;
+
+				AddMessage("\"Pivot reflected change\" in Sprite");
 			}
 		}
 	}

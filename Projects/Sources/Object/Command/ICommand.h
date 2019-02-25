@@ -18,7 +18,7 @@ class ICommand
 {
 public:
 	/* @brief	コンストラクタ		*/
-	ICommand(void) : reciver_(nullptr)	{}
+	ICommand(void) : reciver_(nullptr), spriteRenderer_(nullptr)	{}
 	/* @brief	デストラクタ		*/
 	~ICommand(void) {}
 
@@ -30,9 +30,11 @@ public:
 	virtual void Redo(void)		= 0;
 
 	void SetReciver(Transform* reciver) { reciver_ = reciver;	}
+	void SetSpriteRenderer(SpriteRenderer* spriteRenderer) { spriteRenderer_ = spriteRenderer; }
 
 protected:
-	Transform*	reciver_;
+	Transform*		reciver_;
+	SpriteRenderer* spriteRenderer_;
 };
 
 #endif // _I_COMMAND_H_

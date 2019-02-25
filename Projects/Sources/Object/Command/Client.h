@@ -21,6 +21,7 @@ public:
 	void Redo(void);
 
 	void SetReciver(Transform* transform) { reciver_ = transform; }
+	void SetReciver2(SpriteRenderer* spriteRenderer) { reciver2_ = spriteRenderer; }
 	void SetCtrl(Controller* ctrl) { ctrl_ = ctrl; }
 
 private:
@@ -29,8 +30,10 @@ private:
 
 	void AddMessage(const string& mesaage);
 
-	Transform*	reciver_;
+	Transform*		reciver_;
+	SpriteRenderer* reciver2_;
 	Transform	beforeData_;
+	VECTOR2		beforeData2_;
 
 	std::vector<ICommand*> prevCommand_;
 	std::vector<ICommand*> nextCommand_;

@@ -19,15 +19,15 @@ void TitleScene::Init(SceneList sceneNum)
 	test_ = new SpriteRenderer;
 	if (test_)
 	{
-		test_->Init(systems_, static_cast<int>(Resources::Texture::Base::WHITE), &trans_);
+		test_->Init(systems_, static_cast<int>(Resources::Texture::Base::LOAD), &trans_);
 	}
-	trans_.scale = VECTOR3(5);
 
 	client_ = new Client;
 	if (client_)
 	{
 		client_->SetCtrl(GetCtrl(0));
 		client_->SetReciver(&trans_);
+		client_->SetReciver2(test_);
 		client_->Init();
 	}
 }

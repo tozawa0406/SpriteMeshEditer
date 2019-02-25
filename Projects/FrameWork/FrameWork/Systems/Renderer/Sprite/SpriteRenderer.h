@@ -24,6 +24,7 @@ struct SpriteRenderer : public ObjectRenderer
 
 	float		  pattern;
 	VECTOR2		  split;
+	VECTOR2		  pivot;
 
 	bool billbord;
 	bool xBillbord;

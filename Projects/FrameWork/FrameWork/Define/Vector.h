@@ -56,6 +56,8 @@ public:
 	bool operator == (const VECTOR2& v);
 	bool operator != (float f);
 	bool operator != (const VECTOR2& v);
+
+	operator float*(void) { return &x; }
 };
 
 struct VECTOR3

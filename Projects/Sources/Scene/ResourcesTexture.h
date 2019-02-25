@@ -22,6 +22,7 @@ namespace Resources
 			WHITE = 0,
 			NUMBER,
 			SSUI,
+			LOAD,
 
 			MAX
 		};
@@ -31,26 +32,12 @@ namespace Resources
 			MAX = (int)Base::MAX
 		};
 
-		enum class Camp : int8
-		{
-			MAX = (int)Base::MAX
-		};
-
-		enum class Buttle : int8
-		{
-			MAX = (int)Base::MAX
-		};
-
-		enum class Result : int8
-		{
-			MAX = (int)Base::MAX
-		};
-
 		const string baseFileName[(int)Base::MAX]
 		{
 			{ directoryName + "white.jpg"				},
 			{ directoryName + "UI/number.png"			},
 			{ directoryName + "UI/ssUI.jpg"				},
+			{ directoryName + "load.png"				},
 		};
 
 		//const string titleFileName[(int)Title::MAX - (int)Base::MAX]

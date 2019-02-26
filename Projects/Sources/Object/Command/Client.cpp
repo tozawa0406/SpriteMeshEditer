@@ -4,15 +4,20 @@
 #include "RotationCommand.h"
 #include "ScaleCommand.h"
 #include "PivotCommand.h"
+#include "NameCommand.h"
 
 Client::Client(void) :
 	ctrl_(nullptr)
+	, spriteRenderer_(nullptr)
+	, name_("NoName")
 {
 	receiver_.transform		= nullptr;
 	receiver_.pivot			= nullptr;
+	receiver_.name			= nullptr;
 
 	beforeData_.transform	= nullptr;
 	beforeData_.pivot		= nullptr;
+	beforeData_.name		= nullptr;
 }
 
 Client::~Client(void)
@@ -21,8 +26,19 @@ Client::~Client(void)
 
 void Client::Init(void)
 {
+	spriteRenderer_ = new SpriteRenderer;
+	if (spriteRenderer_)
+	{
+		spriteRenderer_->Init(static_cast<int>(Resources::Texture::Base::WHITE), &transform_);
+
+		receiver_.name		= &name_;
+		receiver_.transform = &transform_;
+		receiver_.pivot		= const_cast<VECTOR2*>(&spriteRenderer_->GetPivot());
+	}
+
 	if (!beforeData_.transform)	{ beforeData_.transform = new Transform;	}
 	if (!beforeData_.pivot)		{ beforeData_.pivot		= new VECTOR2;		}
+	if (!beforeData_.name)		{ beforeData_.name		= new string;		}
 
 	if (receiver_.transform && beforeData_.transform)
 	{
@@ -32,6 +48,12 @@ void Client::Init(void)
 	if (receiver_.pivot && beforeData_.pivot)
 	{
 		*beforeData_.pivot = *receiver_.pivot;
+	}
+
+	if (receiver_.name && beforeData_.name) 
+	{
+		name_.resize(256);
+		*beforeData_.name = *receiver_.name; 
 	}
 
 	if (const auto& systems = Systems::Instance())
@@ -50,11 +72,16 @@ void Client::Uninit(void)
 
 	DeletePtr(beforeData_.transform);
 	DeletePtr(beforeData_.pivot);
+	DeletePtr(beforeData_.name);
+
+	DeletePtr(spriteRenderer_);
 }
 
 void Client::Update(void)
 {
 	if (!ctrl_) { return; }
+
+	ImGui::InputText("name", &name_[0], 256);
 
 	ImGui::InputFloat3("position", receiver_.transform->position, 1);
 	VECTOR3 rot = receiver_.transform->rotation / 0.01744444f;
@@ -92,6 +119,14 @@ void Client::Update(void)
 			if (InvokeCommand<PivotCommand>())
 			{
 				AddMessage("\"Pivot reflected change\" in Sprite");
+			}
+		}
+		if (*beforeData_.name != *receiver_.name)
+		{
+			if (InvokeCommand<NameCommand>())
+			{
+				*beforeData_.name = *receiver_.name;
+				AddMessage("\"Name reflected change\" in Sprite");
 			}
 		}
 	}
@@ -185,12 +220,4 @@ void Client::ConsoleWindow(void)
 	{
 		ImGui::Text(m.c_str());
 	}
-}
-
-void Client::SetReceiver(SpriteRenderer* spriteRenderer)
-{
-	receiver_.transform = const_cast<Transform*>(spriteRenderer->GetTransform());
-	receiver_.pivot		= const_cast<VECTOR2*>(&spriteRenderer->GetPivot());
-
-	spriteRenderer_ = spriteRenderer;
 }

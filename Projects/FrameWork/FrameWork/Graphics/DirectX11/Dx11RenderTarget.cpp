@@ -260,7 +260,7 @@ void Dx11RenderTarget::BeginMultiRendererTarget(void)
 	for (int i = 0; i < 3; ++i)
 	{
 		int n = static_cast<int>(List::COLOR) + i;
-		ClearRendererTarget(static_cast<List>(n), color[i]);
+		ClearRendererTarget(static_cast<List>(n), COLOR::RGBA(32, 100, 92, 255));
 	}
 }
 

@@ -19,7 +19,9 @@ public:
 	GUI(Systems* systems, Object* obj, string name = "");
 	~GUI(void);
 	virtual void GuiUpdate(void) {}
-	virtual void ConsoleWindow(void) {}
+	virtual void InspectorView(void)	{}
+	virtual void ConsoleView(void)		{}
+	virtual void HierarchyView(void)	{}
 
 protected:
 	string name;

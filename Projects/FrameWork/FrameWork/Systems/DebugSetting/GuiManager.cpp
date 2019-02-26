@@ -133,14 +133,11 @@ void GuiManager::GuiUpdate(void)
 			target->GuiUpdate();
 		}
 
-		// FPS•`‰æ
-		ImGui::Text("FPS : %.2f", window->GetFps());
-
 		for (auto& obj : obj_)
 		{
 			if (obj)
 			{
-				obj->GuiUpdate();
+				obj->InspectorView();
 			}
 		}
 
@@ -165,12 +162,29 @@ void GuiManager::GuiUpdate(void)
 		{
 			if (obj)
 			{
-				obj->ConsoleWindow();
+				obj->ConsoleView();
 			}
 		}
 
 		ImGui::End();
 	}
+
+	ImGui::SetNextWindowPos(ImVec2(padding, padding), ImGuiSetCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(450, 500), ImGuiSetCond_Once);
+
+	if (ImGui::Begin("Hierarchy"))
+	{
+		for (auto& obj : obj_)
+		{
+			if (obj)
+			{
+				obj->HierarchyView();
+			}
+		}
+
+		ImGui::End();
+	}
+
 
 #endif
 }

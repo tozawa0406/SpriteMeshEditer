@@ -16,6 +16,7 @@ enum class CommandType : int8
 
 struct Receiver
 {
+	string*		name;
 	Transform*	transform;
 	VECTOR2*	pivot;
 };
@@ -26,7 +27,7 @@ public:
 	/* @brief	コンストラクタ		*/
 	ICommand(void) { receiver_.transform = nullptr; receiver_.pivot = nullptr; }
 	/* @brief	デストラクタ		*/
-	~ICommand(void) {}
+	virtual ~ICommand(void) {}
 
 	/* @brief	処理		*/
 	virtual void Invoke(Receiver& beforeData)	= 0;

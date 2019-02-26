@@ -16,6 +16,8 @@ public:
 	virtual void Uninit(void)	override;
 	virtual void Update(void)	override;
 
+	void SetTransform(const Transform& transform) { transform_.position = transform.position; }
+
 private:
 	Transform		transform_;
 	SpriteRenderer* pivot_;

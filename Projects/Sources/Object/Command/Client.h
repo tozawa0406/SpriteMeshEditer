@@ -15,13 +15,16 @@ public:
 	void Uninit(void);
 	void Update(void);
 
+	const string& GetName(void) { return name_; }
+
 	void ConsoleWindow(void);
 
 	void Undo(void);
 	void Redo(void);
 
-	void SetReceiver(SpriteRenderer* spriteRenderer);
 	void SetCtrl(Controller* ctrl) { ctrl_ = ctrl; }
+
+	const Transform& GetTransform(void) { return transform_; }
 
 private:
 	template<class T>
@@ -31,17 +34,19 @@ private:
 
 	void AddMessage(const string& mesaage);
 
+	string			name_;
+	SpriteRenderer* spriteRenderer_;
+	Transform		transform_;
+
 	Receiver		receiver_;
 	Receiver		beforeData_;
-	SpriteRenderer* spriteRenderer_;
 
-	std::vector<ICommand*> prevCommand_;
-	std::vector<ICommand*> nextCommand_;
+	std::vector<ICommand*>	prevCommand_;
+	std::vector<ICommand*>	nextCommand_;
+	std::vector<string>		message_;
 
-	Controller* ctrl_;
+	Controller*		ctrl_;
 	LoadAddTexture* loadAdd_;
-
-	std::vector<string> message_;
 };
 
 #endif // _CLIENT_H_

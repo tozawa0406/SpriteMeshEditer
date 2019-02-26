@@ -11,6 +11,8 @@
 #include "../Object/Command/Client.h"
 #include <FrameWork/Object/ObjectManager.h>
 
+#include "../Object/Pivot.h"
+
 class TitleScene : public BaseScene, public GUI
 {
 public:
@@ -39,18 +41,20 @@ public:
 	/* @brief	Guiの更新処理
 	 * @param	なし
 	 * @return	なし				*/
-	void GuiUpdate(void) override;
+	void InspectorView(void) override;
 
-	void ConsoleWindow(void) override;
+	void HierarchyView(void) override;
+
+	void ConsoleView(void) override;
 
 private:
-	//! テスト
-	SpriteRenderer* test_;
-	Transform		trans_;
+	void CreateClient(void);
 
 	ObjectManager*	objectManager_;
+	std::vector<Client*>	clientList_;
+	Client*					currentClient_;
 
-	Client* client_;
+	Pivot* pivot_;
 
 };
 

@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Sources\main.cpp" />
     <ClCompile Include="Sources\Object\Command\Client.cpp" />
+    <ClCompile Include="Sources\Object\Command\NameCommand.cpp" />
     <ClCompile Include="Sources\Object\Command\PivotCommand.cpp" />
     <ClCompile Include="Sources\Object\Command\PositionCommand.cpp" />
     <ClCompile Include="Sources\Object\Command\RotationCommand.cpp" />
@@ -37,6 +38,7 @@
   <ItemGroup>
     <ClInclude Include="Sources\Object\Command\Client.h" />
     <ClInclude Include="Sources\Object\Command\ICommand.h" />
+    <ClInclude Include="Sources\Object\Command\NameCommand.h" />
     <ClInclude Include="Sources\Object\Command\PivotCommand.h" />
     <ClInclude Include="Sources\Object\Command\PositionCommand.h" />
     <ClInclude Include="Sources\Object\Command\RotationCommand.h" />

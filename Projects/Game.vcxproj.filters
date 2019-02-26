@@ -68,6 +68,9 @@
     <ClCompile Include="Sources\Object\Pivot.cpp">
       <Filter>Source\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Object\Command\NameCommand.cpp">
+      <Filter>Source\Object\Command</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Object\ObjectTag.h">
@@ -123,6 +126,9 @@
     </ClInclude>
     <ClInclude Include="Sources\Object\Pivot.h">
       <Filter>Source\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Command\NameCommand.h">
+      <Filter>Source\Object\Command</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

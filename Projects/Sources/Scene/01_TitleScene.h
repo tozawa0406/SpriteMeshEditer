@@ -8,7 +8,7 @@
 #define _TITLE_SCENE_H_
 
 #include <FrameWork/Scene/BaseScene.h>
-#include "../Object/Command/Client.h"
+#include "../Object/Command/Receiver.h"
 #include <FrameWork/Object/ObjectManager.h>
 
 #include "../Object/Pivot.h"
@@ -48,11 +48,11 @@ public:
 	void ConsoleView(void) override;
 
 private:
-	void CreateClient(void);
+	void CreateReceiver(void);
 
 	ObjectManager*	objectManager_;
-	std::vector<Client*>	clientList_;
-	Client*					currentClient_;
+	std::vector<Receiver*>	clientList_;
+	Receiver*					currentReceiver_;
 
 	Pivot* pivot_;
 

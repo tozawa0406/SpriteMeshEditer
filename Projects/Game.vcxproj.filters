@@ -50,9 +50,6 @@
     <ClCompile Include="Sources\Object\LoadAddTexture.cpp">
       <Filter>Source\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Object\Command\Client.cpp">
-      <Filter>Source\Object\Command</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Object\Command\PositionCommand.cpp">
       <Filter>Source\Object\Command</Filter>
     </ClCompile>
@@ -69,6 +66,12 @@
       <Filter>Source\Object</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Object\Command\NameCommand.cpp">
+      <Filter>Source\Object\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Command\TextureNumCommand.cpp">
+      <Filter>Source\Object\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Command\Receiver.cpp">
       <Filter>Source\Object\Command</Filter>
     </ClCompile>
   </ItemGroup>
@@ -109,9 +112,6 @@
     <ClInclude Include="Sources\Object\Command\ICommand.h">
       <Filter>Source\Object\Command</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Object\Command\Client.h">
-      <Filter>Source\Object\Command</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Object\Command\PositionCommand.h">
       <Filter>Source\Object\Command</Filter>
     </ClInclude>
@@ -128,6 +128,12 @@
       <Filter>Source\Object</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Object\Command\NameCommand.h">
+      <Filter>Source\Object\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Command\TextureNumCommand.h">
+      <Filter>Source\Object\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Command\Receiver.h">
       <Filter>Source\Object\Command</Filter>
     </ClInclude>
   </ItemGroup>

@@ -10,36 +10,36 @@ ScaleCommand::~ScaleCommand(void)
 {
 }
 
-void ScaleCommand::Invoke(Receiver& beforeData)
+void ScaleCommand::Invoke(void)
 {
-	if (!beforeData.transform || !receiver_.transform) { return; }
+	if (!beforeData_->transform || !receiver_.transform) { return; }
 
-	prevScale_ = beforeData.transform->scale;
+	prevScale_ = beforeData_->transform->scale;
 	nextScale_ = receiver_.transform->scale;
 
-	if (beforeData.transform) { beforeData.transform->scale = nextScale_; }
+	if (beforeData_->transform) { beforeData_->transform->scale = nextScale_; }
 }
 
-void ScaleCommand::Undo(Receiver& beforeData)
+void ScaleCommand::Undo(void)
 {
 	if (receiver_.transform) 
 	{
 		receiver_.transform->scale = prevScale_; 
-		if (beforeData.transform)
+		if (beforeData_->transform)
 		{
-			beforeData.transform->scale = prevScale_;
+			beforeData_->transform->scale = prevScale_;
 		}
 	}
 }
 
-void ScaleCommand::Redo(Receiver& beforeData)
+void ScaleCommand::Redo(void)
 {
 	if (receiver_.transform)
 	{
 		receiver_.transform->scale = nextScale_; 
-		if (beforeData.transform)
+		if (beforeData_->transform)
 		{
-			beforeData.transform->scale = nextScale_;
+			beforeData_->transform->scale = nextScale_;
 		}
 	}
 }

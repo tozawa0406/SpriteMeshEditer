@@ -12,11 +12,11 @@ public:
 	~RotationCommand(void);
 
 	/* @breif	èàóù		*/
-	virtual void Invoke(Receiver& beforeData)	override;
+	virtual void Invoke(void)	override;
 	/* @brief	êiÇﬁ		*/
-	virtual void Undo(Receiver& beforeData)		override;
+	virtual void Undo(void)		override;
 	/* @brief	ñﬂÇÈ		*/
-	virtual void Redo(Receiver& beforeData)		override;
+	virtual void Redo(void)		override;
 
 private:
 	VECTOR3 prevRotation_;

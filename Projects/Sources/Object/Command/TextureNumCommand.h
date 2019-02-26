@@ -1,15 +1,15 @@
-#ifndef _PIVOT_COMMAND_H_
-#define _PIVOT_COMMAND_H_
+#ifndef _TEXTURE_NUM_COMMAND_H_
+#define _TEXTURE_NUM_COMMAND_H_
 
 #include "ICommand.h"
 
-class PivotCommand : public ICommand
+class TextureNumCommand : public ICommand
 {
 public:
 	/* @brief	コンストラクタ		*/
-	PivotCommand(void);
+	TextureNumCommand(void);
 	/* @brief	デストラクタ		*/
-	~PivotCommand(void);
+	~TextureNumCommand(void);
 
 	/* @breif	処理		*/
 	virtual void Invoke(void)	override;
@@ -19,8 +19,8 @@ public:
 	virtual void Redo(void)		override;
 
 private:
-	VECTOR2 prevPivot_;
-	VECTOR2 nextPivot_;
+	int prevTexNum_;
+	int nextTexNum_;
 };
 
-#endif // _PIVOT_COMMAND_H_
+#endif // _TEXTURE_NUM_COMMAND_H_

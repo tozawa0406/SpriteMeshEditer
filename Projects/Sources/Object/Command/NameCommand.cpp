@@ -10,36 +10,36 @@ NameCommand::~NameCommand(void)
 {
 }
 
-void NameCommand::Invoke(Receiver& beforeData)
+void NameCommand::Invoke(void)
 {
-	if (!beforeData.name || !receiver_.name) { return; }
+	if (!beforeData_->name || !receiver_.name) { return; }
 
-	prevName_ = *beforeData.name;
+	prevName_ = *beforeData_->name;
 	nextName_ = *receiver_.name;
 
-	if (beforeData.name) { *beforeData.name = nextName_; }
+	if (beforeData_->name) { *beforeData_->name = nextName_; }
 }
 
-void NameCommand::Undo(Receiver& beforeData)
+void NameCommand::Undo(void)
 {
 	if (receiver_.name)
 	{
 		*receiver_.name = prevName_; 
-		if (beforeData.name)
+		if (beforeData_->name)
 		{
-			*beforeData.name = prevName_;
+			*beforeData_->name = prevName_;
 		}
 	}
 }
 
-void NameCommand::Redo(Receiver& beforeData)
+void NameCommand::Redo(void)
 {
 	if (receiver_.name)
 	{
 		*receiver_.name = nextName_; 
-		if (beforeData.name)
+		if (beforeData_->name)
 		{
-			*beforeData.name = nextName_;
+			*beforeData_->name = nextName_;
 		}
 	}
 }

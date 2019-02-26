@@ -3,13 +3,13 @@
 
 #include "ICommand.h"
 
-class Client
+class Receiver
 {
 public:
 	/* @brief	コンストラクタ		*/
-	Client(void);
+	Receiver(void);
 	/* @brief	デストラクタ		*/
-	~Client(void);
+	~Receiver(void);
 
 	void Init(void);
 	void Uninit(void);
@@ -38,8 +38,8 @@ private:
 	SpriteRenderer* spriteRenderer_;
 	Transform		transform_;
 
-	Receiver		receiver_;
-	Receiver		beforeData_;
+	RECEIVER_DATA	receiver_;
+	RECEIVER_DATA	beforeData_;
 
 	std::vector<ICommand*>	prevCommand_;
 	std::vector<ICommand*>	nextCommand_;

@@ -20,12 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\main.cpp" />
-    <ClCompile Include="Sources\Object\Command\Client.cpp" />
+    <ClCompile Include="Sources\Object\Command\Receiver.cpp" />
     <ClCompile Include="Sources\Object\Command\NameCommand.cpp" />
     <ClCompile Include="Sources\Object\Command\PivotCommand.cpp" />
     <ClCompile Include="Sources\Object\Command\PositionCommand.cpp" />
     <ClCompile Include="Sources\Object\Command\RotationCommand.cpp" />
     <ClCompile Include="Sources\Object\Command\ScaleCommand.cpp" />
+    <ClCompile Include="Sources\Object\Command\TextureNumCommand.cpp" />
     <ClCompile Include="Sources\Object\LoadAddTexture.cpp" />
     <ClCompile Include="Sources\Object\Pivot.cpp" />
     <ClCompile Include="Sources\Object\Search.cpp" />
@@ -36,13 +37,14 @@
     <ClCompile Include="Sources\Scene\ResourceInfoManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Sources\Object\Command\Client.h" />
+    <ClInclude Include="Sources\Object\Command\Receiver.h" />
     <ClInclude Include="Sources\Object\Command\ICommand.h" />
     <ClInclude Include="Sources\Object\Command\NameCommand.h" />
     <ClInclude Include="Sources\Object\Command\PivotCommand.h" />
     <ClInclude Include="Sources\Object\Command\PositionCommand.h" />
     <ClInclude Include="Sources\Object\Command\RotationCommand.h" />
     <ClInclude Include="Sources\Object\Command\ScaleCommand.h" />
+    <ClInclude Include="Sources\Object\Command\TextureNumCommand.h" />
     <ClInclude Include="Sources\Object\LoadAddTexture.h" />
     <ClInclude Include="Sources\Object\ObjectTag.h" />
     <ClInclude Include="Sources\Object\Pivot.h" />

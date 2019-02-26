@@ -10,36 +10,36 @@ PivotCommand::~PivotCommand(void)
 {
 }
 
-void PivotCommand::Invoke(Receiver& beforeData)
+void PivotCommand::Invoke(void)
 {
-	if (!beforeData.pivot || !receiver_.pivot) { return; }
+	if (!beforeData_->spriteRenderer || !receiver_.spriteRenderer) { return; }
 
-	prevPivot_ = *beforeData.pivot;
-	nextPivot_ = *receiver_.pivot;;
+	prevPivot_ = beforeData_->spriteRenderer->GetPivot();
+	nextPivot_ = receiver_.spriteRenderer->GetPivot();
 
-	*beforeData.pivot = nextPivot_;
+	beforeData_->spriteRenderer->SetPivot(nextPivot_);
 }
 
-void PivotCommand::Undo(Receiver& beforeData)
+void PivotCommand::Undo(void)
 {
-	if (receiver_.pivot) 
+	if (receiver_.spriteRenderer) 
 	{
-		*receiver_.pivot = prevPivot_; 
-		if (beforeData.pivot)
+		receiver_.spriteRenderer->SetPivot(prevPivot_);
+		if (beforeData_->spriteRenderer)
 		{
-			*beforeData.pivot = prevPivot_;
+			beforeData_->spriteRenderer->SetPivot(prevPivot_);
 		}
 	}
 }
 
-void PivotCommand::Redo(Receiver& beforeData)
+void PivotCommand::Redo(void)
 {
-	if (receiver_.pivot) 
+	if (receiver_.spriteRenderer) 
 	{
-		*receiver_.pivot = nextPivot_; 
-		if (beforeData.pivot)
+		receiver_.spriteRenderer->SetPivot(nextPivot_); 
+		if (beforeData_->spriteRenderer)
 		{
-			*beforeData.pivot = nextPivot_;
+			beforeData_->spriteRenderer->SetPivot(nextPivot_);
 		}
 	}
 }

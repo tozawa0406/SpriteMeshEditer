@@ -96,7 +96,7 @@ bool VECTOR2::operator != (float f)
 	return (this->x != f || this->y != f) ? true : false;
 }
 
-bool VECTOR2::operator != (const VECTOR2& v)
+bool VECTOR2::operator != (const VECTOR2& v) const
 {
 	return (this->x != v.x || this->y != v.y) ? true : false;
 }

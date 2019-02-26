@@ -10,36 +10,36 @@ PositionCommand::~PositionCommand(void)
 {
 }
 
-void PositionCommand::Invoke(Receiver& beforeData)
+void PositionCommand::Invoke(void)
 {
-	if (!beforeData.transform || !receiver_.transform) { return; }
+	if (!beforeData_->transform || !receiver_.transform) { return; }
 
-	prevPosition_ = beforeData.transform->position;
+	prevPosition_ = beforeData_->transform->position;
 	nextPosition_ = receiver_.transform->position;
 
-	if (beforeData.transform) { beforeData.transform->position = nextPosition_; }
+	if (beforeData_->transform) { beforeData_->transform->position = nextPosition_; }
 }
 
-void PositionCommand::Undo(Receiver& beforeData)
+void PositionCommand::Undo(void)
 {
 	if (receiver_.transform) 
 	{
 		receiver_.transform->position = prevPosition_; 
-		if (beforeData.transform)
+		if (beforeData_->transform)
 		{
-			beforeData.transform->position = prevPosition_;
+			beforeData_->transform->position = prevPosition_;
 		}
 	}
 }
 
-void PositionCommand::Redo(Receiver& beforeData)
+void PositionCommand::Redo(void)
 {
 	if (receiver_.transform) 
 	{
 		receiver_.transform->position = nextPosition_; 
-		if (beforeData.transform)
+		if (beforeData_->transform)
 		{
-			beforeData.transform->position = nextPosition_;
+			beforeData_->transform->position = nextPosition_;
 		}
 	}
 }

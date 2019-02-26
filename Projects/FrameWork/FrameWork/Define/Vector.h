@@ -55,7 +55,7 @@ public:
 
 	bool operator == (const VECTOR2& v);
 	bool operator != (float f);
-	bool operator != (const VECTOR2& v);
+	bool operator != (const VECTOR2& v) const;
 
 	operator float*(void) { return &x; }
 };

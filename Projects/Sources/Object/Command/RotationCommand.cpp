@@ -10,36 +10,36 @@ RotationCommand::~RotationCommand(void)
 {
 }
 
-void RotationCommand::Invoke(Receiver& beforeData)
+void RotationCommand::Invoke(void)
 {
-	if (!beforeData.transform || !receiver_.transform) { return; }
+	if (!beforeData_->transform || !receiver_.transform) { return; }
 
-	prevRotation_ = beforeData.transform->rotation;
+	prevRotation_ = beforeData_->transform->rotation;
 	nextRotation_ = receiver_.transform->rotation;
 
-	if (beforeData.transform) { beforeData.transform->rotation = nextRotation_; }
+	if (beforeData_->transform) { beforeData_->transform->rotation = nextRotation_; }
 }
 
-void RotationCommand::Undo(Receiver& beforeData)
+void RotationCommand::Undo(void)
 {
 	if (receiver_.transform) 
 	{
 		receiver_.transform->rotation = prevRotation_; 
-		if (beforeData.transform)
+		if (beforeData_->transform)
 		{
-			beforeData.transform->rotation = prevRotation_;
+			beforeData_->transform->rotation = prevRotation_;
 		}
 	}
 }
 
-void RotationCommand::Redo(Receiver& beforeData)
+void RotationCommand::Redo(void)
 {
 	if (receiver_.transform)
 	{
 		receiver_.transform->rotation = nextRotation_; 
-		if (beforeData.transform)
+		if (beforeData_->transform)
 		{
-			beforeData.transform->rotation = nextRotation_;
+			beforeData_->transform->rotation = nextRotation_;
 		}
 	}
 }

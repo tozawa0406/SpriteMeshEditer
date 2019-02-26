@@ -1,60 +1,56 @@
-#include "Client.h"
+#include "Receiver.h"
 
 #include "PositionCommand.h"
 #include "RotationCommand.h"
 #include "ScaleCommand.h"
 #include "PivotCommand.h"
 #include "NameCommand.h"
+#include "TextureNumCommand.h"
 
-Client::Client(void) :
+Receiver::Receiver(void) :
 	ctrl_(nullptr)
 	, spriteRenderer_(nullptr)
 	, name_("NoName")
 {
-	receiver_.transform		= nullptr;
-	receiver_.pivot			= nullptr;
-	receiver_.name			= nullptr;
-
-	beforeData_.transform	= nullptr;
-	beforeData_.pivot		= nullptr;
-	beforeData_.name		= nullptr;
 }
 
-Client::~Client(void)
+Receiver::~Receiver(void)
 {
 }
 
-void Client::Init(void)
+void Receiver::Init(void)
 {
 	spriteRenderer_ = new SpriteRenderer;
 	if (spriteRenderer_)
 	{
 		spriteRenderer_->Init(static_cast<int>(Resources::Texture::Base::WHITE), &transform_);
 
-		receiver_.name		= &name_;
-		receiver_.transform = &transform_;
-		receiver_.pivot		= const_cast<VECTOR2*>(&spriteRenderer_->GetPivot());
+		receiver_.name				= &name_;
+		receiver_.transform			= &transform_;
+		receiver_.spriteRenderer	= spriteRenderer_;
 	}
 
-	if (!beforeData_.transform)	{ beforeData_.transform = new Transform;	}
-	if (!beforeData_.pivot)		{ beforeData_.pivot		= new VECTOR2;		}
-	if (!beforeData_.name)		{ beforeData_.name		= new string;		}
+	if (!beforeData_.transform)			{ beforeData_.transform = new Transform;			}
+	if (!beforeData_.name)				{ beforeData_.name		= new string;				}
+	if (!beforeData_.spriteRenderer)	{ beforeData_.spriteRenderer = new SpriteRenderer;	}
+
+	if (receiver_.name && beforeData_.name)
+	{
+		name_.resize(256);
+		*beforeData_.name = *receiver_.name;
+	}
 
 	if (receiver_.transform && beforeData_.transform)
 	{
 		*beforeData_.transform = *receiver_.transform;
 	}
 
-	if (receiver_.pivot && beforeData_.pivot)
+	if (receiver_.spriteRenderer && beforeData_.spriteRenderer)
 	{
-		*beforeData_.pivot = *receiver_.pivot;
+		beforeData_.spriteRenderer->SetPivot(receiver_.spriteRenderer->GetPivot());
+		beforeData_.spriteRenderer->SetTexture(receiver_.spriteRenderer->GetTexture());
 	}
 
-	if (receiver_.name && beforeData_.name) 
-	{
-		name_.resize(256);
-		*beforeData_.name = *receiver_.name; 
-	}
 
 	if (const auto& systems = Systems::Instance())
 	{
@@ -65,21 +61,22 @@ void Client::Init(void)
 	}
 }
 
-void Client::Uninit(void)
+void Receiver::Uninit(void)
 {
 	for (auto& c : prevCommand_) { DeletePtr(c); }
 	for (auto& c : nextCommand_) { DeletePtr(c); }
 
+	DeletePtr(beforeData_.spriteRenderer);
 	DeletePtr(beforeData_.transform);
-	DeletePtr(beforeData_.pivot);
 	DeletePtr(beforeData_.name);
 
 	DeletePtr(spriteRenderer_);
 }
 
-void Client::Update(void)
+void Receiver::Update(void)
 {
 	if (!ctrl_) { return; }
+	if (!receiver_.spriteRenderer) { return; }
 
 	ImGui::InputText("name", &name_[0], 256);
 
@@ -89,7 +86,9 @@ void Client::Update(void)
 	receiver_.transform->rotation = rot * 0.01744444f;
 	ImGui::InputFloat3("scale", receiver_.transform->scale, 1);
 
-	ImGui::InputFloat2("pivot", *receiver_.pivot, 1);
+	VECTOR2 pivot = receiver_.spriteRenderer->GetPivot();
+	ImGui::InputFloat2("pivot", pivot, 1);
+	receiver_.spriteRenderer->SetPivot(pivot);
 
 	if (ctrl_->Press(Input::GAMEPAD_CIRCLE, DIK_RETURN))
 	{
@@ -114,7 +113,7 @@ void Client::Update(void)
 				AddMessage("\"Scale reflected change\" in transform");
 			}
 		}
-		if (*beforeData_.pivot != *receiver_.pivot)
+		if (beforeData_.spriteRenderer->GetPivot() != receiver_.spriteRenderer->GetPivot())
 		{
 			if (InvokeCommand<PivotCommand>())
 			{
@@ -141,22 +140,24 @@ void Client::Update(void)
 		int ret = loadAdd_->SelectTexture();
 		if (ret >= 0)
 		{
-			if (spriteRenderer_)
+			receiver_.spriteRenderer->SetTexture(ret);
+			if (InvokeCommand<TextureNumCommand>())
 			{
-				spriteRenderer_->SetTexture(ret);
+				AddMessage("\"Texture reflected change\" in Sprite");
 			}
 		}
 	}
 }
 
 template<class T>
-bool Client::InvokeCommand(void)
+bool Receiver::InvokeCommand(void)
 {
 	T* command = new T;
 	if (command)
 	{
 		command->SetReceiver(receiver_);
-		command->Invoke(beforeData_);
+		command->SetBeforeData(&beforeData_);
+		command->Invoke();
 
 		prevCommand_.insert(prevCommand_.begin(), command);
 		for (auto& c : nextCommand_) { DeletePtr(c); }
@@ -168,13 +169,13 @@ bool Client::InvokeCommand(void)
 	return false;
 }
 
-void Client::Undo(void)
+void Receiver::Undo(void)
 {
 	if (prevCommand_.size() <= 0) { return; }
 
 	if (prevCommand_[0])
 	{
-		prevCommand_[0]->Undo(beforeData_);
+		prevCommand_[0]->Undo();
 
 		nextCommand_.insert(nextCommand_.begin(), prevCommand_[0]);
 		prevCommand_.erase(prevCommand_.begin());
@@ -183,13 +184,13 @@ void Client::Undo(void)
 	AddMessage("performed \"Undo\" process");
 }
 
-void Client::Redo(void)
+void Receiver::Redo(void)
 {
 	if (nextCommand_.size() <= 0) { return; }
 
 	if (nextCommand_[0])
 	{
-		nextCommand_[0]->Redo(beforeData_);
+		nextCommand_[0]->Redo();
 
 		prevCommand_.insert(prevCommand_.begin(), nextCommand_[0]);
 		nextCommand_.erase(nextCommand_.begin());
@@ -198,12 +199,12 @@ void Client::Redo(void)
 	AddMessage("performed \"Redo\" process");
 }
 
-void Client::SaveData(void)
+void Receiver::SaveData(void)
 {
 	AddMessage("\"Save\" is complete");
 }
 
-void Client::AddMessage(const string& message)
+void Receiver::AddMessage(const string& message)
 {
 	message_.insert(message_.begin(), message);
 	int size = static_cast<int>(message_.size());
@@ -213,7 +214,7 @@ void Client::AddMessage(const string& message)
 	}
 }
 
-void Client::ConsoleWindow(void)
+void Receiver::ConsoleWindow(void)
 {
 //	ImGui::Text("prevSize %d, nextSize %d", prevCommand_.size(), nextCommand_.size());
 	for (auto& m : message_)

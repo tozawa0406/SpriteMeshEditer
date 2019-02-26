@@ -4,7 +4,7 @@
 #include "../Object/Command/PositionCommand.h"
 
 TitleScene::TitleScene(void) : GUI(Systems::Instance(), nullptr, "SceneTitle")
-	, currentClient_(nullptr)
+	, currentReceiver_(nullptr)
 	, objectManager_(nullptr)
 {
 }
@@ -38,7 +38,7 @@ SceneList TitleScene::Update(void)
 	// ƒRƒ“ƒgƒ[ƒ‰‚ÌŽæ“¾
 	const auto& ctrl = GetCtrl(0);
 	if (!ctrl) { return SceneList::NOTCHANGE; }
-	if (!currentClient_) { return SceneList::NOTCHANGE; }
+	if (!currentReceiver_) { return SceneList::NOTCHANGE; }
 
 	if (ctrl->Press(Input::GAMEPAD_L1, DIK_LCONTROL))
 	{
@@ -46,12 +46,12 @@ SceneList TitleScene::Update(void)
 		{
 			if (ctrl->Trigger(Input::GAMEPAD_L1, DIK_Z))
 			{
-				currentClient_->Redo();
+				currentReceiver_->Redo();
 			}
 		}
 		else if (ctrl->Trigger(Input::GAMEPAD_R1, DIK_Z))
 		{
-			currentClient_->Undo();
+			currentReceiver_->Undo();
 		}
 
 	}
@@ -64,58 +64,61 @@ void TitleScene::HierarchyView(void)
 {
 	if (ImGui::Button("CreateSprite"))
 	{
-		CreateClient();
+		CreateReceiver();
 	}
 
 	for (auto& list : clientList_)
 	{
 		if (list)
 		{
-			ImGui::Text(list->GetName().c_str());
+			if (ImGui::Button(list->GetName().c_str()))
+			{
+				currentReceiver_ = list;
+			}
 		}
 	}
 }
 
 void TitleScene::InspectorView(void)
 {
-	if (currentClient_)
+	if (currentReceiver_)
 	{
 		if (ImGui::Button("Undo"))
 		{
-			currentClient_->Undo();
+			currentReceiver_->Undo();
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Redo"))
 		{
-			currentClient_->Redo();
+			currentReceiver_->Redo();
 		}
 
-		currentClient_->Update();
+		currentReceiver_->Update();
 
 		if (pivot_)
 		{
-			pivot_->SetTransform(currentClient_->GetTransform());
+			pivot_->SetTransform(currentReceiver_->GetTransform());
 		}
 	}
 }
 
 void TitleScene::ConsoleView(void)
 {
-	if (currentClient_)
+	if (currentReceiver_)
 	{
-		currentClient_->ConsoleWindow();
+		currentReceiver_->ConsoleWindow();
 	}
 }
 
-void TitleScene::CreateClient(void)
+void TitleScene::CreateReceiver(void)
 {
-	Client* client = new Client;
+	Receiver* client = new Receiver;
 	if (client)
 	{
 		client->SetCtrl(GetCtrl(0));
 		client->Init();
 
 		clientList_.emplace_back(client);
-		currentClient_ = client;
+		currentReceiver_ = client;
 	}
 }

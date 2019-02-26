@@ -1,9 +1,3 @@
-//-----------------------------------------------------------------------------
-//
-//	3D•`‰æŠÇ—[ObjectRendererManager.cpp]
-//	Auther : ŒËàVãÄ‘¾
-//																	2018/08/18
-//-----------------------------------------------------------------------------
 #include "ObjectRendererManager.h"
 
 #include "ObjectRenderer.h"
@@ -43,12 +37,12 @@ void ObjectRendererManager::Sort(void)
 	}
 
 	bool sort = false;
-	for (int j = 0; j < size; j++)
+	for (int j = 0; j < size; ++j)
 	{
 		sort = false;
-		for (int i = 0; i < size; i++)
+		for (int i = 0; i < size; ++i)
 		{
-			if (!obj_[i]->sort) { continue; }
+			if (obj_[i] && !obj_[i]->IsSort()) { continue; }
 			if (wVec[i] < wVec[i + 1])
 			{
 				Swap(obj_[i], obj_[i + 1]);
@@ -71,27 +65,28 @@ void ObjectRendererManager::FastDraw(void)
 
 	for (auto& obj : obj_)
 	{
-		if (obj->enable && obj->fastDraw)
+		if (!obj) { continue; }
+		if (obj->IsEnable() && obj->IsFastDraw())
 		{
-			if (obj->type == ObjectRenderer::RendererType::SPRITE)
+			if (obj->GetType() == ObjectRenderer::RendererType::SPRITE)
 			{
 				Shader* shader = nullptr;
 				const auto& sprite = (SpriteRenderer*)obj;
-				if (obj->shader != Shader::ENUM::UNKOUWN)
+				if (obj->GetShader()!= Shader::ENUM::UNKOUWN)
 				{
-					shader = systems_->GetShader()->GetShader(obj->shader);
-					shader->SetParam(MATRIX().Identity().Create(obj->transform_), obj->material.diffuse, sprite->GetTexcoord());
+					shader = systems_->GetShader()->GetShader(obj->GetShader());
+					shader->SetParam(MATRIX().Identity().Create(obj->GetTransform()), obj->GetMaterial().diffuse, sprite->GetTexcoord());
 				}
 				dev->Draw(sprite, shader);
 			}
-			else if (obj->type == ObjectRenderer::RendererType::MODEL)
+			else if (obj->GetType() == ObjectRenderer::RendererType::MODEL)
 			{
 				Shader* shader = nullptr;
 				const auto& model = (MeshRenderer*)obj;
-				if (obj->shader != Shader::ENUM::UNKOUWN)
+				if (obj->GetShader() != Shader::ENUM::UNKOUWN)
 				{
-					shader = systems_->GetShader()->GetShader(obj->shader);
-					shader->SetParam(MATRIX().Identity().Create(obj->transform_), obj->material.diffuse, VECTOR4(0, 0, 1, 1));
+					shader = systems_->GetShader()->GetShader(obj->GetShader());
+					shader->SetParam(MATRIX().Identity().Create(obj->GetTransform()), obj->GetMaterial().diffuse, VECTOR4(0, 0, 1, 1));
 				}
 				dev->Draw(model, shader);
 			}
@@ -112,27 +107,28 @@ void ObjectRendererManager::Draw(void)
 
 	for (auto& obj : obj_)
 	{
-		if (obj->enable && !obj->fastDraw)
+		if (!obj) { continue; }
+		if (obj->IsEnable() && !obj->IsFastDraw())
 		{
-			if (obj->type == ObjectRenderer::RendererType::SPRITE)
+			if (obj->GetType() == ObjectRenderer::RendererType::SPRITE)
 			{
 				Shader* shader = nullptr;
 				const auto& sprite = (SpriteRenderer*)obj;
-				if (obj->shader != Shader::ENUM::UNKOUWN)
+				if (obj->GetShader() != Shader::ENUM::UNKOUWN)
 				{
-					shader = systems_->GetShader()->GetShader(obj->shader);
-					shader->SetParam(MATRIX().Identity().Create(obj->transform_), obj->material.diffuse, sprite->GetTexcoord());
+					shader = systems_->GetShader()->GetShader(obj->GetShader());
+					shader->SetParam(MATRIX().Identity().Create(obj->GetTransform()), obj->GetMaterial().diffuse, sprite->GetTexcoord());
 				}
 				dev->Draw(sprite, shader);
 			}
-			else if (obj->type == ObjectRenderer::RendererType::MODEL)
+			else if (obj->GetType() == ObjectRenderer::RendererType::MODEL)
 			{
 				Shader* shader = nullptr;
 				const auto& model = (MeshRenderer*)obj;
-				if (obj->shader != Shader::ENUM::UNKOUWN)
+				if (obj->GetShader() != Shader::ENUM::UNKOUWN)
 				{
-					shader = systems_->GetShader()->GetShader(obj->shader);
-					shader->SetParam(MATRIX().Identity().Create(obj->transform_), obj->material.diffuse, VECTOR4(0, 0, 1, 1));
+					shader = systems_->GetShader()->GetShader(obj->GetShader());
+					shader->SetParam(MATRIX().Identity().Create(obj->GetTransform()), obj->GetMaterial().diffuse, VECTOR4(0, 0, 1, 1));
 				}
 				dev->Draw(model, shader);
 			}
@@ -157,14 +153,15 @@ void ObjectRendererManager::DrawShadow(void)
 
 		for (auto& obj : obj_)
 		{
-			if (obj->shadow)
+			if (!obj) { continue; }
+			if (obj->IsShadow())
 			{
-				if (obj->type == ObjectRenderer::RendererType::SPRITE)
+				if (obj->GetType() == ObjectRenderer::RendererType::SPRITE)
 				{
 					const auto& sprite = (SpriteRenderer*)obj;
 					dev->Draw(sprite, shader);
 				}
-				else if (obj->type == ObjectRenderer::RendererType::MODEL)
+				else if (obj->GetType() == ObjectRenderer::RendererType::MODEL)
 				{
 					const auto& model = (MeshRenderer*)obj;
 					dev->Draw(model, shader);

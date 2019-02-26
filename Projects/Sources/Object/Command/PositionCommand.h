@@ -12,17 +12,15 @@ public:
 	~PositionCommand(void);
 
 	/* @breif	èàóù		*/
-	virtual void Invoke(void)	override;
+	virtual void Invoke(Receiver& beforeData)	override;
 	/* @brief	êiÇﬁ		*/
-	virtual void Undo(void)		override;
+	virtual void Undo(Receiver& beforeData)		override;
 	/* @brief	ñﬂÇÈ		*/
-	virtual void Redo(void)		override;
-
-	void SetPosition(const VECTOR3& prevPositoin, const VECTOR3& newPosition);
+	virtual void Redo(Receiver& beforeData)		override;
 
 private:
 	VECTOR3 prevPosition_;
-	VECTOR3 newPosition_;
+	VECTOR3 nextPosition_;
 };
 
 #endif // _POSITION_COMMAND_H_

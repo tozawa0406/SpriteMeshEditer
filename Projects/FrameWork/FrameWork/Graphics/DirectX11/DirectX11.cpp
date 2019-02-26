@@ -119,7 +119,7 @@ bool DirectX11::SetDevice(void)
 	ReleasePtr(pDXGI);
 
 	//レンダーターゲットビューの作成
-	ID3D11Texture2D *pBackBuffer;
+	ID3D11Texture2D* pBackBuffer;
 	pSwapChain_->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 	pDevice_->CreateRenderTargetView(pBackBuffer, NULL, &pRenderTargetView_);
 	pBackBuffer->Release();

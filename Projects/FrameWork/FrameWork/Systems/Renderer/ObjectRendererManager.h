@@ -1,34 +1,30 @@
-//-----------------------------------------------------------------------------
-//
-//	3D•`‰æŠÇ—[ObjectRendererManager.h]
-//	Auther : ŒËàVãÄ‘¾
-//																	2018/08/18
-//-----------------------------------------------------------------------------
+/*
+ * @file	ObjectRendererManager.h
+ * @brief	3DƒIƒuƒWƒFƒNƒg•`‰æ‚ÌŠÇ—
+ * @author	ŒËàVãÄ‘¾
+ * @date	2019/02/25
+ */
 #ifndef _OBJECT_RENDERER_MANAGER_H_
 #define _OBJECT_RENDERER_MANAGER_H_
 
 #include "../../Define/Define.h"
 #include "../BaseManager.h"
 
-struct ObjectRenderer;
-//-----------------------------------------------------------------------------
-//	ƒNƒ‰ƒXéŒ¾
-//-----------------------------------------------------------------------------
+class ObjectRenderer;
 class ObjectRendererManager : public BaseManager<ObjectRenderer>
 {
 	friend ObjectRenderer;
 public:
 	ObjectRendererManager(Systems* systems) : BaseManager(systems) {}
 
-	HRESULT Init(void) override { return S_OK; }
+	virtual HRESULT Init(void) override { return S_OK; }
+	virtual void    Draw(void) override;
 	void	FastDraw(void);
-	void    Draw(void) override;	//ƒ|ƒŠƒSƒ“•`‰æˆ—
 	void	DrawShadow(void);
 
 private:
-	void Add(ObjectRenderer* obj);
+	virtual void Add(ObjectRenderer* obj) override;
 	void Sort(void);
-
 };
 
 

@@ -20,20 +20,19 @@ public:
 	void Undo(void);
 	void Redo(void);
 
-	void SetReciver(Transform* transform) { reciver_ = transform; }
-	void SetReciver2(SpriteRenderer* spriteRenderer) { reciver2_ = spriteRenderer; }
+	void SetReceiver(SpriteRenderer* spriteRenderer);
 	void SetCtrl(Controller* ctrl) { ctrl_ = ctrl; }
 
 private:
-	void SetNewCommand(ICommand* command);
+	template<class T>
+	bool InvokeCommand(void);
+
 	void SaveData(void);
 
 	void AddMessage(const string& mesaage);
 
-	Transform*		reciver_;
-	SpriteRenderer* reciver2_;
-	Transform	beforeData_;
-	VECTOR2		beforeData2_;
+	Receiver		receiver_;
+	Receiver		beforeData_;
 
 	std::vector<ICommand*> prevCommand_;
 	std::vector<ICommand*> nextCommand_;

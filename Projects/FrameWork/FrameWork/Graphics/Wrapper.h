@@ -11,7 +11,7 @@
 
 // ‘O•û’è‹`
 namespace CanvasRenderer { class Image; }
-struct SpriteRenderer;
+class SpriteRenderer;
 struct MeshRenderer;
 class  Particle;
 struct ColliderRenderer;

@@ -1,51 +1,56 @@
-//-----------------------------------------------------------------------------
-//
-//	板ポリ描画[SpriteRenderer.cpp]
-//	Auther : 戸澤翔太
-//																	2018/08/18
-//-----------------------------------------------------------------------------
 #include "SpriteRenderer.h"
 #include "../../../Windows/Windows.h"
 #include "../../GameSystems.h"
 
 #include "../Shader/Default.h"
 
-SpriteRenderer::SpriteRenderer(void) : ObjectRenderer(ObjectRenderer::RendererType::SPRITE), texNum((int)Resources::Texture::Base::UNOWN)
-									 , vertexBuffer(0), indexBuffer(0), vertexNum(4), indexNum(6), pattern(0), split(1), billbord(false), xBillbord(false), pivot(0.5f)
+SpriteRenderer::SpriteRenderer(void) : ObjectRenderer(ObjectRenderer::RendererType::SPRITE)
+	, texNum_(static_cast<int>(Resources::Texture::Base::UNOWN))
+	, pattern_(0)
+	, split_(VECTOR2(1))
+	, flagBillboard_(0)
+	, pivot_(VECTOR2(0.5f))
+	, vertexBuffer_(0)
+	, indexBuffer_(0)
+	, vertexNum_(4)
+	, indexNum_(6)
+	, texcoord_(VECTOR4(0, 0, 1, 1))
 {
-	texcoord = VECTOR4(0, 0, 1, 1);
 }
 
 SpriteRenderer::~SpriteRenderer(void)
 {
-	if (systems_)
+	if (wrapper_)
 	{
-		systems_->GetGraphics()->GetWrapper()->ReleaseBuffer(vertexBuffer, Wrapper::FVF::VERTEX_3D);
+		wrapper_->ReleaseBuffer(vertexBuffer_, Wrapper::FVF::VERTEX_3D);
 	}
 }
 
-void SpriteRenderer::Init(Systems* systems, int texNu, const Transform* transform)
+void SpriteRenderer::Init(int texNum, const Transform* transform)
 {
-	ObjectRenderer::Init(systems, transform);
+	const auto& systems = Systems::Instance();
+	if (!systems) { return; }
 
-	this->texNum = texNu;
+	ObjectRenderer::Init(systems->GetObjectRenderer(), transform);
 
-	VECTOR2 inv = { 1 / split.x, 1 / split.y };
-	int		splitX = (int)split.x;
-	int		p = (int)pattern;
+	texNum_ = texNum;
+
+	VECTOR2 inv		= { 1 / split_.x, 1 / split_.y };
+	int		splitX	= static_cast<int>(split_.x);
+	int		p		= static_cast<int>(pattern_);
 
 	// 左上座標
-	texcoord.x = inv.x *  (p % splitX);
-	texcoord.y = inv.y *  (p / splitX);
+	texcoord_.x = inv.x *  (p % splitX);
+	texcoord_.y = inv.y *  (p / splitX);
 
 	// サイズ
-	texcoord.z = inv.x;
-	texcoord.w = inv.y;
+	texcoord_.z = inv.x;
+	texcoord_.w = inv.y;
 
 	const auto& wrapper = systems->GetGraphics()->GetWrapper();
 
 	VERTEX v[4];
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 4; ++i)
 	{
 		int x = i % 2, y = i / 2;
 		v[i].position	= VECTOR3(-0.5f + (1 * x), 0.5f - (1 * y), 0.0f);
@@ -56,8 +61,8 @@ void SpriteRenderer::Init(Systems* systems, int texNu, const Transform* transfor
 		v[i].boneIndex	= VECTOR4(0, 0, 0, 0);
 		v[i].weight		= VECTOR4(0, 0, 0, 0);
 	}
-	this->vertexBuffer = wrapper->CreateVertexBuffer(v, sizeof(v[0]), Wrapper::PRIMITIVE::V::FILL_RECT);
-	if (this->vertexBuffer == Wrapper::R_ERROR) { return; }
+	vertexBuffer_ = wrapper->CreateVertexBuffer(v, sizeof(v[0]), Wrapper::PRIMITIVE::V::FILL_RECT);
+	if (vertexBuffer_ == Wrapper::R_ERROR) { return; }
 
 	WORD index[6];
 	index[0] = 0;
@@ -66,33 +71,33 @@ void SpriteRenderer::Init(Systems* systems, int texNu, const Transform* transfor
 	index[3] = 2;
 	index[4] = 3;
 	index[5] = 1;
-	this->indexBuffer = wrapper->CreateIndexBuffer(index, 6);
+	indexBuffer_ = wrapper->CreateIndexBuffer(index, 6);
 
-	shader = Shader::ENUM::DEFAULT;
+	shader_ = Shader::ENUM::DEFAULT;
 }
 
 bool SpriteRenderer::Animation(float add)
 {
-	pattern += add;
+	pattern_ += add;
 
 	bool zero = false;
-	if (pattern >= split.x * split.y)
+	if (pattern_ >= split_.x * split_.y)
 	{
-		pattern = 0;
+		pattern_ = 0;
 		zero = true;
 	}
 
-	VECTOR2 inv		= { 1 / split.x, 1 / split.y };
-	int		splitX	= (int)split.x;
-	int		p		= (int)pattern;
+	VECTOR2 inv		= { 1 / split_.x, 1 / split_.y };
+	int		splitX	= static_cast<int>(split_.x);
+	int		p		= static_cast<int>(pattern_);
 
 	// 左上座標
-	texcoord.x = inv.x *  (p % splitX);
-	texcoord.y = inv.y *  (p / splitX);
+	texcoord_.x = inv.x *  (p % splitX);
+	texcoord_.y = inv.y *  (p / splitX);
 
 	// サイズ
-	texcoord.z = inv.x;
-	texcoord.w = inv.y;
+	texcoord_.z = inv.x;
+	texcoord_.w = inv.y;
 
 	return zero;
 }

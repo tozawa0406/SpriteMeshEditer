@@ -2,7 +2,7 @@
 
 RotationCommand::RotationCommand(void) : 
 	prevRotation_(0)
-	, newRotation_(0)
+	, nextRotation_(0)
 {
 }
 
@@ -10,22 +10,36 @@ RotationCommand::~RotationCommand(void)
 {
 }
 
-void RotationCommand::Invoke(void)
+void RotationCommand::Invoke(Receiver& beforeData)
 {
+	if (!beforeData.transform || !receiver_.transform) { return; }
+
+	prevRotation_ = beforeData.transform->rotation;
+	nextRotation_ = receiver_.transform->rotation;
+
+	if (beforeData.transform) { beforeData.transform->rotation = nextRotation_; }
 }
 
-void RotationCommand::Undo(void)
+void RotationCommand::Undo(Receiver& beforeData)
 {
-	reciver_->rotation = prevRotation_;
+	if (receiver_.transform) 
+	{
+		receiver_.transform->rotation = prevRotation_; 
+		if (beforeData.transform)
+		{
+			beforeData.transform->rotation = prevRotation_;
+		}
+	}
 }
 
-void RotationCommand::Redo(void)
+void RotationCommand::Redo(Receiver& beforeData)
 {
-	reciver_->rotation = newRotation_;
-}
-
-void RotationCommand::SetRotation(const VECTOR3& prevRotation, const VECTOR3& newRotation)
-{
-	prevRotation_ = prevRotation;
-	newRotation_  = newRotation;
+	if (receiver_.transform)
+	{
+		receiver_.transform->rotation = nextRotation_; 
+		if (beforeData.transform)
+		{
+			beforeData.transform->rotation = nextRotation_;
+		}
+	}
 }

@@ -214,29 +214,32 @@ inline void Swap(T& obj1, T& obj2)
 	obj2 = temp;
 }
 
-/* @fn		BitCheck
- * @brief	＆演算
+/* @brief	＆演算
  * @param	(var)	フラグ
  * @param	(bit)	チェックフラグ
  * @return	真ならtrue				*/
 template<class T>
 inline bool BitCheck(const T& var, const T& bit) { return (var & bit) ? true : false; }
 
-/* @fn		BitSub
- * @brief	XOR演算
+/* @brief	XOR演算
  * @param	(var)	フラグ
  * @param	(bit)	チェックフラグ
  * @return	真ならtrue				*/
 template<class T>
 inline void BitSub(T& var, const T& bit) { (var & bit) ? var ^= bit : var; }
 
-/* @fn		BitAdd
-* @brief	OR演算
-* @param	(var)	フラグ
-* @param	(bit)	チェックフラグ
-* @return	真ならtrue				*/
+/* @brief	OR演算
+ * @param	(var)	フラグ
+ * @param	(bit)	チェックフラグ
+ * @return	真ならtrue				*/
 template<class T>
 inline void BitAdd(T& var, const T& bit) { var |= bit; }
+
+/* @brief	ビット演算によるboolの設定
+ * @param	(judge)		判定するbool
+ * @param	(flag)		値を設定するフラグ
+ * @param	(bit)		フラグの値	*/
+inline void BitSetFlag(bool judge, uint8& flag, uint8 bit) { (judge) ? BitAdd(flag, bit) : BitSub(flag, bit); }
 
 
 #endif //_DEFINE_H_

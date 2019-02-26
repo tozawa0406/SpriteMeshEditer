@@ -24,15 +24,18 @@ MeshRenderer::~MeshRenderer(void)
 {
 }
 
-void MeshRenderer::Init(Systems* systems, int modelNum, const Transform* transform)
+void MeshRenderer::Init(int modelNum, const Transform* transform)
 {
+	const auto& systems = Systems::Instance();
+	if (!systems) { return; }
+
 	assert(modelNum != static_cast<int>(Resources::Model::Base::UNOWN));
-	ObjectRenderer::Init(systems, transform);
+	ObjectRenderer::Init(systems->GetObjectRenderer(), transform);
 
-	modelNum_ = modelNum;
-	shader = Shader::ENUM::DEFAULT;
+	modelNum_	= modelNum;
+	shader_		= Shader::ENUM::DEFAULT;
 
-	const auto& model = ((Dx11Wrapper*)systems->GetGraphics()->GetWrapper())->GetModel(modelNum);
+	const auto& model = static_cast<Dx11Wrapper*>(wrapper_)->GetModel(modelNum);
 	animationMax_.clear();
 	if(model.bone.size() > 0)
 	{
@@ -104,7 +107,12 @@ void MeshRenderer::Skinning(void)
 //	if (isSkinning_) { return; }
 	isSkinning_ = true;
 
-	Dx11Wrapper* dx11 = ((Dx11Wrapper*)systems_->GetGraphics()->GetWrapper());
+	const auto& systems = Systems::Instance();
+	if (!systems) { return; }
+
+	Dx11Wrapper* dx11 = static_cast<Dx11Wrapper*>(wrapper_);
+	if (!dx11) { return; }
+
 	auto& model = dx11->GetModel(modelNum_);
 
 	MATRIX rootMtx;
@@ -114,17 +122,17 @@ void MeshRenderer::Skinning(void)
 
 	DefaultShader::CONSTANT cbuf;
 	MATRIX initMtx = MATRIX().Identity();
-	memcpy_s(&cbuf.view , sizeof(MATRIX), &systems_->GetSceneManager()->GetCameraManager()->GetView(), sizeof(MATRIX));
-	memcpy_s(&cbuf.proj , sizeof(MATRIX), &systems_->GetSceneManager()->GetCameraManager()->GetProj(), sizeof(MATRIX));
+	memcpy_s(&cbuf.view , sizeof(MATRIX), &systems->GetSceneManager()->GetCameraManager()->GetView(), sizeof(MATRIX));
+	memcpy_s(&cbuf.proj , sizeof(MATRIX), &systems->GetSceneManager()->GetCameraManager()->GetProj(), sizeof(MATRIX));
 
 	cbuf.texcoord = VECTOR4(0, 0, 1, 1);
-	memcpy_s(&cbuf.diffuse, sizeof(float) * 4, &material.diffuse, sizeof(float) * 4);
+	memcpy_s(&cbuf.diffuse, sizeof(float) * 4, &GetMaterial().diffuse, sizeof(float) * 4);
 
-	const ZTexture* depth = (ZTexture*)systems_->GetShader()->GetShader(Shader::ENUM::ZTEXTURE);
+	const ZTexture* depth = (ZTexture*)systems->GetShader()->GetShader(Shader::ENUM::ZTEXTURE);
 	cbuf.lightView = depth->GetLightView();
 	cbuf.lightProj = depth->GetLightProj();
 
-	DefaultShader* defShader = ((DefaultShader*)systems_->GetShader()->GetShader(Shader::ENUM::DEFAULT));
+	DefaultShader* defShader = ((DefaultShader*)systems->GetShader()->GetShader(Shader::ENUM::DEFAULT));
 
 	DefaultShader::CONSTANT_BONE cbuf1;
 	ZeroMemory(&cbuf1, sizeof(DefaultShader::CONSTANT_BONE));

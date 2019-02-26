@@ -12,17 +12,15 @@ public:
 	~ScaleCommand(void);
 
 	/* @breif	èàóù		*/
-	virtual void Invoke(void)	override;
+	virtual void Invoke(Receiver& beforeData)	override;
 	/* @brief	êiÇﬁ		*/
-	virtual void Undo(void)		override;
+	virtual void Undo(Receiver& beforeData)		override;
 	/* @brief	ñﬂÇÈ		*/
-	virtual void Redo(void)		override;
-
-	void SetScale(const VECTOR3& prevScale, const VECTOR3& newScale);
+	virtual void Redo(Receiver& beforeData)		override;
 
 private:
 	VECTOR3 prevScale_;
-	VECTOR3 newScale_;
+	VECTOR3 nextScale_;
 };
 
 #endif // _SCALE_COMMAND_H_

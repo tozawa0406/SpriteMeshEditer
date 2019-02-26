@@ -12,7 +12,7 @@
 
 struct MeshRenderer : public ObjectRenderer
 {
-	void Init(Systems* systems, int modelNum, const Transform* trans);
+	void Init(int modelNum, const Transform* trans);
 	int  GetModelNum(void) const { return modelNum_; }
 
 	MeshRenderer(void);

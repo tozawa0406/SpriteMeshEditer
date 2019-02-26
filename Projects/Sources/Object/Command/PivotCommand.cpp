@@ -10,22 +10,36 @@ PivotCommand::~PivotCommand(void)
 {
 }
 
-void PivotCommand::Invoke(void)
+void PivotCommand::Invoke(Receiver& beforeData)
 {
+	if (!beforeData.pivot || !receiver_.pivot) { return; }
+
+	prevPivot_ = *beforeData.pivot;
+	nextPivot_ = *receiver_.pivot;;
+
+	*beforeData.pivot = nextPivot_;
 }
 
-void PivotCommand::Undo(void)
+void PivotCommand::Undo(Receiver& beforeData)
 {
-	spriteRenderer_->pivot = prevPivot_;
+	if (receiver_.pivot) 
+	{
+		*receiver_.pivot = prevPivot_; 
+		if (beforeData.pivot)
+		{
+			*beforeData.pivot = prevPivot_;
+		}
+	}
 }
 
-void PivotCommand::Redo(void)
+void PivotCommand::Redo(Receiver& beforeData)
 {
-	spriteRenderer_->pivot = nextPivot_;
-}
-
-void PivotCommand::SetPivot(const VECTOR2& prevPivot, const VECTOR2& nextPivot)
-{
-	prevPivot_ = prevPivot;
-	nextPivot_ = nextPivot;
+	if (receiver_.pivot) 
+	{
+		*receiver_.pivot = nextPivot_; 
+		if (beforeData.pivot)
+		{
+			*beforeData.pivot = nextPivot_;
+		}
+	}
 }

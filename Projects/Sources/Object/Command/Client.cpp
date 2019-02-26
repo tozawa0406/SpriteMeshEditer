@@ -6,11 +6,13 @@
 #include "PivotCommand.h"
 
 Client::Client(void) :
-	reciver_(nullptr)
-	, beforeData_(VECTOR3(0), VECTOR3(0), VECTOR3(1))
-	, beforeData2_(VECTOR2(0))
-	, ctrl_(nullptr)
+	ctrl_(nullptr)
 {
+	receiver_.transform		= nullptr;
+	receiver_.pivot			= nullptr;
+
+	beforeData_.transform	= nullptr;
+	beforeData_.pivot		= nullptr;
 }
 
 Client::~Client(void)
@@ -19,15 +21,17 @@ Client::~Client(void)
 
 void Client::Init(void)
 {
-	if (reciver_)
+	if (!beforeData_.transform)	{ beforeData_.transform = new Transform;	}
+	if (!beforeData_.pivot)		{ beforeData_.pivot		= new VECTOR2;		}
+
+	if (receiver_.transform && beforeData_.transform)
 	{
-		beforeData_.position	= reciver_->position;
-		beforeData_.rotation	= reciver_->rotation;
-		beforeData_.scale		= reciver_->scale;
+		*beforeData_.transform = *receiver_.transform;
 	}
-	if (reciver2_)
+
+	if (receiver_.pivot && beforeData_.pivot)
 	{
-		beforeData2_ = reciver2_->pivot;
+		*beforeData_.pivot = *receiver_.pivot;
 	}
 }
 
@@ -35,75 +39,50 @@ void Client::Uninit(void)
 {
 	for (auto& c : prevCommand_) { DeletePtr(c); }
 	for (auto& c : nextCommand_) { DeletePtr(c); }
+
+	DeletePtr(beforeData_.transform);
+	DeletePtr(beforeData_.pivot);
 }
 
 void Client::Update(void)
 {
 	if (!ctrl_) { return; }
 
-	ImGui::InputFloat3("position", reciver_->position, 1);
-	VECTOR3 rot = reciver_->rotation / 0.01744444f;
+	ImGui::InputFloat3("position", receiver_.transform->position, 1);
+	VECTOR3 rot = receiver_.transform->rotation / 0.01744444f;
 	ImGui::InputFloat3("rotation", rot, 1);
-	reciver_->rotation = rot * 0.01744444f;
-	ImGui::InputFloat3("scale", reciver_->scale, 1);
+	receiver_.transform->rotation = rot * 0.01744444f;
+	ImGui::InputFloat3("scale", receiver_.transform->scale, 1);
 
-	ImGui::InputFloat2("pivot", reciver2_->pivot, 1);
+	ImGui::InputFloat2("pivot", *receiver_.pivot, 1);
 
 	if (ctrl_->Press(Input::GAMEPAD_CIRCLE, DIK_RETURN))
 	{
-		if (beforeData_.position != reciver_->position)
+		if (beforeData_.transform->position != receiver_.transform->position)
 		{
-			PositionCommand* command = new PositionCommand;
-			if(command)
+			if(InvokeCommand<PositionCommand>())
 			{
-				command->SetReciver(reciver_);
-				command->SetSpriteRenderer(reciver2_);
-				command->SetPosition(beforeData_.position, reciver_->position);
-				SetNewCommand(command);
-				beforeData_.position = reciver_->position;
-
 				AddMessage("\"Position reflected change\" in transform");
 			}
 		}
-		if (beforeData_.rotation != reciver_->rotation)
+		if (beforeData_.transform->rotation != receiver_.transform->rotation)
 		{
-			RotationCommand* command = new RotationCommand;
-			if (command)
+			if (InvokeCommand<RotationCommand>())
 			{
-				command->SetReciver(reciver_);
-				command->SetSpriteRenderer(reciver2_);
-				command->SetRotation(beforeData_.rotation, reciver_->rotation);
-				SetNewCommand(command);
-				beforeData_.rotation = reciver_->rotation;
-
 				AddMessage("\"Rotation reflected change\" in transform");
 			}
 		}
-		if (beforeData_.scale != reciver_->scale)
+		if (beforeData_.transform->scale != receiver_.transform->scale)
 		{
-			ScaleCommand* command = new ScaleCommand;
-			if (command)
+			if (InvokeCommand<ScaleCommand>())
 			{
-				command->SetReciver(reciver_);
-				command->SetSpriteRenderer(reciver2_);
-				command->SetScale(beforeData_.scale, reciver_->scale);
-				SetNewCommand(command);
-				beforeData_.scale = reciver_->scale;
-
 				AddMessage("\"Scale reflected change\" in transform");
 			}
 		}
-		if (beforeData2_ != reciver2_->pivot)
+		if (*beforeData_.pivot != *receiver_.pivot)
 		{
-			PivotCommand* command = new PivotCommand;
-			if (command)
+			if (InvokeCommand<PivotCommand>())
 			{
-				command->SetReciver(reciver_);
-				command->SetSpriteRenderer(reciver2_);
-				command->SetPivot(beforeData2_, reciver2_->pivot);
-				SetNewCommand(command);
-				beforeData2_ = reciver2_->pivot;
-
 				AddMessage("\"Pivot reflected change\" in Sprite");
 			}
 		}
@@ -115,10 +94,23 @@ void Client::Update(void)
 	}
 }
 
-void Client::SetNewCommand(ICommand* command)
+template<class T>
+bool Client::InvokeCommand(void)
 {
-	prevCommand_.insert(prevCommand_.begin(), command);
-	for (auto& c : nextCommand_) { DeletePtr(c); }
+	T* command = new T;
+	if (command)
+	{
+		command->SetReceiver(receiver_);
+		command->Invoke(beforeData_);
+
+		prevCommand_.insert(prevCommand_.begin(), command);
+		for (auto& c : nextCommand_) { DeletePtr(c); }
+
+		nextCommand_.clear();
+
+		return true;
+	}
+	return false;
 }
 
 void Client::Undo(void)
@@ -127,15 +119,10 @@ void Client::Undo(void)
 
 	if (prevCommand_[0])
 	{
-		prevCommand_[0]->Undo();
+		prevCommand_[0]->Undo(beforeData_);
 
 		nextCommand_.insert(nextCommand_.begin(), prevCommand_[0]);
 		prevCommand_.erase(prevCommand_.begin());
-
-		if (reciver_)
-		{
-			beforeData_ = *reciver_;
-		}
 	}
 
 	AddMessage("performed \"Undo\" process");
@@ -147,15 +134,10 @@ void Client::Redo(void)
 
 	if (nextCommand_[0])
 	{
-		nextCommand_[0]->Redo();
+		nextCommand_[0]->Redo(beforeData_);
 
 		prevCommand_.insert(prevCommand_.begin(), nextCommand_[0]);
 		nextCommand_.erase(nextCommand_.begin());
-
-		if (reciver_)
-		{
-			beforeData_ = *reciver_;
-		}
 	}
 
 	AddMessage("performed \"Redo\" process");
@@ -178,9 +160,15 @@ void Client::AddMessage(const string& message)
 
 void Client::ConsoleWindow(void)
 {
-
+//	ImGui::Text("prevSize %d, nextSize %d", prevCommand_.size(), nextCommand_.size());
 	for (auto& m : message_)
 	{
 		ImGui::Text(m.c_str());
 	}
+}
+
+void Client::SetReceiver(SpriteRenderer* spriteRenderer)
+{
+	receiver_.transform = const_cast<Transform*>(spriteRenderer->GetTransform());
+	receiver_.pivot		= const_cast<VECTOR2*>(&spriteRenderer->GetPivot());
 }

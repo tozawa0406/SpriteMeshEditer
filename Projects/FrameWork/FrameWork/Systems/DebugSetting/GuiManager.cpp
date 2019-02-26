@@ -116,7 +116,7 @@ void GuiManager::GuiUpdate(void)
 	}
 	float padding = 50;
 
-	ImGui::SetNextWindowPos(ImVec2(padding, padding), ImGuiSetCond_Once);
+	ImGui::SetNextWindowPos(ImVec2(Windows::WIDTH - padding - 450, padding), ImGuiSetCond_Once);
 	ImGui::SetNextWindowSize(ImVec2(450, 500), ImGuiSetCond_Once);
 
 	if (ImGui::Begin("Editer"))

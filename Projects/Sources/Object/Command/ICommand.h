@@ -14,27 +14,31 @@ enum class CommandType : int8
 	MAX
 };
 
+struct Receiver
+{
+	Transform*	transform;
+	VECTOR2*	pivot;
+};
+
 class ICommand
 {
 public:
 	/* @brief	コンストラクタ		*/
-	ICommand(void) : reciver_(nullptr), spriteRenderer_(nullptr)	{}
+	ICommand(void) { receiver_.transform = nullptr; receiver_.pivot = nullptr; }
 	/* @brief	デストラクタ		*/
 	~ICommand(void) {}
 
 	/* @brief	処理		*/
-	virtual void Invoke(void) = 0;
+	virtual void Invoke(Receiver& beforeData)	= 0;
 	/* @brief	進む		*/
-	virtual void Undo(void)		= 0;
+	virtual void Undo(Receiver& beforeData)		= 0;
 	/* @brief	戻る		*/
-	virtual void Redo(void)		= 0;
+	virtual void Redo(Receiver& beforeData)		= 0;
 
-	void SetReciver(Transform* reciver) { reciver_ = reciver;	}
-	void SetSpriteRenderer(SpriteRenderer* spriteRenderer) { spriteRenderer_ = spriteRenderer; }
+	void SetReceiver(Receiver& receiver) { receiver_ = receiver; }
 
 protected:
-	Transform*		reciver_;
-	SpriteRenderer* spriteRenderer_;
+	Receiver	receiver_;
 };
 
 #endif // _I_COMMAND_H_

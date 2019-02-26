@@ -12,17 +12,15 @@ public:
 	~RotationCommand(void);
 
 	/* @breif	èàóù		*/
-	virtual void Invoke(void)	override;
+	virtual void Invoke(Receiver& beforeData)	override;
 	/* @brief	êiÇﬁ		*/
-	virtual void Undo(void)		override;
+	virtual void Undo(Receiver& beforeData)		override;
 	/* @brief	ñﬂÇÈ		*/
-	virtual void Redo(void)		override;
-
-	void SetRotation(const VECTOR3& prevRotation, const VECTOR3& newRotation);
+	virtual void Redo(Receiver& beforeData)		override;
 
 private:
 	VECTOR3 prevRotation_;
-	VECTOR3 newRotation_;
+	VECTOR3 nextRotation_;
 };
 
 #endif // _ROTATION_COMMAND_H_

@@ -12,13 +12,11 @@ public:
 	~PivotCommand(void);
 
 	/* @breif	èàóù		*/
-	virtual void Invoke(void)	override;
+	virtual void Invoke(Receiver& beforeData)	override;
 	/* @brief	êiÇﬁ		*/
-	virtual void Undo(void)		override;
+	virtual void Undo(Receiver& beforeData)		override;
 	/* @brief	ñﬂÇÈ		*/
-	virtual void Redo(void)		override;
-
-	void SetPivot(const VECTOR2& prevPivot, const VECTOR2& nextPivot);
+	virtual void Redo(Receiver& beforeData)		override;
 
 private:
 	VECTOR2 prevPivot_;

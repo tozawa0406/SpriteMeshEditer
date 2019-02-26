@@ -449,14 +449,15 @@ void Dx11Wrapper::Draw(const SpriteRenderer* obj, const Shader* shader)
 	ID3D11SamplerState* sampler  = nullptr;
 
 	MATRIX mtx = mtx.Identity();
-	if (obj->billbord) { mtx *= inverse_; }
+	if (obj->IsBillboard()) { mtx *= inverse_; }
 
 	// テクスチャの大きさ拡大
 	float ratio = 0.05f;	// 拡大比率
-	const auto& s = texture_[0][obj->texNum].size * ratio;
+	const auto& s = texture_[0][obj->GetTexture()].size * ratio;
 	mtx.Scaling(VECTOR3(s.x, s.y, 1));
 
-	VECTOR2 pivot = VECTOR2(0.5f - obj->pivot.x, 0.5f - (1 - obj->pivot.y));
+	// ピボット位置の調整
+	VECTOR2 pivot = VECTOR2(0.5f - obj->GetPivot().x, 0.5f - (1 - obj->GetPivot().y));
 	mtx.Translation(VECTOR3(s.x * pivot.x, s.y * pivot.y, 0));
 
 	// Transform
@@ -473,7 +474,7 @@ void Dx11Wrapper::Draw(const SpriteRenderer* obj, const Shader* shader)
 		SHADER_DEFAULT_OBJECT sg;
 		sg.world = mtx;
 		sg.texcoord = obj->GetTexcoord();
-		sg.diffuse  = obj->material.diffuse;
+		sg.diffuse  = obj->GetMaterial().diffuse;
 		pContext->UpdateSubresource(constant, 0, NULL, &sg, 0, 0);
 		pContext->VSSetConstantBuffers(0, 1, &constantBuffer_[shader_[1].constantBuffer[0]]);
 		pContext->VSSetConstantBuffers(1, 1, &constant);	// cbufferを使うVSに設定
@@ -497,13 +498,13 @@ void Dx11Wrapper::Draw(const SpriteRenderer* obj, const Shader* shader)
 		}
 		constant = constantBuffer_[shader->GetConstantBuffer(0)];
 
-		shader->SetParam(mtx, obj->material.diffuse, obj->GetTexcoord());
+		shader->SetParam(mtx, obj->GetMaterial().diffuse, obj->GetTexcoord());
 
 		pContext->VSSetConstantBuffers(0, 1, &constant);	// cbufferを使うVSに設定
 	}
 
 	// テクスチャの設定
-	SetTexture(0, (int)obj->texNum);
+	SetTexture(0, obj->GetTexture());
 
 	// テクスチャサンプラの設定
 	pContext->PSSetSamplers(0, 1, &sampler);
@@ -608,7 +609,7 @@ void Dx11Wrapper::Draw(MeshRenderer* obj, const Shader* shader)
 			SHADER_DEFAULT_OBJECT sg;
 			sg.world = mtx;
 			sg.texcoord = VECTOR4(0, 0, 0, 0);
-			sg.diffuse  = obj->material.diffuse;
+			sg.diffuse  = obj->GetMaterial().diffuse;
 			pContext->UpdateSubresource(constant, 0, NULL, &sg, 0, 0);
 		}
 		else
@@ -616,7 +617,7 @@ void Dx11Wrapper::Draw(MeshRenderer* obj, const Shader* shader)
 			MATRIX tempMtx;
 			memcpy_s(&tempMtx, sizeof(MATRIX), &mtx, sizeof(MATRIX));
 			tempMtx._44 = (float)obj->GetModelNum();
-			COLOR c = obj->material.diffuse;
+			COLOR c = obj->GetMaterial().diffuse;
 			c.a = obj->GetRate();
 			c.b = (float)i;
 			shader->SetParam(tempMtx, c, VECTOR4(obj->GetAnimation(), obj->GetAnimationOld(), ((int)obj->GetPattern()), ((int)obj->GetPatternOld())));

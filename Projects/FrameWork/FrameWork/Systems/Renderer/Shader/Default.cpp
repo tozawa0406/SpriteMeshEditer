@@ -44,7 +44,7 @@ HRESULT DefaultShader::SetParam(const MATRIX& mtx, const COLOR& color, VECTOR4 t
 	memcpy_s(&cbuf.proj , sizeof(MATRIX), &systems->GetSceneManager()->GetCameraManager()->GetProj(), sizeof(MATRIX));
 
 	cbuf.texcoord = texcoord;
-	VECTOR4 t = { color.r, color.g, 1, 1 };
+	VECTOR4 t = { color.r, color.g, color.b, color.a };
 	cbuf.diffuse = t;
 
 	cbuf.lightPosition = VECTOR4(0);

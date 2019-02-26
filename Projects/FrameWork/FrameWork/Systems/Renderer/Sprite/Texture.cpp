@@ -142,6 +142,6 @@ void Texture::GuiUpdate(void)
 {
 	if (loadAdd_)
 	{
-		loadAdd_->GuiUpdate();
+//		loadAdd_->GuiUpdate();
 	}
 }

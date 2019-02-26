@@ -33,11 +33,13 @@ private:
 
 	Receiver		receiver_;
 	Receiver		beforeData_;
+	SpriteRenderer* spriteRenderer_;
 
 	std::vector<ICommand*> prevCommand_;
 	std::vector<ICommand*> nextCommand_;
 
 	Controller* ctrl_;
+	LoadAddTexture* loadAdd_;
 
 	std::vector<string> message_;
 };

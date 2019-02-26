@@ -33,6 +33,14 @@ void Client::Init(void)
 	{
 		*beforeData_.pivot = *receiver_.pivot;
 	}
+
+	if (const auto& systems = Systems::Instance())
+	{
+		if (const auto& texture = systems->GetTexture())
+		{
+			loadAdd_ = texture->GetAddLoad();
+		}
+	}
 }
 
 void Client::Uninit(void)
@@ -91,6 +99,18 @@ void Client::Update(void)
 	if (ImGui::Button("Save"))
 	{
 		SaveData();
+	}
+
+	if (loadAdd_)
+	{
+		int ret = loadAdd_->SelectTexture();
+		if (ret >= 0)
+		{
+			if (spriteRenderer_)
+			{
+				spriteRenderer_->SetTexture(ret);
+			}
+		}
 	}
 }
 
@@ -171,4 +191,6 @@ void Client::SetReceiver(SpriteRenderer* spriteRenderer)
 {
 	receiver_.transform = const_cast<Transform*>(spriteRenderer->GetTransform());
 	receiver_.pivot		= const_cast<VECTOR2*>(&spriteRenderer->GetPivot());
+
+	spriteRenderer_ = spriteRenderer;
 }

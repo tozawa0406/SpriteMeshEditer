@@ -9,6 +9,7 @@
 
 #include <FrameWork/Scene/BaseScene.h>
 #include "../Object/Command/Client.h"
+#include <FrameWork/Object/ObjectManager.h>
 
 class TitleScene : public BaseScene, public GUI
 {
@@ -45,7 +46,9 @@ public:
 private:
 	//! ƒeƒXƒg
 	SpriteRenderer* test_;
-	Transform trans_;
+	Transform		trans_;
+
+	ObjectManager*	objectManager_;
 
 	Client* client_;
 

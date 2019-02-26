@@ -1,10 +1,12 @@
 #include "01_TitleScene.h"
 #include <FrameWork/Scene/SceneManager.h>
 
+#include "../Object/Pivot.h"
 #include "../Object/Command/PositionCommand.h"
 
 TitleScene::TitleScene(void) : GUI(Systems::Instance(), nullptr, "SceneTitle")
 	, client_(nullptr)
+	, objectManager_(nullptr)
 {
 }
 
@@ -19,8 +21,16 @@ void TitleScene::Init(SceneList sceneNum)
 	test_ = new SpriteRenderer;
 	if (test_)
 	{
-		test_->Init(static_cast<int>(Resources::Texture::Base::LOAD), &trans_);
+		test_->Init(static_cast<int>(Resources::Texture::Base::WHITE), &trans_);
 	}
+
+	objectManager_ = new ObjectManager(this);
+	if (objectManager_)
+	{
+		objectManager_->Init();
+	}
+
+	objectManager_->Create<Pivot>();
 
 	client_ = new Client;
 	if (client_)
@@ -34,6 +44,7 @@ void TitleScene::Init(SceneList sceneNum)
 void TitleScene::Uninit(void)
 {
 	UninitDeletePtr(client_);
+	UninitDeletePtr(objectManager_);
 	DeletePtr(test_);
 }
 

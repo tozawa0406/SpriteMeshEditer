@@ -26,6 +26,7 @@
     <ClCompile Include="Sources\Object\Command\RotationCommand.cpp" />
     <ClCompile Include="Sources\Object\Command\ScaleCommand.cpp" />
     <ClCompile Include="Sources\Object\LoadAddTexture.cpp" />
+    <ClCompile Include="Sources\Object\Pivot.cpp" />
     <ClCompile Include="Sources\Object\Search.cpp" />
     <ClCompile Include="Sources\Scene\00_EachScene.cpp" />
     <ClCompile Include="Sources\Scene\01_TitleScene.cpp" />
@@ -42,6 +43,7 @@
     <ClInclude Include="Sources\Object\Command\ScaleCommand.h" />
     <ClInclude Include="Sources\Object\LoadAddTexture.h" />
     <ClInclude Include="Sources\Object\ObjectTag.h" />
+    <ClInclude Include="Sources\Object\Pivot.h" />
     <ClInclude Include="Sources\Object\Search.h" />
     <ClInclude Include="Sources\Scene\00_EachScene.h" />
     <ClInclude Include="Sources\Scene\01_TitleScene.h" />

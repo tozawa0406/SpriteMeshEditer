@@ -23,6 +23,7 @@ namespace Resources
 			NUMBER,
 			SSUI,
 			LOAD,
+			PIVOT,
 
 			MAX
 		};
@@ -38,6 +39,7 @@ namespace Resources
 			{ directoryName + "UI/number.png"			},
 			{ directoryName + "UI/ssUI.jpg"				},
 			{ directoryName + "load.png"				},
+			{ directoryName + "pivot.png"				},
 		};
 
 		//const string titleFileName[(int)Title::MAX - (int)Base::MAX]

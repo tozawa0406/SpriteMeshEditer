@@ -26,6 +26,8 @@ public:
 
 	void GuiUpdate(void);
 
+	LoadAddTexture* GetAddLoad(void) { return loadAdd_; }
+
 private:
 	Texture(Systems* systems);
 	HRESULT Init(void)	 override;

@@ -19,9 +19,9 @@ class Systems;
 class Windows
 {
 	//! @def	ウィンドウの名前
-	static constexpr char*	CLASS_NAME		= "editer";
+	static constexpr char*	CLASS_NAME		= "editor";
 	//! @def	ウィンドウの名前
-	static constexpr char*	WINDOW_NAME		= "editer";
+	static constexpr char*	WINDOW_NAME		= "editor";
 	//! @def	ウィンドウスタイル
 	static constexpr int	WINDOW_STYLE	= WS_OVERLAPPEDWINDOW ^ WS_MAXIMIZEBOX;
 	//! グラフィックスのタイプ(ダイアログで指定(今回はしない))

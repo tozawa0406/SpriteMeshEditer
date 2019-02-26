@@ -6,6 +6,12 @@
 
 #include "Search.h"
 
+struct ADD_TEXTURE_DATA
+{
+	string	name;
+	int		texNum;
+};
+
 class Loading;
 class LoadAddTexture : public Interface
 {
@@ -20,6 +26,8 @@ public:
 
 	void GuiUpdate(void);
 
+	int SelectTexture(void);
+
 private:
 	LoadAddTexture(Systems* systems);
 	HRESULT Init(void)	 override;
@@ -29,7 +37,7 @@ private:
 	Loading* loading_;
 
 	SearchFile*			search_;
-	std::vector<string> list_;
+	std::vector<ADD_TEXTURE_DATA> list_;
 };
 
 #endif // _LOAD_ADD_TEXTURE_H_

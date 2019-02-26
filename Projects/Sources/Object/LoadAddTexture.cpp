@@ -36,8 +36,26 @@ int LoadAddTexture::SetUpLoading(Loading* loading, int sceneNum)
 	int size = 0;
 	if (search_)
 	{
-		search_->Search(Define::ResourceDirectoryName + "Edit/", "jpg", list_);
-		search_->Search(Define::ResourceDirectoryName + "Edit/", "png", list_);
+		std::vector<string> temp;
+		search_->Search(Define::ResourceDirectoryName + "Edit/", "jpg", temp);
+		for (auto name : temp)
+		{
+			ADD_TEXTURE_DATA add;
+			add.name = name;
+			add.texNum = 0;
+			list_.emplace_back(add);
+		}
+		temp.clear();
+		search_->Search(Define::ResourceDirectoryName + "Edit/", "png", temp);
+		for (auto name : temp)
+		{
+			ADD_TEXTURE_DATA add;
+			add.name = name;
+			add.texNum = 0;
+			list_.emplace_back(add);
+		}
+		temp.clear();
+
 	}
 
 	return size;
@@ -53,13 +71,15 @@ HRESULT LoadAddTexture::Load(int sceneNum)
 	{
 		if (const auto& wrapper = graphics->GetWrapper())
 		{
-			int max = static_cast<int>(list_.size());
+			int max = static_cast<int>(list_.size()) + static_cast<int>(Resources::Texture::Base::MAX);
 			for (int i = 0; i < max; ++i)
 			{
 				if (i < static_cast<int>(Resources::Texture::Base::MAX)) { continue; }
-				HRESULT hr = wrapper->LoadTexture(list_[i], i);
-				if (FAILED(hr)) { 
-					return E_FAIL; }
+
+				int arrayNum = i - static_cast<int>(Resources::Texture::Base::MAX);
+				HRESULT hr = wrapper->LoadTexture(list_[arrayNum].name, i);
+				if (FAILED(hr)) { return E_FAIL; }
+				list_[arrayNum].texNum = i;
 				loading_->AddLoading();
 			}
 		}
@@ -93,12 +113,23 @@ void LoadAddTexture::Release(bool uninit)
 
 void LoadAddTexture::GuiUpdate(void)
 {
-	if (ImGui::BeginMenu("AddTexture"))
+}
+
+int LoadAddTexture::SelectTexture(void)
+{
+	int ret = -1;
+	if (ImGui::BeginMenu("TextureList"))
 	{
 		for (auto& obj : list_)
 		{
-			ImGui::Text(obj.c_str());
+			ImGui::Text("texNum %d", obj.texNum);
+			ImGui::SameLine();
+			if (ImGui::Button(obj.name.c_str()))
+			{
+				ret = obj.texNum;
+			}
 		}
 		ImGui::EndMenu();
 	}
+	return ret;
 }

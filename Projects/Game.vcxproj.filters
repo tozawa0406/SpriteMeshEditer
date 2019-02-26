@@ -74,6 +74,9 @@
     <ClCompile Include="Sources\Object\Command\Receiver.cpp">
       <Filter>Source\Object\Command</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Object\Command\Client.cpp">
+      <Filter>Source\Object\Command</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Object\ObjectTag.h">
@@ -134,6 +137,9 @@
       <Filter>Source\Object\Command</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Object\Command\Receiver.h">
+      <Filter>Source\Object\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Command\Client.h">
       <Filter>Source\Object\Command</Filter>
     </ClInclude>
   </ItemGroup>

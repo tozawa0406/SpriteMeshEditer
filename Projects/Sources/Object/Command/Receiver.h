@@ -1,8 +1,9 @@
-#ifndef _CLIENT_H_
-#define _CLIENT_H_
+#ifndef _RECEIVER_H_
+#define _RECEIVER_H_
 
 #include "ICommand.h"
 
+class Client;
 class Receiver
 {
 public:
@@ -11,16 +12,11 @@ public:
 	/* @brief	デストラクタ		*/
 	~Receiver(void);
 
-	void Init(void);
+	void Init(Client* client);
 	void Uninit(void);
 	void Update(void);
 
 	const string& GetName(void) { return name_; }
-
-	void ConsoleWindow(void);
-
-	void Undo(void);
-	void Redo(void);
 
 	void SetCtrl(Controller* ctrl) { ctrl_ = ctrl; }
 
@@ -32,8 +28,6 @@ private:
 
 	void SaveData(void);
 
-	void AddMessage(const string& mesaage);
-
 	string			name_;
 	SpriteRenderer* spriteRenderer_;
 	Transform		transform_;
@@ -41,12 +35,10 @@ private:
 	RECEIVER_DATA	receiver_;
 	RECEIVER_DATA	beforeData_;
 
-	std::vector<ICommand*>	prevCommand_;
-	std::vector<ICommand*>	nextCommand_;
-	std::vector<string>		message_;
+	Client*			client_;
 
 	Controller*		ctrl_;
 	LoadAddTexture* loadAdd_;
 };
 
-#endif // _CLIENT_H_
+#endif // _RECEIVER_H_

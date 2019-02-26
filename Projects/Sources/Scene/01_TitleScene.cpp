@@ -3,9 +3,12 @@
 
 #include "../Object/Command/PositionCommand.h"
 
+#include "../Object/Command/Client.h"
+#include "../Object/Pivot.h"
+
 TitleScene::TitleScene(void) : GUI(Systems::Instance(), nullptr, "SceneTitle")
-	, currentReceiver_(nullptr)
 	, objectManager_(nullptr)
+	, client_(nullptr)
 {
 }
 
@@ -23,13 +26,16 @@ void TitleScene::Init(SceneList sceneNum)
 		objectManager_->Init();
 	}
 
-	pivot_ = objectManager_->Create<Pivot>();
+	client_ = objectManager_->Create<Client>();
+	if (client_)
+	{
+		client_->SetCtrl(GetCtrl(0));
+		client_->SetPivot(objectManager_->Create<Pivot>());
+	}
 }
 
 void TitleScene::Uninit(void)
 {
-	for (auto& c : clientList_) { UninitDeletePtr(c); }
-
 	UninitDeletePtr(objectManager_);
 }
 
@@ -38,23 +44,8 @@ SceneList TitleScene::Update(void)
 	// ƒRƒ“ƒgƒ[ƒ‰‚ÌŽæ“¾
 	const auto& ctrl = GetCtrl(0);
 	if (!ctrl) { return SceneList::NOTCHANGE; }
-	if (!currentReceiver_) { return SceneList::NOTCHANGE; }
 
-	if (ctrl->Press(Input::GAMEPAD_L1, DIK_LCONTROL))
-	{
-		if (ctrl->Press(Input::GAMEPAD_L2, DIK_LSHIFT))
-		{
-			if (ctrl->Trigger(Input::GAMEPAD_L1, DIK_Z))
-			{
-				currentReceiver_->Redo();
-			}
-		}
-		else if (ctrl->Trigger(Input::GAMEPAD_R1, DIK_Z))
-		{
-			currentReceiver_->Undo();
-		}
-
-	}
+	if (objectManager_) { objectManager_->Update(); }
 
 	// ‘JˆÚˆ—
 	return SceneList::NOTCHANGE;
@@ -62,63 +53,15 @@ SceneList TitleScene::Update(void)
 
 void TitleScene::HierarchyView(void)
 {
-	if (ImGui::Button("CreateSprite"))
-	{
-		CreateReceiver();
-	}
-
-	for (auto& list : clientList_)
-	{
-		if (list)
-		{
-			if (ImGui::Button(list->GetName().c_str()))
-			{
-				currentReceiver_ = list;
-			}
-		}
-	}
+	if (client_) { client_->HierarchyView(); }
 }
 
 void TitleScene::InspectorView(void)
 {
-	if (currentReceiver_)
-	{
-		if (ImGui::Button("Undo"))
-		{
-			currentReceiver_->Undo();
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Redo"))
-		{
-			currentReceiver_->Redo();
-		}
-
-		currentReceiver_->Update();
-
-		if (pivot_)
-		{
-			pivot_->SetTransform(currentReceiver_->GetTransform());
-		}
-	}
+	if (client_) { client_->InspectorView(); }
 }
 
 void TitleScene::ConsoleView(void)
 {
-	if (currentReceiver_)
-	{
-		currentReceiver_->ConsoleWindow();
-	}
-}
-
-void TitleScene::CreateReceiver(void)
-{
-	Receiver* client = new Receiver;
-	if (client)
-	{
-		client->SetCtrl(GetCtrl(0));
-		client->Init();
-
-		clientList_.emplace_back(client);
-		currentReceiver_ = client;
-	}
+	if (client_) { client_->ConsoleView(); }
 }

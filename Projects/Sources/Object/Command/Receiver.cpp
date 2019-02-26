@@ -1,4 +1,5 @@
 #include "Receiver.h"
+#include "Client.h"
 
 #include "PositionCommand.h"
 #include "RotationCommand.h"
@@ -11,6 +12,7 @@ Receiver::Receiver(void) :
 	ctrl_(nullptr)
 	, spriteRenderer_(nullptr)
 	, name_("NoName")
+	, client_(nullptr)
 {
 }
 
@@ -18,8 +20,10 @@ Receiver::~Receiver(void)
 {
 }
 
-void Receiver::Init(void)
+void Receiver::Init(Client* client)
 {
+	client_ = client;
+
 	spriteRenderer_ = new SpriteRenderer;
 	if (spriteRenderer_)
 	{
@@ -63,9 +67,6 @@ void Receiver::Init(void)
 
 void Receiver::Uninit(void)
 {
-	for (auto& c : prevCommand_) { DeletePtr(c); }
-	for (auto& c : nextCommand_) { DeletePtr(c); }
-
 	DeletePtr(beforeData_.spriteRenderer);
 	DeletePtr(beforeData_.transform);
 	DeletePtr(beforeData_.name);
@@ -96,28 +97,40 @@ void Receiver::Update(void)
 		{
 			if(InvokeCommand<PositionCommand>())
 			{
-				AddMessage("\"Position reflected change\" in transform");
+				if (client_)
+				{
+					client_->AddMessage("\"Position reflected change\" in transform");
+				}
 			}
 		}
 		if (beforeData_.transform->rotation != receiver_.transform->rotation)
 		{
 			if (InvokeCommand<RotationCommand>())
 			{
-				AddMessage("\"Rotation reflected change\" in transform");
+				if (client_)
+				{
+					client_->AddMessage("\"Rotation reflected change\" in transform");
+				}
 			}
 		}
 		if (beforeData_.transform->scale != receiver_.transform->scale)
 		{
 			if (InvokeCommand<ScaleCommand>())
 			{
-				AddMessage("\"Scale reflected change\" in transform");
+				if (client_)
+				{
+					client_->AddMessage("\"Scale reflected change\" in transform");
+				}
 			}
 		}
 		if (beforeData_.spriteRenderer->GetPivot() != receiver_.spriteRenderer->GetPivot())
 		{
 			if (InvokeCommand<PivotCommand>())
 			{
-				AddMessage("\"Pivot reflected change\" in Sprite");
+				if (client_)
+				{
+					client_->AddMessage("\"Pivot reflected change\" in Sprite");
+				}
 			}
 		}
 		if (*beforeData_.name != *receiver_.name)
@@ -125,7 +138,10 @@ void Receiver::Update(void)
 			if (InvokeCommand<NameCommand>())
 			{
 				*beforeData_.name = *receiver_.name;
-				AddMessage("\"Name reflected change\" in Sprite");
+				if (client_)
+				{
+					client_->AddMessage("\"Name reflected change\" in Sprite");
+				}
 			}
 		}
 	}
@@ -143,7 +159,10 @@ void Receiver::Update(void)
 			receiver_.spriteRenderer->SetTexture(ret);
 			if (InvokeCommand<TextureNumCommand>())
 			{
-				AddMessage("\"Texture reflected change\" in Sprite");
+				if (client_)
+				{
+					client_->AddMessage("\"Texture reflected change\" in Sprite");
+				}
 			}
 		}
 	}
@@ -159,66 +178,17 @@ bool Receiver::InvokeCommand(void)
 		command->SetBeforeData(&beforeData_);
 		command->Invoke();
 
-		prevCommand_.insert(prevCommand_.begin(), command);
-		for (auto& c : nextCommand_) { DeletePtr(c); }
-
-		nextCommand_.clear();
+		if (client_) { client_->AddCommand(command); }
 
 		return true;
 	}
 	return false;
 }
 
-void Receiver::Undo(void)
-{
-	if (prevCommand_.size() <= 0) { return; }
-
-	if (prevCommand_[0])
-	{
-		prevCommand_[0]->Undo();
-
-		nextCommand_.insert(nextCommand_.begin(), prevCommand_[0]);
-		prevCommand_.erase(prevCommand_.begin());
-	}
-
-	AddMessage("performed \"Undo\" process");
-}
-
-void Receiver::Redo(void)
-{
-	if (nextCommand_.size() <= 0) { return; }
-
-	if (nextCommand_[0])
-	{
-		nextCommand_[0]->Redo();
-
-		prevCommand_.insert(prevCommand_.begin(), nextCommand_[0]);
-		nextCommand_.erase(nextCommand_.begin());
-	}
-
-	AddMessage("performed \"Redo\" process");
-}
-
 void Receiver::SaveData(void)
 {
-	AddMessage("\"Save\" is complete");
-}
-
-void Receiver::AddMessage(const string& message)
-{
-	message_.insert(message_.begin(), message);
-	int size = static_cast<int>(message_.size());
-	if (size > 6)
+	if (client_)
 	{
-		message_.erase(message_.end() - 1);
-	}
-}
-
-void Receiver::ConsoleWindow(void)
-{
-//	ImGui::Text("prevSize %d, nextSize %d", prevCommand_.size(), nextCommand_.size());
-	for (auto& m : message_)
-	{
-		ImGui::Text(m.c_str());
+		client_->AddMessage("\"Save\" is complete");
 	}
 }

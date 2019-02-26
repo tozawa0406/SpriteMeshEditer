@@ -11,8 +11,7 @@
 #include "../Object/Command/Receiver.h"
 #include <FrameWork/Object/ObjectManager.h>
 
-#include "../Object/Pivot.h"
-
+class Client;
 class TitleScene : public BaseScene, public GUI
 {
 public:
@@ -48,14 +47,9 @@ public:
 	void ConsoleView(void) override;
 
 private:
-	void CreateReceiver(void);
-
 	ObjectManager*	objectManager_;
-	std::vector<Receiver*>	clientList_;
-	Receiver*					currentReceiver_;
 
-	Pivot* pivot_;
-
+	Client* client_;
 };
 
 #endif // _TITLE_SCENE_H_

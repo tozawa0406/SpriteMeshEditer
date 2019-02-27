@@ -118,18 +118,25 @@ void LoadAddTexture::GuiUpdate(void)
 int LoadAddTexture::SelectTexture(void)
 {
 	int ret = -1;
-	if (ImGui::BeginMenu("TextureList"))
+	ImGui::Dummy(ImVec2(0, 5));
+	if (ImGui::CollapsingHeader("TextureList"))
 	{
 		for (auto& obj : list_)
 		{
-			ImGui::Text("texNum %d", obj.texNum);
-			ImGui::SameLine();
-			if (ImGui::Button(obj.name.c_str()))
+			bool select = false;
+
+			string name = "";
+			for (size_t i = obj.name.size() - 1; obj.name[i] != '/' && i > 0; --i)
+			{
+				name.insert(name.begin(), obj.name[i]);
+			}
+
+			ImGui::MenuItem(name.c_str(), nullptr, &select);
+			if (select)
 			{
 				ret = obj.texNum;
 			}
 		}
-		ImGui::EndMenu();
 	}
 	return ret;
 }

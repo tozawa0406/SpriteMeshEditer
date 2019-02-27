@@ -2,6 +2,8 @@
 #include "Receiver.h"
 #include "../Pivot.h"
 
+#include "../IOFile.h"
+
 Client::Client(void) : Object(ObjectTag::STATIC)
 	, currentReceiver_(nullptr)
 	, ctrl_(nullptr)
@@ -15,6 +17,11 @@ Client::~Client(void)
 
 void Client::Init(void)
 {
+}
+
+void Client::Load(void)
+{
+	LoadData();
 }
 
 void Client::Uninit(void)
@@ -49,10 +56,6 @@ void Client::InspectorView(void)
 {
 	if (currentReceiver_)
 	{
-		if (ImGui::Button("Undo")) { Undo(); }
-		ImGui::SameLine();
-		if (ImGui::Button("Redo")) { Redo(); }
-
 		currentReceiver_->Update();
 
 		if (pivot_)
@@ -74,6 +77,10 @@ void Client::ConsoleView(void)
 void Client::HierarchyView(void)
 {
 	ImGui::Dummy(ImVec2(0, 5));
+	if (ImGui::Button("Undo")) { Undo(); }
+	ImGui::SameLine();
+	if (ImGui::Button("Redo")) { Redo(); }
+
 	if (ImGui::Button("CreateSprite"))
 	{
 		CreateReceiver();
@@ -95,6 +102,11 @@ void Client::HierarchyView(void)
 				}
 			}
 		}
+	}
+
+	if (ImGui::Button("Save"))
+	{
+		SaveData();
 	}
 }
 
@@ -146,7 +158,7 @@ void Client::Redo(void)
 	AddMessage("performed \"Redo\" process");
 }
 
-void Client::CreateReceiver(void)
+void Client::CreateReceiver(IOFile* file)
 {
 	Receiver* client = new Receiver;
 	if (client)
@@ -154,7 +166,46 @@ void Client::CreateReceiver(void)
 		client->SetCtrl(ctrl_);
 		client->Init(this);
 
+		if (file)
+		{
+			client->LoadData(*file);
+		}
+
 		clientList_.emplace_back(client);
 		currentReceiver_ = client;
+	}
+}
+
+void Client::SaveData(void)
+{
+	IOFile file;
+	file.OpenFile("test.bin", std::ios::out);
+
+	size_t size = clientList_.size();
+	file.WriteParam(&size, sizeof(size_t));
+	for (auto& client : clientList_)
+	{
+		if (client) { client->SaveData(file); }
+	}
+	file.CloseFile();
+
+	AddMessage("\"Save\" is complete");
+}
+
+void Client::LoadData(void)
+{
+	IOFile file;
+	if (file.OpenFile("test.bin", std::ios::in))
+	{
+		size_t size = 0;
+		file.ReadParam(&size, sizeof(size_t));
+
+		for (size_t i = 0; i < size; ++i)
+		{
+			CreateReceiver(&file);
+		}
+		file.CloseFile();
+
+		AddMessage("\"Load\" is complete");
 	}
 }

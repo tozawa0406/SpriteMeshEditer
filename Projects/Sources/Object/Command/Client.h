@@ -3,6 +3,7 @@
 
 #include "ICommand.h"
 #include <FrameWork/Object/Object.h>
+#include "../IOFile.h"
 
 class Pivot;
 class Receiver;
@@ -18,6 +19,8 @@ public:
 	virtual void Uninit(void)	override;
 	virtual void Update(void)	override;
 
+	void Load(void);
+
 	void InspectorView(void);
 	void ConsoleView(void);
 	void HierarchyView(void);
@@ -32,8 +35,9 @@ private:
 	void Undo(void);
 	void Redo(void);
 
-	void CreateReceiver(void);
+	void CreateReceiver(IOFile* file = nullptr);
 	void SaveData(void);
+	void LoadData(void);
 
 	std::vector<ICommand*>	prevCommand_;
 	std::vector<ICommand*>	nextCommand_;

@@ -31,6 +31,8 @@ void TitleScene::Init(SceneList sceneNum)
 	{
 		client_->SetCtrl(GetCtrl(0));
 		client_->SetPivot(objectManager_->Create<Pivot>());
+
+		client_->Load();
 	}
 }
 

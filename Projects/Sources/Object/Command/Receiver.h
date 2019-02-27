@@ -2,6 +2,7 @@
 #define _RECEIVER_H_
 
 #include "ICommand.h"
+#include "../IOFile.h"
 
 class Client;
 class Receiver
@@ -22,11 +23,12 @@ public:
 
 	const Transform& GetTransform(void) { return transform_; }
 
+	void SaveData(IOFile& file);
+	void LoadData(IOFile& file);
+
 private:
 	template<class T>
 	bool InvokeCommand(void);
-
-	void SaveData(void);
 
 	string			name_;
 	SpriteRenderer* spriteRenderer_;

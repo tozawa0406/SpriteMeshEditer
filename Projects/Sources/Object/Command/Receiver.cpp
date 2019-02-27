@@ -81,6 +81,22 @@ void Receiver::Update(void)
 
 	ImGui::InputText("name", &name_[0], 256);
 
+	if (loadAdd_)
+	{
+		int ret = loadAdd_->SelectTexture();
+		if (ret >= 0)
+		{
+			receiver_.spriteRenderer->SetTexture(ret);
+			if (InvokeCommand<TextureNumCommand>())
+			{
+				if (client_)
+				{
+					client_->AddMessage("\"Texture reflected change\" in Sprite");
+				}
+			}
+		}
+	}
+
 	ImGui::InputFloat3("position", receiver_.transform->position, 1);
 	VECTOR3 rot = receiver_.transform->rotation / 0.01744444f;
 	ImGui::InputFloat3("rotation", rot, 1);
@@ -145,27 +161,6 @@ void Receiver::Update(void)
 			}
 		}
 	}
-
-	if (ImGui::Button("Save"))
-	{
-		SaveData();
-	}
-
-	if (loadAdd_)
-	{
-		int ret = loadAdd_->SelectTexture();
-		if (ret >= 0)
-		{
-			receiver_.spriteRenderer->SetTexture(ret);
-			if (InvokeCommand<TextureNumCommand>())
-			{
-				if (client_)
-				{
-					client_->AddMessage("\"Texture reflected change\" in Sprite");
-				}
-			}
-		}
-	}
 }
 
 template<class T>
@@ -185,10 +180,52 @@ bool Receiver::InvokeCommand(void)
 	return false;
 }
 
-void Receiver::SaveData(void)
+void Receiver::SaveData(IOFile& file)
 {
-	if (client_)
+	if (!spriteRenderer_) { return; }
+
+	size_t size = name_.size();
+	file.WriteParam(&size, sizeof(size_t));
+	file.WriteParam(&name_[0], sizeof(char) * name_.size());
+	file.WriteParam(&transform_.position, sizeof(VECTOR3));
+	file.WriteParam(&transform_.rotation, sizeof(VECTOR3));
+	file.WriteParam(&transform_.scale	, sizeof(VECTOR3));
+	VECTOR2 pivot = spriteRenderer_->GetPivot();
+	file.WriteParam(&pivot, sizeof(VECTOR2));
+	int texNum = spriteRenderer_->GetTexture();
+	file.WriteParam(&texNum, sizeof(int));
+}
+
+void Receiver::LoadData(IOFile& file)
+{
+	if (!spriteRenderer_) { return; }
+
+	size_t size = 0;
+	file.ReadParam(&size, sizeof(size_t));
+	file.ReadParam(&name_[0], sizeof(char) * size);
+	file.ReadParam(&transform_.position, sizeof(VECTOR3));
+	file.ReadParam(&transform_.rotation, sizeof(VECTOR3));
+	file.ReadParam(&transform_.scale, sizeof(VECTOR3));
+	VECTOR2 pivot = VECTOR2(0);
+	file.ReadParam(&pivot, sizeof(VECTOR2));
+	spriteRenderer_->SetPivot(pivot);
+	int texNum = 0;
+	file.ReadParam(&texNum, sizeof(int));
+	spriteRenderer_->SetTexture(texNum);
+
+	if (receiver_.name && beforeData_.name)
 	{
-		client_->AddMessage("\"Save\" is complete");
+		*beforeData_.name = *receiver_.name;
+	}
+
+	if (receiver_.transform && beforeData_.transform)
+	{
+		*beforeData_.transform = *receiver_.transform;
+	}
+
+	if (receiver_.spriteRenderer && beforeData_.spriteRenderer)
+	{
+		beforeData_.spriteRenderer->SetPivot(receiver_.spriteRenderer->GetPivot());
+		beforeData_.spriteRenderer->SetTexture(receiver_.spriteRenderer->GetTexture());
 	}
 }

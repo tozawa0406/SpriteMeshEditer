@@ -34,6 +34,8 @@ public:
 	int  RemoveSprite(Receiver* receiver);
 	void AddSprite(Receiver* receiver, int place);
 
+	const std::vector<Receiver*>& GetReceiverList(void) { return receiverList_; }
+
 private:
 	void Undo(void);
 	void Redo(void);
@@ -46,6 +48,7 @@ private:
 	std::vector<ICommand*>	nextCommand_;
 	std::vector<string>		message_;
 
+	string					name_;
 	Pivot*					pivot_;
 	std::vector<Receiver*>	receiverList_;
 	Receiver*				currentReceiver_;

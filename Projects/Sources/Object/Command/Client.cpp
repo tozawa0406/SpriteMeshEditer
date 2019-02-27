@@ -1,6 +1,7 @@
 #include "Client.h"
 #include "Receiver.h"
 #include "../Pivot.h"
+#include "../Search.h"
 #include "CreateSpriteCommand.h"
 
 #include "../IOFile.h"
@@ -9,6 +10,7 @@ Client::Client(void) : Object(ObjectTag::STATIC)
 	, currentReceiver_(nullptr)
 	, ctrl_(nullptr)
 	, pivot_(nullptr)
+	, name_("")
 {
 }
 
@@ -18,6 +20,7 @@ Client::~Client(void)
 
 void Client::Init(void)
 {
+	name_.resize(256);
 }
 
 void Client::Load(void)
@@ -75,6 +78,8 @@ void Client::ConsoleView(void)
 
 void Client::HierarchyView(void)
 {
+	ImGui::InputText("fileName", &name_[0], 256);
+
 	ImGui::Dummy(ImVec2(0, 5));
 	if (ImGui::Button("Undo")) { Undo(); }
 	ImGui::SameLine();
@@ -86,14 +91,15 @@ void Client::HierarchyView(void)
 	}
 
 	ImGui::Dummy(ImVec2(0, 5));
-	if (ImGui::CollapsingHeader("Hierarchy"))
+
+	if(ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(400, 200)))
 	{
 		for (auto& list : receiverList_)
 		{
 			if (list)
 			{
 				bool select = false;
-				ImGui::Text("  "); ImGui::SameLine();
+				ImGui::Text(" "); ImGui::SameLine();
 				if (list == currentReceiver_) { ImGui::Text("> "); ImGui::SameLine(); }
 				else { ImGui::Text("  "); ImGui::SameLine(); }
 				ImGui::MenuItem(list->GetName().c_str(), nullptr, &select);
@@ -103,9 +109,10 @@ void Client::HierarchyView(void)
 				}
 			}
 		}
+		ImGui::EndChild();
 	}
 
-	if (ImGui::Button("Save"))
+	if (ImGui::Button("Save", ImVec2(400, 40)))
 	{
 		SaveData();
 	}
@@ -195,7 +202,15 @@ void Client::CreateReceiver(IOFile* file)
 void Client::SaveData(void)
 {
 	IOFile file;
-	file.OpenFile("test.bin", std::ios::out);
+	string directory = Define::ResourceDirectoryName + "Export/" + name_;
+
+	for (size_t i = directory.size() - 1; i > 0; --i)
+	{
+		if (directory[i] == 0) { directory.erase(directory.begin() + i); }
+	}
+
+	directory += ".bin";
+	file.OpenFile(directory, std::ios::out);
 
 	size_t size = receiverList_.size();
 	file.WriteParam(&size, sizeof(size_t));
@@ -211,7 +226,31 @@ void Client::SaveData(void)
 void Client::LoadData(void)
 {
 	IOFile file;
-	if (file.OpenFile("test.bin", std::ios::in))
+
+	string directory = Define::ResourceDirectoryName + "Export/";
+
+	std::vector<string> list;
+	SearchFile search;
+	search.Search(directory, "bin", list);
+	if (list.size() <= 0) { return; }
+
+	for (size_t i = list[0].size() - 1; list[0][i] != '/' && i > 0; --i)
+	{
+		name_.insert(name_.begin(), list[0][i]);
+	}
+
+	int num = 0;
+	for (num = static_cast<int>(name_.size()) - 1; name_[num] != '.' && num > 0; --num)
+	{
+		if (name_[num] != 0)
+		{
+			name_.erase(name_.begin() + num);
+		}
+	}
+	name_.erase(name_.begin() + num);
+	name_.resize(256);
+
+	if (file.OpenFile(list[0], std::ios::in))
 	{
 		size_t size = 0;
 		file.ReadParam(&size, sizeof(size_t));

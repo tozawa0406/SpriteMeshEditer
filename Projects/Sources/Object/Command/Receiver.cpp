@@ -80,6 +80,25 @@ void Receiver::Update(void)
 	SelectParam();
 
 	Delete();
+
+	if (!client_) { return; }
+
+	const auto& list = client_->GetReceiverList();
+	if (ImGui::TreeNode("sprites"))
+	{
+		for (auto& receiver : list)
+		{
+			if (!receiver) { continue; }
+			if (receiver == this) { continue; }
+			bool select = false;
+			ImGui::MenuItem(receiver->GetName().c_str(), nullptr, &select);
+			if (select)
+			{
+				transform_.parent = &receiver->transform_;
+			}
+		}
+		ImGui::TreePop();
+	}
 }
 
 template<class T>

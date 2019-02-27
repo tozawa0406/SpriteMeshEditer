@@ -68,7 +68,7 @@ struct SHADER_UI
 };
 
 // コンストラクタ
-Dx11Wrapper::Dx11Wrapper(DirectX11* directX) : directX11_(directX), depthState_(nullptr)
+Dx11Wrapper::Dx11Wrapper(DirectX11* directX) : directX11_(directX), depthState_(nullptr), ratio_(100)
 {
 }
 
@@ -452,7 +452,7 @@ void Dx11Wrapper::Draw(const SpriteRenderer* obj, const Shader* shader)
 	if (obj->IsBillboard()) { mtx *= inverse_; }
 
 	// テクスチャの大きさ拡大
-	float ratio = 0.05f;	// 拡大比率
+	float ratio = 1.f / ratio_;	// 拡大比率
 	const auto& s = texture_[0][obj->GetTexture()].size * ratio;
 	mtx.Scaling(VECTOR3(s.x, s.y, 1));
 
@@ -1448,4 +1448,9 @@ void Dx11Wrapper::SetConstantBuffer(ShaderType type, int startSrot, int numBuffe
 	{
 		context->PSSetConstantBuffers(startSrot, numBuffers, &constantBuffer_[constantBuffer]);
 	}
+}
+
+void Dx11Wrapper::GuiUpdate(void)
+{
+	ImGui::InputInt("Pixel Per Unit", &ratio_);
 }

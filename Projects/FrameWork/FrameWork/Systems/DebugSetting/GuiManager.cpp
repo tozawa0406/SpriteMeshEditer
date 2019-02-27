@@ -121,18 +121,6 @@ void GuiManager::GuiUpdate(void)
 
 	if (ImGui::Begin("Inspector"))
 	{
-		const auto& graphics = window->GetGraphics();
-		if (!graphics) { return; }
-		graphics->GuiUpdate();
-		if (const auto& wrapper = graphics->GetWrapper())
-		{
-			wrapper->GuiUpdate();
-		}
-		if (const auto& target = graphics->GetRenderTarget())
-		{
-			target->GuiUpdate();
-		}
-
 		for (auto& obj : obj_)
 		{
 			if (obj)
@@ -180,6 +168,18 @@ void GuiManager::GuiUpdate(void)
 			{
 				obj->HierarchyView();
 			}
+		}
+
+		const auto& graphics = window->GetGraphics();
+		if (!graphics) { return; }
+		graphics->GuiUpdate();
+		if (const auto& wrapper = graphics->GetWrapper())
+		{
+			wrapper->GuiUpdate();
+		}
+		if (const auto& target = graphics->GetRenderTarget())
+		{
+			target->GuiUpdate();
 		}
 
 		ImGui::End();

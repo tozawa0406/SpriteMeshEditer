@@ -62,6 +62,8 @@ public:
 
 	void DrawQuad(VECTOR2 position, VECTOR2 size, COLOR color = COLOR(1, 1, 1, 1)) override;
 
+	void GuiUpdate(void) override;
+
 private:
 	void		CreateInputLayout(D3D11_INPUT_ELEMENT_DESC* elem, int size, string fileName);
 	ID3DBlob*	CompiledShader(string fileName, string method, string version);
@@ -130,6 +132,8 @@ private:
 	std::vector<ID3D11Buffer*>			constantBuffer_;		// アプリ←→シェーダー架け橋　ワールドから射影までの変換行列を渡すためのコンスタントバッファー
 
 	ShaderData shader_[2];
+
+	int ratio_;
 
 public:
 	ComputeShader& GetComputeShader(int i) { return computeShader_[i]; }

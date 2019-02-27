@@ -119,7 +119,7 @@ void GuiManager::GuiUpdate(void)
 	ImGui::SetNextWindowPos(ImVec2(Windows::WIDTH - padding - 450, padding), ImGuiSetCond_Once);
 	ImGui::SetNextWindowSize(ImVec2(450, 500), ImGuiSetCond_Once);
 
-	if (ImGui::Begin("Editor"))
+	if (ImGui::Begin("Inspector"))
 	{
 		const auto& graphics = window->GetGraphics();
 		if (!graphics) { return; }

@@ -23,6 +23,7 @@ struct RECEIVER_DATA
 	RECEIVER_DATA(void) : name(nullptr), transform(nullptr), spriteRenderer(nullptr) {}
 };
 
+class Receiver;
 class ICommand
 {
 public:
@@ -38,12 +39,10 @@ public:
 	/* @brief	–ß‚é		*/
 	virtual void Redo(void)		= 0;
 
-	void SetReceiver(RECEIVER_DATA& receiver)		{ receiver_ = receiver;		}
-	void SetBeforeData(RECEIVER_DATA* beforeData)	{ beforeData_ = beforeData; }
+	void SetReceiver(Receiver* receiver) { receiver_ = receiver; }
 
 protected:
-	RECEIVER_DATA	receiver_;
-	RECEIVER_DATA*	beforeData_;
+	Receiver* receiver_;
 };
 
 #endif // _I_COMMAND_H_

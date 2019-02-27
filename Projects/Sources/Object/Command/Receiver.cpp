@@ -28,31 +28,27 @@ void Receiver::Init(Client* client)
 	if (spriteRenderer_)
 	{
 		spriteRenderer_->Init(static_cast<int>(Resources::Texture::Base::WHITE), &transform_);
-
-		receiver_.name				= &name_;
-		receiver_.transform			= &transform_;
-		receiver_.spriteRenderer	= spriteRenderer_;
 	}
 
 	if (!beforeData_.transform)			{ beforeData_.transform = new Transform;			}
 	if (!beforeData_.name)				{ beforeData_.name		= new string;				}
 	if (!beforeData_.spriteRenderer)	{ beforeData_.spriteRenderer = new SpriteRenderer;	}
 
-	if (receiver_.name && beforeData_.name)
+	if (beforeData_.name)
 	{
 		name_.resize(256);
-		*beforeData_.name = *receiver_.name;
+		*beforeData_.name = name_;
 	}
 
-	if (receiver_.transform && beforeData_.transform)
+	if (beforeData_.transform)
 	{
-		*beforeData_.transform = *receiver_.transform;
+		*beforeData_.transform = transform_;
 	}
 
-	if (receiver_.spriteRenderer && beforeData_.spriteRenderer)
+	if (beforeData_.spriteRenderer && spriteRenderer_)
 	{
-		beforeData_.spriteRenderer->SetPivot(receiver_.spriteRenderer->GetPivot());
-		beforeData_.spriteRenderer->SetTexture(receiver_.spriteRenderer->GetTexture());
+		beforeData_.spriteRenderer->SetPivot(spriteRenderer_->GetPivot());
+		beforeData_.spriteRenderer->SetTexture(spriteRenderer_->GetTexture());
 	}
 
 
@@ -77,7 +73,7 @@ void Receiver::Uninit(void)
 void Receiver::Update(void)
 {
 	if (!ctrl_) { return; }
-	if (!receiver_.spriteRenderer) { return; }
+	if (!spriteRenderer_) { return; }
 
 	ImGui::InputText("name", &name_[0], 256);
 
@@ -86,7 +82,7 @@ void Receiver::Update(void)
 		int ret = loadAdd_->SelectTexture();
 		if (ret >= 0)
 		{
-			receiver_.spriteRenderer->SetTexture(ret);
+			spriteRenderer_->SetTexture(ret);
 			if (InvokeCommand<TextureNumCommand>())
 			{
 				if (client_)
@@ -97,19 +93,19 @@ void Receiver::Update(void)
 		}
 	}
 
-	ImGui::InputFloat3("position", receiver_.transform->position, 1);
-	VECTOR3 rot = receiver_.transform->rotation / 0.01744444f;
+	ImGui::InputFloat3("position", transform_.position, 1);
+	VECTOR3 rot = transform_.rotation / 0.01744444f;
 	ImGui::InputFloat3("rotation", rot, 1);
-	receiver_.transform->rotation = rot * 0.01744444f;
-	ImGui::InputFloat3("scale", receiver_.transform->scale, 1);
+	transform_.rotation = rot * 0.01744444f;
+	ImGui::InputFloat3("scale", transform_.scale, 1);
 
-	VECTOR2 pivot = receiver_.spriteRenderer->GetPivot();
+	VECTOR2 pivot = spriteRenderer_->GetPivot();
 	ImGui::InputFloat2("pivot", pivot, 1);
-	receiver_.spriteRenderer->SetPivot(pivot);
+	spriteRenderer_->SetPivot(pivot);
 
 	if (ctrl_->Press(Input::GAMEPAD_CIRCLE, DIK_RETURN))
 	{
-		if (beforeData_.transform->position != receiver_.transform->position)
+		if (beforeData_.transform->position != transform_.position)
 		{
 			if(InvokeCommand<PositionCommand>())
 			{
@@ -119,7 +115,7 @@ void Receiver::Update(void)
 				}
 			}
 		}
-		if (beforeData_.transform->rotation != receiver_.transform->rotation)
+		if (beforeData_.transform->rotation != transform_.rotation)
 		{
 			if (InvokeCommand<RotationCommand>())
 			{
@@ -129,7 +125,7 @@ void Receiver::Update(void)
 				}
 			}
 		}
-		if (beforeData_.transform->scale != receiver_.transform->scale)
+		if (beforeData_.transform->scale != transform_.scale)
 		{
 			if (InvokeCommand<ScaleCommand>())
 			{
@@ -139,7 +135,7 @@ void Receiver::Update(void)
 				}
 			}
 		}
-		if (beforeData_.spriteRenderer->GetPivot() != receiver_.spriteRenderer->GetPivot())
+		if (beforeData_.spriteRenderer->GetPivot() != spriteRenderer_->GetPivot())
 		{
 			if (InvokeCommand<PivotCommand>())
 			{
@@ -149,11 +145,11 @@ void Receiver::Update(void)
 				}
 			}
 		}
-		if (*beforeData_.name != *receiver_.name)
+		if (*beforeData_.name != name_)
 		{
 			if (InvokeCommand<NameCommand>())
 			{
-				*beforeData_.name = *receiver_.name;
+				*beforeData_.name = name_;
 				if (client_)
 				{
 					client_->AddMessage("\"Name reflected change\" in Sprite");
@@ -169,8 +165,7 @@ bool Receiver::InvokeCommand(void)
 	T* command = new T;
 	if (command)
 	{
-		command->SetReceiver(receiver_);
-		command->SetBeforeData(&beforeData_);
+		command->SetReceiver(this);
 		command->Invoke();
 
 		if (client_) { client_->AddCommand(command); }
@@ -213,19 +208,19 @@ void Receiver::LoadData(IOFile& file)
 	file.ReadParam(&texNum, sizeof(int));
 	spriteRenderer_->SetTexture(texNum);
 
-	if (receiver_.name && beforeData_.name)
+	if (beforeData_.name)
 	{
-		*beforeData_.name = *receiver_.name;
+		*beforeData_.name = name_;
 	}
 
-	if (receiver_.transform && beforeData_.transform)
+	if (beforeData_.transform)
 	{
-		*beforeData_.transform = *receiver_.transform;
+		*beforeData_.transform = transform_;
 	}
 
-	if (receiver_.spriteRenderer && beforeData_.spriteRenderer)
+	if (spriteRenderer_ && spriteRenderer_)
 	{
-		beforeData_.spriteRenderer->SetPivot(receiver_.spriteRenderer->GetPivot());
-		beforeData_.spriteRenderer->SetTexture(receiver_.spriteRenderer->GetTexture());
+		beforeData_.spriteRenderer->SetPivot(spriteRenderer_->GetPivot());
+		beforeData_.spriteRenderer->SetTexture(spriteRenderer_->GetTexture());
 	}
 }

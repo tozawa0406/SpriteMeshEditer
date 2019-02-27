@@ -1,4 +1,5 @@
 #include "PivotCommand.h"
+#include "Receiver.h"
 
 PivotCommand::PivotCommand(void) : 
 	prevPivot_(0)
@@ -12,34 +13,35 @@ PivotCommand::~PivotCommand(void)
 
 void PivotCommand::Invoke(void)
 {
-	if (!beforeData_->spriteRenderer || !receiver_.spriteRenderer) { return; }
+	if (!receiver_) { return; }
+	auto spriteRenderer = receiver_->GetSpriteRenderer();
+	auto beforeSprite = receiver_->GetBeforeData().spriteRenderer;
+	if (!spriteRenderer || !beforeSprite) { return; }
 
-	prevPivot_ = beforeData_->spriteRenderer->GetPivot();
-	nextPivot_ = receiver_.spriteRenderer->GetPivot();
+	prevPivot_ = beforeSprite->GetPivot();
+	nextPivot_ = spriteRenderer->GetPivot();
 
-	beforeData_->spriteRenderer->SetPivot(nextPivot_);
+	beforeSprite->SetPivot(nextPivot_);
 }
 
 void PivotCommand::Undo(void)
 {
-	if (receiver_.spriteRenderer) 
-	{
-		receiver_.spriteRenderer->SetPivot(prevPivot_);
-		if (beforeData_->spriteRenderer)
-		{
-			beforeData_->spriteRenderer->SetPivot(prevPivot_);
-		}
-	}
+	if (!receiver_) { return; }
+	auto spriteRenderer = receiver_->GetSpriteRenderer();
+	auto beforeSprite = receiver_->GetBeforeData().spriteRenderer;
+	if (!spriteRenderer || !beforeSprite) { return; }
+
+	const_cast<SpriteRenderer*>(spriteRenderer)->SetPivot(prevPivot_);
+	beforeSprite->SetPivot(prevPivot_);
 }
 
 void PivotCommand::Redo(void)
 {
-	if (receiver_.spriteRenderer) 
-	{
-		receiver_.spriteRenderer->SetPivot(nextPivot_); 
-		if (beforeData_->spriteRenderer)
-		{
-			beforeData_->spriteRenderer->SetPivot(nextPivot_);
-		}
-	}
+	if (!receiver_) { return; }
+	auto spriteRenderer = receiver_->GetSpriteRenderer();
+	auto beforeSprite = receiver_->GetBeforeData().spriteRenderer;
+	if (!spriteRenderer || !beforeSprite) { return; }
+
+	const_cast<SpriteRenderer*>(spriteRenderer)->SetPivot(nextPivot_);
+	beforeSprite->SetPivot(nextPivot_);
 }

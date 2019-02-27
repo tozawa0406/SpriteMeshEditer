@@ -80,6 +80,9 @@
     <ClCompile Include="Sources\Object\IOFile.cpp">
       <Filter>Source\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Object\Command\CreateSpriteCommand.cpp">
+      <Filter>Source\Object\Command</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Object\ObjectTag.h">
@@ -147,6 +150,9 @@
     </ClInclude>
     <ClInclude Include="Sources\Object\IOFile.h">
       <Filter>Source\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Command\CreateSpriteCommand.h">
+      <Filter>Source\Object\Command</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

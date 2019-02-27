@@ -1,4 +1,5 @@
 #include "NameCommand.h"
+#include "Receiver.h"
 
 NameCommand::NameCommand(void) : 
 	prevName_("")
@@ -12,34 +13,34 @@ NameCommand::~NameCommand(void)
 
 void NameCommand::Invoke(void)
 {
-	if (!beforeData_->name || !receiver_.name) { return; }
+	if (!receiver_) { return; }
 
-	prevName_ = *beforeData_->name;
-	nextName_ = *receiver_.name;
+	prevName_ = *receiver_->GetBeforeData().name;
+	nextName_ = receiver_->GetName();
 
-	if (beforeData_->name) { *beforeData_->name = nextName_; }
+	auto beforeData = receiver_->GetBeforeData();
+	*beforeData.name = nextName_;
+	receiver_->SetBeforeData(beforeData);
 }
 
 void NameCommand::Undo(void)
 {
-	if (receiver_.name)
-	{
-		*receiver_.name = prevName_; 
-		if (beforeData_->name)
-		{
-			*beforeData_->name = prevName_;
-		}
-	}
+	if (!receiver_) { return; }
+
+	receiver_->SetName(prevName_);
+
+	auto beforeData = receiver_->GetBeforeData();
+	*beforeData.name = prevName_;
+	receiver_->SetBeforeData(beforeData);
 }
 
 void NameCommand::Redo(void)
 {
-	if (receiver_.name)
-	{
-		*receiver_.name = nextName_; 
-		if (beforeData_->name)
-		{
-			*beforeData_->name = nextName_;
-		}
-	}
+	if (!receiver_) { return; }
+
+	receiver_->SetName(nextName_);
+
+	auto beforeData = receiver_->GetBeforeData();
+	*beforeData.name = nextName_;
+	receiver_->SetBeforeData(beforeData);
 }

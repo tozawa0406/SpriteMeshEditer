@@ -17,11 +17,18 @@ public:
 	void Uninit(void);
 	void Update(void);
 
-	const string& GetName(void) { return name_; }
+	const string&			GetName(void)			{ return name_;				}
+	const Transform&		GetTransform(void)		{ return transform_;		}
+	const SpriteRenderer*	GetSpriteRenderer(void) { return spriteRenderer_;	}
+
+	const RECEIVER_DATA& GetBeforeData(void) { return beforeData_; }
+
+	void SetName(const string& name)				{ name_ = name;				}
+	void SetTransform(const Transform& transform)	{ transform_ = transform;	}
+
+	void SetBeforeData(const RECEIVER_DATA& beforeData) { beforeData_ = beforeData; }
 
 	void SetCtrl(Controller* ctrl) { ctrl_ = ctrl; }
-
-	const Transform& GetTransform(void) { return transform_; }
 
 	void SaveData(IOFile& file);
 	void LoadData(IOFile& file);
@@ -34,7 +41,6 @@ private:
 	SpriteRenderer* spriteRenderer_;
 	Transform		transform_;
 
-	RECEIVER_DATA	receiver_;
 	RECEIVER_DATA	beforeData_;
 
 	Client*			client_;

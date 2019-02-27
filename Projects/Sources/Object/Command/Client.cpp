@@ -1,6 +1,7 @@
 #include "Client.h"
 #include "Receiver.h"
 #include "../Pivot.h"
+#include "CreateSpriteCommand.h"
 
 #include "../IOFile.h"
 
@@ -28,8 +29,8 @@ void Client::Uninit(void)
 {
 	for (auto& c : clientList_) { UninitDeletePtr(c); }
 
-	for (auto& c : prevCommand_) { DeletePtr(c); }
-	for (auto& c : nextCommand_) { DeletePtr(c); }
+	for (auto& c : prevCommand_) { UninitDeletePtr(c); }
+	for (auto& c : nextCommand_) { UninitDeletePtr(c); }
 }
 
 void Client::Update(void)
@@ -113,7 +114,7 @@ void Client::HierarchyView(void)
 void Client::AddCommand(ICommand* command)
 {
 	prevCommand_.insert(prevCommand_.begin(), command);
-	for (auto& c : nextCommand_) { DeletePtr(c); }
+	for (auto& c : nextCommand_) { UninitDeletePtr(c); }
 
 	nextCommand_.clear();
 }
@@ -160,19 +161,34 @@ void Client::Redo(void)
 
 void Client::CreateReceiver(IOFile* file)
 {
-	Receiver* client = new Receiver;
-	if (client)
+	CreateSpriteCommand* command = new CreateSpriteCommand;
+	if (command)
 	{
-		client->SetCtrl(ctrl_);
-		client->Init(this);
-
-		if (file)
+		Receiver* client = new Receiver;
+		if (client)
 		{
-			client->LoadData(*file);
-		}
+			client->SetCtrl(ctrl_);
+			client->Init(this);
 
-		clientList_.emplace_back(client);
-		currentReceiver_ = client;
+			if (file)
+			{
+				client->LoadData(*file);
+
+				DeletePtr(command);
+			}
+			else
+			{
+				command->SetReceiver(client);
+				command->SetClient(this);
+				command->Invoke();
+
+				AddCommand(command);
+				AddMessage("\"Create Sprite\"");
+			}
+
+			clientList_.emplace_back(client);
+			currentReceiver_ = client;
+		}
 	}
 }
 
@@ -208,4 +224,23 @@ void Client::LoadData(void)
 
 		AddMessage("\"Load\" is complete");
 	}
+}
+
+int Client::RemoveSprite(Receiver* receiver)
+{
+	int size = static_cast<int>(clientList_.size());
+	for (int i = 0; i < size; ++i)
+	{
+		if (clientList_[i] == receiver)
+		{
+			clientList_.erase(clientList_.begin() + i);
+			return i;
+		}
+	}
+	return 0;
+}
+
+void Client::AddSprite(Receiver* receiver, int place)
+{
+	clientList_.insert(clientList_.begin() + place, receiver);
 }

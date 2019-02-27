@@ -32,6 +32,9 @@ public:
 	/* @brief	デストラクタ		*/
 	virtual ~ICommand(void) {}
 
+	/* @breif	後処理が必要ならば	*/
+	virtual void Uninit(void) {}
+
 	/* @brief	処理		*/
 	virtual void Invoke(void)	= 0;
 	/* @brief	進む		*/

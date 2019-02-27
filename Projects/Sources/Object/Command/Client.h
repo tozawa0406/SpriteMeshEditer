@@ -31,6 +31,9 @@ public:
 	inline void SetCtrl(Controller* ctrl)	{ ctrl_ = ctrl;		}
 	inline void SetPivot(Pivot* pivot)		{ pivot_ = pivot;	}
 
+	int  RemoveSprite(Receiver* receiver);
+	void AddSprite(Receiver* receiver, int place);
+
 private:
 	void Undo(void);
 	void Redo(void);

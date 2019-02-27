@@ -47,7 +47,7 @@ private:
 	std::vector<string>		message_;
 
 	Pivot*					pivot_;
-	std::vector<Receiver*>	clientList_;
+	std::vector<Receiver*>	receiverList_;
 	Receiver*				currentReceiver_;
 
 	Controller*		ctrl_;

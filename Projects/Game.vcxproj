@@ -22,6 +22,7 @@
     <ClCompile Include="Sources\main.cpp" />
     <ClCompile Include="Sources\Object\Command\Client.cpp" />
     <ClCompile Include="Sources\Object\Command\CreateSpriteCommand.cpp" />
+    <ClCompile Include="Sources\Object\Command\DeleteCommand.cpp" />
     <ClCompile Include="Sources\Object\Command\Receiver.cpp" />
     <ClCompile Include="Sources\Object\Command\NameCommand.cpp" />
     <ClCompile Include="Sources\Object\Command\PivotCommand.cpp" />
@@ -42,6 +43,7 @@
   <ItemGroup>
     <ClInclude Include="Sources\Object\Command\Client.h" />
     <ClInclude Include="Sources\Object\Command\CreateSpriteCommand.h" />
+    <ClInclude Include="Sources\Object\Command\DeleteCommand.h" />
     <ClInclude Include="Sources\Object\Command\Receiver.h" />
     <ClInclude Include="Sources\Object\Command\ICommand.h" />
     <ClInclude Include="Sources\Object\Command\NameCommand.h" />

@@ -83,6 +83,9 @@
     <ClCompile Include="Sources\Object\Command\CreateSpriteCommand.cpp">
       <Filter>Source\Object\Command</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Object\Command\DeleteCommand.cpp">
+      <Filter>Source\Object\Command</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Object\ObjectTag.h">
@@ -152,6 +155,9 @@
       <Filter>Source\Object</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Object\Command\CreateSpriteCommand.h">
+      <Filter>Source\Object\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Command\DeleteCommand.h">
       <Filter>Source\Object\Command</Filter>
     </ClInclude>
   </ItemGroup>

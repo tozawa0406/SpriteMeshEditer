@@ -37,6 +37,9 @@ private:
 	template<class T>
 	bool InvokeCommand(void);
 
+	void SelectParam(void);
+	void Delete(void);
+
 	string			name_;
 	SpriteRenderer* spriteRenderer_;
 	Transform		transform_;
@@ -47,6 +50,8 @@ private:
 
 	Controller*		ctrl_;
 	LoadAddTexture* loadAdd_;
+
+	bool delete_;
 };
 
 #endif // _RECEIVER_H_

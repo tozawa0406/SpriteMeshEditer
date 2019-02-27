@@ -27,7 +27,7 @@ void Client::Load(void)
 
 void Client::Uninit(void)
 {
-	for (auto& c : clientList_) { UninitDeletePtr(c); }
+	for (auto& c : receiverList_) { UninitDeletePtr(c); }
 
 	for (auto& c : prevCommand_) { UninitDeletePtr(c); }
 	for (auto& c : nextCommand_) { UninitDeletePtr(c); }
@@ -35,8 +35,6 @@ void Client::Uninit(void)
 
 void Client::Update(void)
 {
-	if (!currentReceiver_) { return; }
-
 	if (ctrl_->Press(Input::GAMEPAD_L1, DIK_LCONTROL))
 	{
 		if (ctrl_->Press(Input::GAMEPAD_L2, DIK_LSHIFT))
@@ -58,11 +56,11 @@ void Client::InspectorView(void)
 	if (currentReceiver_)
 	{
 		currentReceiver_->Update();
+	}
 
-		if (pivot_)
-		{
-			pivot_->SetTransform(currentReceiver_->GetTransform());
-		}
+	if (pivot_ && currentReceiver_)
+	{
+		pivot_->SetTransform(currentReceiver_->GetTransform());
 	}
 }
 
@@ -90,12 +88,14 @@ void Client::HierarchyView(void)
 	ImGui::Dummy(ImVec2(0, 5));
 	if (ImGui::CollapsingHeader("Hierarchy"))
 	{
-		for (auto& list : clientList_)
+		for (auto& list : receiverList_)
 		{
 			if (list)
 			{
 				bool select = false;
-				ImGui::Text("   "); ImGui::SameLine();
+				ImGui::Text("  "); ImGui::SameLine();
+				if (list == currentReceiver_) { ImGui::Text("> "); ImGui::SameLine(); }
+				else { ImGui::Text("  "); ImGui::SameLine(); }
 				ImGui::MenuItem(list->GetName().c_str(), nullptr, &select);
 				if (select)
 				{
@@ -186,7 +186,7 @@ void Client::CreateReceiver(IOFile* file)
 				AddMessage("\"Create Sprite\"");
 			}
 
-			clientList_.emplace_back(client);
+			receiverList_.emplace_back(client);
 			currentReceiver_ = client;
 		}
 	}
@@ -197,9 +197,9 @@ void Client::SaveData(void)
 	IOFile file;
 	file.OpenFile("test.bin", std::ios::out);
 
-	size_t size = clientList_.size();
+	size_t size = receiverList_.size();
 	file.WriteParam(&size, sizeof(size_t));
-	for (auto& client : clientList_)
+	for (auto& client : receiverList_)
 	{
 		if (client) { client->SaveData(file); }
 	}
@@ -228,12 +228,21 @@ void Client::LoadData(void)
 
 int Client::RemoveSprite(Receiver* receiver)
 {
-	int size = static_cast<int>(clientList_.size());
+	int size = static_cast<int>(receiverList_.size());
 	for (int i = 0; i < size; ++i)
 	{
-		if (clientList_[i] == receiver)
+		if (receiverList_[i] == receiver)
 		{
-			clientList_.erase(clientList_.begin() + i);
+			if(size > 1)
+			{ 
+				if (i == 0)			{ currentReceiver_ = receiverList_[i + 1]; }
+				else if (i != 0)	{ currentReceiver_ = receiverList_[i - 1]; }
+			}
+			else					{ 
+				currentReceiver_ = nullptr; }
+
+			receiverList_.erase(receiverList_.begin() + i);
+
 			return i;
 		}
 	}
@@ -242,5 +251,5 @@ int Client::RemoveSprite(Receiver* receiver)
 
 void Client::AddSprite(Receiver* receiver, int place)
 {
-	clientList_.insert(clientList_.begin() + place, receiver);
+	receiverList_.insert(receiverList_.begin() + place, receiver);
 }

@@ -26,7 +26,8 @@ public:
 
 	void GuiUpdate(void);
 
-	int SelectTexture(void);
+	int SelectTexture(string& textureName);
+	int SetTexture(const string& texName);
 
 private:
 	LoadAddTexture(Systems* systems);
@@ -36,8 +37,8 @@ private:
 	int sceneNum_;
 	Loading* loading_;
 
-	SearchFile*			search_;
-	std::vector<ADD_TEXTURE_DATA> list_;
+	SearchFile*						search_;
+	std::vector<ADD_TEXTURE_DATA>	list_;
 };
 
 #endif // _LOAD_ADD_TEXTURE_H_

@@ -28,6 +28,7 @@ public:
 private:
 	int			place_;
 	Client*		client_;
+	Receiver*	parent_;
 };
 
 #endif // _DELETE_COMMAND_H_

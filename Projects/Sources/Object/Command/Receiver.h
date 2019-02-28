@@ -30,13 +30,22 @@ public:
 
 	void SetCtrl(Controller* ctrl) { ctrl_ = ctrl; }
 
-	void SaveData(IOFile& file);
-	void LoadData(IOFile& file);
+	void SaveData(IOFile& file, bool parentCall);
+	bool LoadData(IOFile& file, bool parentCall);
+
+	void SetParent(Receiver* parent);
+	Receiver* GetParent(void) { return parent_; }
+
+	inline std::vector<Receiver*> GetChild(void) { return child_; }
+
+	bool IsHierarchy(void)				{ return isHierarchy_;		}
+	void SetHierarchy(bool hierarchy)	{ isHierarchy_ = hierarchy; }
 
 private:
 	template<class T>
 	bool InvokeCommand(void);
 
+	void SetChild(Receiver* child, bool add);
 	void SelectParam(void);
 	void Delete(void);
 
@@ -45,13 +54,18 @@ private:
 	Transform		transform_;
 
 	RECEIVER_DATA	beforeData_;
+	string			textureName_;
 
 	Client*			client_;
 
 	Controller*		ctrl_;
 	LoadAddTexture* loadAdd_;
+	
+	Receiver*		parent_;
+	std::vector<Receiver*> child_;
 
 	bool delete_;
+	bool isHierarchy_;
 };
 
 #endif // _RECEIVER_H_

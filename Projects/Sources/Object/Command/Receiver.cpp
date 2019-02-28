@@ -8,6 +8,7 @@
 #include "NameCommand.h"
 #include "TextureNumCommand.h"
 #include "DeleteCommand.h"
+#include "ParentCommand.h"
 
 Receiver::Receiver(void) :
 	ctrl_(nullptr)
@@ -15,6 +16,9 @@ Receiver::Receiver(void) :
 	, name_("NoName")
 	, client_(nullptr)
 	, delete_(false)
+	, parent_(nullptr)
+	, isHierarchy_(false)
+	, textureName_("")
 {
 }
 
@@ -83,21 +87,56 @@ void Receiver::Update(void)
 
 	if (!client_) { return; }
 
-	const auto& list = client_->GetReceiverList();
-	if (ImGui::TreeNode("sprites"))
+	if (!parent_)
 	{
-		for (auto& receiver : list)
+		const auto& list = client_->GetReceiverList();
+		if (ImGui::TreeNode("SetParent"))
 		{
-			if (!receiver) { continue; }
-			if (receiver == this) { continue; }
-			bool select = false;
-			ImGui::MenuItem(receiver->GetName().c_str(), nullptr, &select);
-			if (select)
+			for (auto& receiver : list)
 			{
-				transform_.parent = &receiver->transform_;
+				if (!receiver) { continue; }
+				if (receiver == this) { continue; }
+				bool select = false;
+				ImGui::MenuItem(receiver->GetName().c_str(), nullptr, &select);
+				if (select)
+				{
+					ParentCommand* command = new ParentCommand;
+					if (command)
+					{
+						command->SetReceiver(receiver);
+						command->SetChiled(this, true);
+						command->Invoke();
+
+						if (client_) 
+						{
+							client_->AddCommand(command); 
+							client_->AddMessage("\"SetParent\"");
+						}
+					}
+				}
+			}
+			ImGui::TreePop();
+		}
+	}
+	else
+	{
+		if (ImGui::Button("RemoveParent"))
+		{
+
+			ParentCommand* command = new ParentCommand;
+			if (command)
+			{
+				command->SetReceiver(parent_);
+				command->SetChiled(this, false);
+				command->Invoke();
+
+				if (client_) 
+				{
+					client_->AddCommand(command); 
+					client_->AddMessage("\"RemoveParent\"");
+				}
 			}
 		}
-		ImGui::TreePop();
 	}
 }
 
@@ -117,9 +156,13 @@ bool Receiver::InvokeCommand(void)
 	return false;
 }
 
-void Receiver::SaveData(IOFile& file)
+void Receiver::SaveData(IOFile& file, bool parentCall)
 {
 	if (!spriteRenderer_) { return; }
+
+	bool isParent = (parent_) ? true : false;
+	if (isParent && !parentCall) { return; }
+	file.WriteParam(&isParent, sizeof(bool));
 
 	size_t size = name_.size();
 	file.WriteParam(&size, sizeof(size_t));
@@ -129,13 +172,25 @@ void Receiver::SaveData(IOFile& file)
 	file.WriteParam(&transform_.scale	, sizeof(VECTOR3));
 	VECTOR2 pivot = spriteRenderer_->GetPivot();
 	file.WriteParam(&pivot, sizeof(VECTOR2));
-	int texNum = spriteRenderer_->GetTexture();
-	file.WriteParam(&texNum, sizeof(int));
+	size = textureName_.size();
+	file.WriteParam(&size, sizeof(size_t));
+	file.WriteParam(&textureName_[0], sizeof(char) * textureName_.size());
+
+	size = child_.size();
+	file.WriteParam(&size, sizeof(size_t));
+	for (int i = 0; i < size; ++i)
+	{
+		child_[i]->SaveData(file, true);
+	}
 }
 
-void Receiver::LoadData(IOFile& file)
+bool Receiver::LoadData(IOFile& file, bool parentCall)
 {
-	if (!spriteRenderer_) { return; }
+	if (!spriteRenderer_) { return false; }
+
+	bool isParent = false;
+	file.ReadParam(&isParent, sizeof(bool));
+	if (!parentCall && isParent) { return false; }
 
 	size_t size = 0;
 	file.ReadParam(&size, sizeof(size_t));
@@ -146,9 +201,31 @@ void Receiver::LoadData(IOFile& file)
 	VECTOR2 pivot = VECTOR2(0);
 	file.ReadParam(&pivot, sizeof(VECTOR2));
 	spriteRenderer_->SetPivot(pivot);
-	int texNum = 0;
-	file.ReadParam(&texNum, sizeof(int));
-	spriteRenderer_->SetTexture(texNum);
+
+	size = 0;
+	file.ReadParam(&size, sizeof(size_t));
+	textureName_.resize(size);
+	file.ReadParam(&textureName_[0], sizeof(char) * size);
+
+	if (loadAdd_) { 
+		spriteRenderer_->SetTexture(loadAdd_->SetTexture(textureName_)); }
+
+	size = 0;
+	file.ReadParam(&size, sizeof(size_t));
+	for (int i = 0; i < size; ++i)
+	{
+		Receiver* receiver = new Receiver;
+		if (receiver)
+		{
+			receiver->SetCtrl(ctrl_);
+			receiver->Init(client_);
+
+			receiver->LoadData(file, true);
+			receiver->SetParent(this);
+
+			client_->AddSprite(receiver, 0);
+		}
+	}
 
 	if (beforeData_.name)
 	{
@@ -165,6 +242,7 @@ void Receiver::LoadData(IOFile& file)
 		beforeData_.spriteRenderer->SetPivot(spriteRenderer_->GetPivot());
 		beforeData_.spriteRenderer->SetTexture(spriteRenderer_->GetTexture());
 	}
+	return true;
 }
 
 void Receiver::SelectParam(void)
@@ -173,9 +251,11 @@ void Receiver::SelectParam(void)
 
 	if (loadAdd_)
 	{
-		int ret = loadAdd_->SelectTexture();
+		string name;
+		int ret = loadAdd_->SelectTexture(name);
 		if (ret >= 0)
 		{
+			textureName_ = name;
 			spriteRenderer_->SetTexture(ret);
 			if (InvokeCommand<TextureNumCommand>())
 			{
@@ -286,4 +366,38 @@ void Receiver::Delete(void)
 			ImGui::End();
 		}
 	}
+}
+
+void Receiver::SetParent(Receiver* parent)
+{
+	if (parent) 
+	{
+		parent_ = parent;
+		transform_.parent = &parent->GetTransform();
+		parent->SetChild(this, true);
+	}
+	else
+	{
+		parent_->SetChild(this, false);
+		parent_ = nullptr;
+		transform_.parent = nullptr;
+	}
+}
+
+void Receiver::SetChild(Receiver* child, bool add)
+{
+	int size = static_cast<int>(child_.size());
+	for (int i = 0; i < size; ++i)
+	{
+		if (child_[i] == child)
+		{
+			if (!add)
+			{
+				child_.erase(child_.begin() + i);
+			}
+			return;
+		}
+	}
+
+	child_.emplace_back(child);
 }

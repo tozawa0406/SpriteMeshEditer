@@ -40,6 +40,7 @@ private:
 	void Undo(void);
 	void Redo(void);
 
+	void DrawHierarchy(Receiver* draw, string& blank);
 	void CreateReceiver(IOFile* file = nullptr);
 	void SaveData(void);
 	void LoadData(void);

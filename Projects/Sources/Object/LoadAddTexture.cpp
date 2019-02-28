@@ -115,7 +115,7 @@ void LoadAddTexture::GuiUpdate(void)
 {
 }
 
-int LoadAddTexture::SelectTexture(void)
+int LoadAddTexture::SelectTexture(string& textureName)
 {
 	int ret = -1;
 	ImGui::Dummy(ImVec2(0, 5));
@@ -134,9 +134,22 @@ int LoadAddTexture::SelectTexture(void)
 			ImGui::MenuItem(name.c_str(), nullptr, &select);
 			if (select)
 			{
-				ret = obj.texNum;
+				textureName = obj.name;
+				ret  = obj.texNum;
 			}
 		}
 	}
 	return ret;
+}
+
+int LoadAddTexture::SetTexture(const string& texName)
+{
+	for (auto& obj : list_)
+	{
+		if (texName == obj.name)
+		{
+			return obj.texNum;
+		}
+	}
+	return 0;
 }

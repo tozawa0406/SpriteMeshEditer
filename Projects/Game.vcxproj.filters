@@ -86,6 +86,9 @@
     <ClCompile Include="Sources\Object\Command\DeleteCommand.cpp">
       <Filter>Source\Object\Command</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Object\Command\ParentCommand.cpp">
+      <Filter>Source\Object\Command</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Object\ObjectTag.h">
@@ -158,6 +161,9 @@
       <Filter>Source\Object\Command</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Object\Command\DeleteCommand.h">
+      <Filter>Source\Object\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Command\ParentCommand.h">
       <Filter>Source\Object\Command</Filter>
     </ClInclude>
   </ItemGroup>

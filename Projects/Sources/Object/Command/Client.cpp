@@ -78,6 +78,8 @@ void Client::ConsoleView(void)
 
 void Client::HierarchyView(void)
 {
+	for (auto& r : receiverList_) { if (r) { r->SetHierarchy(false); } }
+
 	ImGui::InputText("fileName", &name_[0], 256);
 
 	ImGui::Dummy(ImVec2(0, 5));
@@ -96,17 +98,10 @@ void Client::HierarchyView(void)
 	{
 		for (auto& list : receiverList_)
 		{
-			if (list)
+			if (list && !list->GetTransform().parent)
 			{
-				bool select = false;
-				ImGui::Text(" "); ImGui::SameLine();
-				if (list == currentReceiver_) { ImGui::Text("> "); ImGui::SameLine(); }
-				else { ImGui::Text("  "); ImGui::SameLine(); }
-				ImGui::MenuItem(list->GetName().c_str(), nullptr, &select);
-				if (select)
-				{
-					currentReceiver_ = list;
-				}
+				string blank = " ";
+				DrawHierarchy(list, blank);
 			}
 		}
 		ImGui::EndChild();
@@ -115,6 +110,31 @@ void Client::HierarchyView(void)
 	if (ImGui::Button("Save", ImVec2(400, 40)))
 	{
 		SaveData();
+	}
+}
+
+void Client::DrawHierarchy(Receiver* draw, string& blank)
+{
+	if (draw && !draw->IsHierarchy())
+	{
+		bool select = false;
+		ImGui::Text(blank.c_str()); ImGui::SameLine();
+		if (draw == currentReceiver_) { ImGui::Text("> "); ImGui::SameLine(); }
+		else { ImGui::Text("  "); ImGui::SameLine(); }
+		ImGui::MenuItem(draw->GetName().c_str(), nullptr, &select);
+		if (select)
+		{
+			currentReceiver_ = draw;
+		}
+
+		draw->SetHierarchy(true);
+
+		const auto& chiled = draw->GetChild();
+		for (auto& c : chiled)
+		{
+			string addBlank = blank + "  ";
+			DrawHierarchy(c, addBlank);
+		}
 	}
 }
 
@@ -177,11 +197,17 @@ void Client::CreateReceiver(IOFile* file)
 			client->SetCtrl(ctrl_);
 			client->Init(this);
 
+			receiverList_.emplace_back(client);
+
 			if (file)
 			{
-				client->LoadData(*file);
-
 				DeletePtr(command);
+				if (!client->LoadData(*file, false))
+				{
+					RemoveVector(receiverList_, client);
+					UninitDeletePtr(client);
+					return;
+				}
 			}
 			else
 			{
@@ -193,7 +219,6 @@ void Client::CreateReceiver(IOFile* file)
 				AddMessage("\"Create Sprite\"");
 			}
 
-			receiverList_.emplace_back(client);
 			currentReceiver_ = client;
 		}
 	}
@@ -216,7 +241,7 @@ void Client::SaveData(void)
 	file.WriteParam(&size, sizeof(size_t));
 	for (auto& client : receiverList_)
 	{
-		if (client) { client->SaveData(file); }
+		if (client) { client->SaveData(file, false); }
 	}
 	file.CloseFile();
 
@@ -257,6 +282,8 @@ void Client::LoadData(void)
 
 		for (size_t i = 0; i < size; ++i)
 		{
+			if (receiverList_.size() >= size) { break; }
+
 			CreateReceiver(&file);
 		}
 		file.CloseFile();
@@ -290,5 +317,12 @@ int Client::RemoveSprite(Receiver* receiver)
 
 void Client::AddSprite(Receiver* receiver, int place)
 {
-	receiverList_.insert(receiverList_.begin() + place, receiver);
+	if (place > 0)
+	{
+		receiverList_.insert(receiverList_.begin() + place, receiver);
+	}
+	else
+	{
+		receiverList_.emplace_back(receiver);
+	}
 }

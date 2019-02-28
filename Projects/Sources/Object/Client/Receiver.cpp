@@ -19,6 +19,7 @@ Receiver::Receiver(void) :
 	, parent_(nullptr)
 	, isHierarchy_(false)
 	, textureName_("")
+	, isHierarchyChild_(false)
 {
 }
 
@@ -83,46 +84,46 @@ void Receiver::Update(void)
 
 	SelectParam();
 
-	Delete();
-
 	if (!client_) { return; }
 
 	if (!parent_)
 	{
-		const auto& list = client_->GetReceiverList();
-		if (ImGui::TreeNode("SetParent"))
+		if (ImGui::CollapsingHeader("SetParent"))
 		{
-			for (auto& receiver : list)
+			if (ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(400, 200)))
 			{
-				if (!receiver) { continue; }
-				if (receiver == this) { continue; }
-				bool select = false;
-				ImGui::MenuItem(receiver->GetName().c_str(), nullptr, &select);
-				if (select)
+				const auto& list = client_->GetReceiverList();
+				for (auto& receiver : list)
 				{
-					ParentCommand* command = new ParentCommand;
-					if (command)
+					if (!receiver) { continue; }
+					if (receiver == this) { continue; }
+					bool select = false;
+					ImGui::MenuItem(receiver->GetName().c_str(), nullptr, &select);
+					if (select)
 					{
-						command->SetReceiver(receiver);
-						command->SetChiled(this, true);
-						command->Invoke();
-
-						if (client_) 
+						ParentCommand* command = new ParentCommand;
+						if (command)
 						{
-							client_->AddCommand(command); 
-							client_->AddMessage("\"SetParent\"");
+							command->SetReceiver(receiver);
+							command->SetChiled(this, true);
+							command->Invoke();
+
+							if (client_)
+							{
+								client_->AddCommand(command);
+								client_->AddMessage("\"SetParent\"");
+							}
 						}
 					}
 				}
+				ImGui::EndChild();
 			}
-			ImGui::TreePop();
 		}
 	}
 	else
 	{
 		if (ImGui::Button("RemoveParent"))
 		{
-
 			ParentCommand* command = new ParentCommand;
 			if (command)
 			{
@@ -138,6 +139,8 @@ void Receiver::Update(void)
 			}
 		}
 	}
+
+	Delete();
 }
 
 template<class T>
@@ -267,14 +270,14 @@ void Receiver::SelectParam(void)
 		}
 	}
 
-	ImGui::InputFloat3("position", transform_.position, 1);
+	ImGui::InputFloat3("position", transform_.position, 2);
 	VECTOR3 rot = transform_.rotation / 0.01744444f;
 	ImGui::InputFloat3("rotation", rot, 1);
 	transform_.rotation = rot * 0.01744444f;
-	ImGui::InputFloat3("scale", transform_.scale, 1);
+	ImGui::InputFloat3("scale", transform_.scale, 2);
 
 	VECTOR2 pivot = spriteRenderer_->GetPivot();
-	ImGui::InputFloat2("pivot", pivot, 1);
+	ImGui::InputFloat2("pivot", pivot, 2);
 	spriteRenderer_->SetPivot(pivot);
 
 	if (ctrl_->Trigger(Input::GAMEPAD_CIRCLE, DIK_RETURN))
@@ -360,8 +363,8 @@ void Receiver::Delete(void)
 					}
 				}
 			}
-			ImGui::SameLine(); ImGui::Text(" ");
-			ImGui::SameLine();
+			ImGui::SameLine(); 
+			ImGui::TextAlign(" ");
 			if (ImGui::Button("no", ImVec2(72.5f, 40))) { delete_ = false; }
 			ImGui::End();
 		}

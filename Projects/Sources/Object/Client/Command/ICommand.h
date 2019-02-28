@@ -6,14 +6,6 @@
 #include <FrameWork/Systems/DebugSetting/GUI.h>
 #include <FrameWork/Systems/Input/Controller.h>
 
-enum class CommandType : int8
-{
-	UNKOWN = -1,
-	SET_POSITION,
-
-	MAX
-};
-
 struct RECEIVER_DATA
 {
 	string*		name;

@@ -34,4 +34,9 @@ private:
 	GuiManager* guiManager;
 };
 
+namespace ImGui
+{
+	inline void TextAlign(const string& text) { ImGui::Text(text.c_str()); ImGui::SameLine(); }
+}
+
 #endif // _GUI_H_

@@ -126,26 +126,42 @@ void Client::DrawHierarchy(Receiver* draw, string& blank)
 	if (draw && !draw->IsHierarchy())
 	{
 		// 空白描画
-		ImGui::Text(blank.c_str()); ImGui::SameLine();
+		ImGui::TextAlign(blank);
 		// 選択カーソルの描画
-		if (draw == currentReceiver_) { ImGui::Text("> "); ImGui::SameLine(); }
-		else { ImGui::Text("  "); ImGui::SameLine(); }
+		if (draw == currentReceiver_) { ImGui::TextAlign(">"); }
+		else { ImGui::TextAlign(" "); }
+
+		if (draw->GetChild().size() > 0)
+		{
+			ImGui::TextAlign("*");
+		}
+		else
+		{
+			ImGui::TextAlign(" ");
+		}
 
 		bool select = false;
 		ImGui::MenuItem(draw->GetName().c_str(), nullptr, &select);
 		// 選択されたら現在のワークスペースに
-		if (select) { currentReceiver_ = draw; }
+		if (select) 
+		{
+			currentReceiver_ = draw; 
+			draw->SetHierarchyChild(!draw->IsHierarchChild());
+		}
 
 		// 描画済み状態
 		draw->SetHierarchy(true);
 
 		// 子要素の描画
-		const auto& child = draw->GetChild();
-		for (auto& c : child)
+		if (draw->IsHierarchChild())
 		{
-			// 空白の追加
-			string addBlank = blank + "  ";
-			DrawHierarchy(c, addBlank);
+			const auto& child = draw->GetChild();
+			for (auto& c : child)
+			{
+				// 空白の追加
+				string addBlank = blank + "  ";
+				DrawHierarchy(c, addBlank);
+			}
 		}
 	}
 }

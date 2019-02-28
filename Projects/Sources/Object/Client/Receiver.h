@@ -41,6 +41,9 @@ public:
 	bool IsHierarchy(void)				{ return isHierarchy_;		}
 	void SetHierarchy(bool hierarchy)	{ isHierarchy_ = hierarchy; }
 
+	bool IsHierarchChild(void)		{ return isHierarchyChild_; }
+	void SetHierarchyChild(bool is) { isHierarchyChild_ = is; }
+
 private:
 	template<class T>
 	bool InvokeCommand(void);
@@ -64,6 +67,7 @@ private:
 	Receiver*		parent_;
 	std::vector<Receiver*> child_;
 
+	bool isHierarchyChild_;
 	bool delete_;
 	bool isHierarchy_;
 };

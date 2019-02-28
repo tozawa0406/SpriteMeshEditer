@@ -121,22 +121,26 @@ int LoadAddTexture::SelectTexture(string& textureName)
 	ImGui::Dummy(ImVec2(0, 5));
 	if (ImGui::CollapsingHeader("TextureList"))
 	{
-		for (auto& obj : list_)
+		if (ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(400, 200)))
 		{
-			bool select = false;
-
-			string name = "";
-			for (size_t i = obj.name.size() - 1; obj.name[i] != '/' && i > 0; --i)
+			for (auto& obj : list_)
 			{
-				name.insert(name.begin(), obj.name[i]);
-			}
+				bool select = false;
 
-			ImGui::MenuItem(name.c_str(), nullptr, &select);
-			if (select)
-			{
-				textureName = obj.name;
-				ret  = obj.texNum;
+				string name = "";
+				for (size_t i = obj.name.size() - 1; obj.name[i] != '/' && i > 0; --i)
+				{
+					name.insert(name.begin(), obj.name[i]);
+				}
+
+				ImGui::MenuItem(name.c_str(), nullptr, &select);
+				if (select)
+				{
+					textureName = obj.name;
+					ret = obj.texNum;
+				}
 			}
+			ImGui::EndChild();
 		}
 	}
 	return ret;

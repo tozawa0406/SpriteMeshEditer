@@ -10,6 +10,7 @@ SpriteRenderer::SpriteRenderer(void) : ObjectRenderer(ObjectRenderer::RendererTy
 	, split_(VECTOR2(1))
 	, flagBillboard_(0)
 	, pivot_(VECTOR2(0.5f))
+	, layer_(0)
 	, vertexBuffer_(0)
 	, indexBuffer_(0)
 	, vertexNum_(4)

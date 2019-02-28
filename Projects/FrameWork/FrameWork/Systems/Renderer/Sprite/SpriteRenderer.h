@@ -31,6 +31,8 @@ public:
 	inline void SetSplit(const VECTOR2& split)	{ split_ = split;	}
 	/* @brief	ピボットの設定			*/
 	inline void SetPivot(const VECTOR2& pivot)	{ pivot_ = pivot;	}
+	/* @brief	レイヤーの設定			*/
+	inline void SetLayer(uint8 layer)			{ layer_ = layer;	}
 	/* @brief	ビルボードの設定		*/
 	inline void SetBillboard(bool billboard)	{ BitSetFlag(billboard, flagBillboard_, FLAG_BILLBOARD);	}
 	/* @brief	X軸の回転のないビルボードの設定		*/
@@ -44,6 +46,8 @@ public:
 	inline const VECTOR2&	GetSplit(void)		const { return split_;		}
 	/* @brief	ピボットの取得			*/
 	inline const VECTOR2&	GetPivot(void)		const { return pivot_;		}
+	/* @brief	レイヤーの取得			*/
+	inline uint8			GetLayer(void)		const { return layer_;		}
 	/* @ brief	ビルボード状態の取得	*/
 	inline bool				IsBillboard(void)	const { return BitCheck(flagBillboard_, FLAG_BILLBOARD);	}
 	/* @brief	X軸回転のないビルボードの設定		*/
@@ -77,6 +81,8 @@ private:
 	VECTOR2		split_;
 	//! ピボット
 	VECTOR2		pivot_;
+	//! レイヤー
+	uint8		layer_;
 
 	//! ビルボードフラグ
 	uint8		flagBillboard_;

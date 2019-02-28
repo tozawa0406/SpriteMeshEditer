@@ -175,6 +175,8 @@ void Receiver::SaveData(IOFile& file, bool parentCall)
 	file.WriteParam(&transform_.scale	, sizeof(VECTOR3));
 	VECTOR2 pivot = spriteRenderer_->GetPivot();
 	file.WriteParam(&pivot, sizeof(VECTOR2));
+	uint8 layer = spriteRenderer_->GetLayer();
+	file.WriteParam(&layer, sizeof(uint8));
 	size = textureName_.size();
 	file.WriteParam(&size, sizeof(size_t));
 	file.WriteParam(&textureName_[0], sizeof(char) * textureName_.size());
@@ -204,6 +206,9 @@ bool Receiver::LoadData(IOFile& file, bool parentCall)
 	VECTOR2 pivot = VECTOR2(0);
 	file.ReadParam(&pivot, sizeof(VECTOR2));
 	spriteRenderer_->SetPivot(pivot);
+	uint8 layer = 0;
+	file.ReadParam(&layer, sizeof(uint8));
+	spriteRenderer_->SetLayer(layer);
 
 	size = 0;
 	file.ReadParam(&size, sizeof(size_t));
@@ -250,7 +255,13 @@ bool Receiver::LoadData(IOFile& file, bool parentCall)
 
 void Receiver::SelectParam(void)
 {
+	if (!spriteRenderer_) { return; }
+
 	ImGui::InputText("name", &name_[0], 256);
+
+	int layer = static_cast<int>(spriteRenderer_->GetLayer());
+	ImGui::InputInt("layer", &layer);
+	spriteRenderer_->SetLayer(static_cast<uint8>(layer));
 
 	if (loadAdd_)
 	{

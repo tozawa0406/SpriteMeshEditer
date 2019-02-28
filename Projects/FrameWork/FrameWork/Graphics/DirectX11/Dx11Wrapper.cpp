@@ -460,8 +460,12 @@ void Dx11Wrapper::Draw(const SpriteRenderer* obj, const Shader* shader)
 	VECTOR2 pivot = VECTOR2(0.5f - obj->GetPivot().x, 0.5f - (1 - obj->GetPivot().y));
 	mtx.Translation(VECTOR3(s.x * pivot.x, s.y * pivot.y, 0));
 
+	// ƒŒƒCƒ„[‚Ì”½‰f
+	Transform temp = *obj->GetTransform();
+	temp.position.z += -0.0025f * obj->GetLayer();
+
 	// Transform
-	mtx.Create(obj->GetTransform());
+	mtx.Create(&temp);
 
 	if (!shader || (shader->GetVertexShader() == 0 && shader->GetPixelShader() == 0))
 	{

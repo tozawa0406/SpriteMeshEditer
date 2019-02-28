@@ -158,7 +158,7 @@ void GuiManager::GuiUpdate(void)
 	}
 
 	ImGui::SetNextWindowPos(ImVec2(padding, padding), ImGuiSetCond_Once);
-	ImGui::SetNextWindowSize(ImVec2(450, 500), ImGuiSetCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(450, 700), ImGuiSetCond_Once);
 
 	if (ImGui::Begin("Hierarchy"))
 	{

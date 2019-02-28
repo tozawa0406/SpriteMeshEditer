@@ -12,14 +12,20 @@ public:
 	/* @brief	デストラクタ		*/
 	virtual ~Pivot(void);
 
+	/* @brief	初期化処理			*/
 	virtual void Init(void)		override;
+	/* @brief	後処理				*/
 	virtual void Uninit(void)	override;
+	/* @brief	更新処理			*/
 	virtual void Update(void)	override;
 
+	/* @brief	トランスフォームの設定	*/
 	void SetTransform(const Transform& transform) { transform_.position = transform.position; }
 
 private:
+	//! トランスフォーム
 	Transform		transform_;
+	//! スプライト
 	SpriteRenderer* pivot_;
 };
 

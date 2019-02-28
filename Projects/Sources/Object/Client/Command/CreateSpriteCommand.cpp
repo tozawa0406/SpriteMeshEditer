@@ -1,5 +1,4 @@
 #include "CreateSpriteCommand.h"
-#include "Receiver.h"
 
 CreateSpriteCommand::CreateSpriteCommand(void) :
 	place_(-1)

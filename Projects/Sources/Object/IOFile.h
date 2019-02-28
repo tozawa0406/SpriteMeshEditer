@@ -23,13 +23,18 @@ public:
 	/* @brief	ファイルクローズ	*/
 	void CloseFile(void);
 
+	/* @brief	フォイルへの書き込み
+	 * @param	(param)		書き込む内容のポインタ
+	 * @param	(size)		バイト数	*/
 	void WriteParam(void* param, size_t size);
-
+	
+	/* @brief	フォイルからの読込
+	 * @param	(param)		読み込む内容のポインタ
+	 * @param	(size)		バイト数	*/
 	void ReadParam(void* param, size_t size);
 
-
-
 private:
+	//! ファイルポインタ
 	std::fstream fs_;
 };
 

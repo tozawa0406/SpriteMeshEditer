@@ -2,9 +2,7 @@
 #include "Receiver.h"
 #include "../Pivot.h"
 #include "../Search.h"
-#include "CreateSpriteCommand.h"
-
-#include "../IOFile.h"
+#include "Command/CreateSpriteCommand.h"
 
 Client::Client(void) : Object(ObjectTag::STATIC)
 	, currentReceiver_(nullptr)
@@ -38,6 +36,7 @@ void Client::Uninit(void)
 
 void Client::Update(void)
 {
+	// キーボード対応
 	if (ctrl_->Press(Input::GAMEPAD_L1, DIK_LCONTROL))
 	{
 		if (ctrl_->Press(Input::GAMEPAD_L2, DIK_LSHIFT))
@@ -51,25 +50,33 @@ void Client::Update(void)
 		{
 			Undo();
 		}
+		else if (ctrl_->Trigger(Input::GAMEPAD_START, DIK_S))
+		{
+			SaveData();
+		}
 	}
 }
 
 void Client::InspectorView(void)
 {
+	// 現在のスプライトの情報
 	if (currentReceiver_)
 	{
 		currentReceiver_->Update();
 	}
 
+	// ピボットの位置調整
 	if (pivot_ && currentReceiver_)
 	{
-		pivot_->SetTransform(currentReceiver_->GetTransform());
+		Transform transform = currentReceiver_->GetTransform();
+		transform.position.z -= 1;
+		pivot_->SetTransform(transform);
 	}
 }
 
 void Client::ConsoleView(void)
 {
-	//	ImGui::Text("prevSize %d, nextSize %d", prevCommand_.size(), nextCommand_.size());
+	// コンソールでメッセージ描画
 	for (auto& m : message_)
 	{
 		ImGui::Text(m.c_str());
@@ -78,26 +85,28 @@ void Client::ConsoleView(void)
 
 void Client::HierarchyView(void)
 {
+	// ヒエラルキー描画情報をリセット
 	for (auto& r : receiverList_) { if (r) { r->SetHierarchy(false); } }
 
+	// ファイル名
 	ImGui::InputText("fileName", &name_[0], 256);
 
+	// Undo/Redoボタン
 	ImGui::Dummy(ImVec2(0, 5));
 	if (ImGui::Button("Undo")) { Undo(); }
 	ImGui::SameLine();
 	if (ImGui::Button("Redo")) { Redo(); }
 
-	if (ImGui::Button("CreateSprite"))
-	{
-		CreateReceiver();
-	}
+	// スプライト追加
+	if (ImGui::Button("CreateSprite")) { CreateReceiver(); }
 
+	// ヒエラルキーにスプライトの一覧描画
 	ImGui::Dummy(ImVec2(0, 5));
-
-	if(ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(400, 200)))
+	if(ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(400, 400)))
 	{
 		for (auto& list : receiverList_)
 		{
+			// 親がいないものを描画(子は親から再起で描画される)
 			if (list && !list->GetTransform().parent)
 			{
 				string blank = " ";
@@ -107,31 +116,34 @@ void Client::HierarchyView(void)
 		ImGui::EndChild();
 	}
 
-	if (ImGui::Button("Save", ImVec2(400, 40)))
-	{
-		SaveData();
-	}
+	// セーブ処理
+	if (ImGui::Button("Save", ImVec2(400, 40))) { SaveData(); }
 }
 
 void Client::DrawHierarchy(Receiver* draw, string& blank)
 {
+	// ヒエラルキービューに描画
 	if (draw && !draw->IsHierarchy())
 	{
-		bool select = false;
+		// 空白描画
 		ImGui::Text(blank.c_str()); ImGui::SameLine();
+		// 選択カーソルの描画
 		if (draw == currentReceiver_) { ImGui::Text("> "); ImGui::SameLine(); }
 		else { ImGui::Text("  "); ImGui::SameLine(); }
-		ImGui::MenuItem(draw->GetName().c_str(), nullptr, &select);
-		if (select)
-		{
-			currentReceiver_ = draw;
-		}
 
+		bool select = false;
+		ImGui::MenuItem(draw->GetName().c_str(), nullptr, &select);
+		// 選択されたら現在のワークスペースに
+		if (select) { currentReceiver_ = draw; }
+
+		// 描画済み状態
 		draw->SetHierarchy(true);
 
-		const auto& chiled = draw->GetChild();
-		for (auto& c : chiled)
+		// 子要素の描画
+		const auto& child = draw->GetChild();
+		for (auto& c : child)
 		{
+			// 空白の追加
 			string addBlank = blank + "  ";
 			DrawHierarchy(c, addBlank);
 		}
@@ -140,17 +152,21 @@ void Client::DrawHierarchy(Receiver* draw, string& blank)
 
 void Client::AddCommand(ICommand* command)
 {
+	// 戻る処理の追加
 	prevCommand_.insert(prevCommand_.begin(), command);
 	for (auto& c : nextCommand_) { UninitDeletePtr(c); }
 
+	// 進む処理のリセット
 	nextCommand_.clear();
 }
 
 void Client::AddMessage(const string& message)
 {
+	// メッセージの追加
 	message_.insert(message_.begin(), message);
 	int size = static_cast<int>(message_.size());
-	if (size > 6)
+	// 一定のメッセージ履歴は消去
+	if (size > 30)
 	{
 		message_.erase(message_.end() - 1);
 	}
@@ -158,13 +174,17 @@ void Client::AddMessage(const string& message)
 
 void Client::Undo(void)
 {
+	// 戻るコマンドがあるか
 	if (prevCommand_.size() <= 0) { return; }
 
+	// 先頭を実行
 	if (prevCommand_[0])
 	{
 		prevCommand_[0]->Undo();
 
+		// 進む処理に追加
 		nextCommand_.insert(nextCommand_.begin(), prevCommand_[0]);
+		// 戻る処理からは削除
 		prevCommand_.erase(prevCommand_.begin());
 	}
 
@@ -173,13 +193,17 @@ void Client::Undo(void)
 
 void Client::Redo(void)
 {
+	// 進むコマンドはあるか
 	if (nextCommand_.size() <= 0) { return; }
 
+	// 先頭を実行
 	if (nextCommand_[0])
 	{
 		nextCommand_[0]->Redo();
 
+		// 戻る処理に追加
 		prevCommand_.insert(prevCommand_.begin(), nextCommand_[0]);
+		// 進む処理からは削除
 		nextCommand_.erase(nextCommand_.begin());
 	}
 
@@ -188,22 +212,30 @@ void Client::Redo(void)
 
 void Client::CreateReceiver(IOFile* file)
 {
+	// コマンド発行
 	CreateSpriteCommand* command = new CreateSpriteCommand;
 	if (command)
 	{
+		// スプライト生成
 		Receiver* client = new Receiver;
 		if (client)
 		{
+			// スプライト初期化
 			client->SetCtrl(ctrl_);
 			client->Init(this);
 
+			// リストに追加
 			receiverList_.emplace_back(client);
 
+			// ロード時
 			if (file)
 			{
+				// コマンドは積まない
 				DeletePtr(command);
+				// データのロード
 				if (!client->LoadData(*file, false))
 				{
+					// 失敗した場合、スプライトのメモリ解放
 					RemoveVector(receiverList_, client);
 					UninitDeletePtr(client);
 					return;
@@ -211,6 +243,7 @@ void Client::CreateReceiver(IOFile* file)
 			}
 			else
 			{
+				// コマンドの実行
 				command->SetReceiver(client);
 				command->SetClient(this);
 				command->Invoke();
@@ -219,6 +252,7 @@ void Client::CreateReceiver(IOFile* file)
 				AddMessage("\"Create Sprite\"");
 			}
 
+			// ワークスペースとして扱う
 			currentReceiver_ = client;
 		}
 	}
@@ -226,7 +260,7 @@ void Client::CreateReceiver(IOFile* file)
 
 void Client::SaveData(void)
 {
-	IOFile file;
+	// ディレクトリ名の生成
 	string directory = Define::ResourceDirectoryName + "Export/" + name_;
 
 	for (size_t i = directory.size() - 1; i > 0; --i)
@@ -235,23 +269,29 @@ void Client::SaveData(void)
 	}
 
 	directory += ".bin";
-	file.OpenFile(directory, std::ios::out);
 
-	size_t size = receiverList_.size();
-	file.WriteParam(&size, sizeof(size_t));
-	for (auto& client : receiverList_)
+	// 書き込み
+	IOFile file;
+	if (file.OpenFile(directory, std::ios::out))
 	{
-		if (client) { client->SaveData(file, false); }
+		// 書き込む量を先に指定
+		size_t size = receiverList_.size();
+		file.WriteParam(&size, sizeof(size_t));
+		for (auto& client : receiverList_)
+		{
+			// それぞれを書き込む
+			if (client) { client->SaveData(file, false); }
+		}
+		// 終了
+		file.CloseFile();
 	}
-	file.CloseFile();
 
 	AddMessage("\"Save\" is complete");
 }
 
 void Client::LoadData(void)
 {
-	IOFile file;
-
+	// ディレクトリ名の生成
 	string directory = Define::ResourceDirectoryName + "Export/";
 
 	std::vector<string> list;
@@ -275,17 +315,23 @@ void Client::LoadData(void)
 	name_.erase(name_.begin() + num);
 	name_.resize(256);
 
+	// 読み込み
+	IOFile file;
 	if (file.OpenFile(list[0], std::ios::in))
 	{
+		// 全体量の取得
 		size_t size = 0;
 		file.ReadParam(&size, sizeof(size_t));
 
 		for (size_t i = 0; i < size; ++i)
 		{
+			// 子要素読み込みで全体量に達したら
 			if (receiverList_.size() >= size) { break; }
 
+			// それぞれの読込
 			CreateReceiver(&file);
 		}
+		// 終了
 		file.CloseFile();
 
 		AddMessage("\"Load\" is complete");
@@ -319,10 +365,12 @@ void Client::AddSprite(Receiver* receiver, int place)
 {
 	if (place > 0)
 	{
+		// 場所指定があればそこに追加
 		receiverList_.insert(receiverList_.begin() + place, receiver);
 	}
 	else
 	{
+		// 指定がなければ後ろに追加
 		receiverList_.emplace_back(receiver);
 	}
 }

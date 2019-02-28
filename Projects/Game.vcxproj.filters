@@ -12,16 +12,13 @@
     <Filter Include="Source\Object">
       <UniqueIdentifier>{42e8fc0f-778c-4c7a-b8f1-f890c767e261}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Object\UI">
-      <UniqueIdentifier>{c1f30dfa-b770-4b1e-8678-7a87f4fd028c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Object\Billboard">
-      <UniqueIdentifier>{cbb48814-e9cf-4ddf-83d8-19966402b834}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Scene">
       <UniqueIdentifier>{3c00dc18-912c-462f-9a47-13fac996df8f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Object\Command">
+    <Filter Include="Source\Object\Client">
+      <UniqueIdentifier>{88a33f63-2d04-42f7-be78-b336bbf815fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Object\Client\Command">
       <UniqueIdentifier>{63dfb7db-911d-4ee0-b83a-03c0f2e74af1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -50,44 +47,44 @@
     <ClCompile Include="Sources\Object\LoadAddTexture.cpp">
       <Filter>Source\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Object\Command\PositionCommand.cpp">
-      <Filter>Source\Object\Command</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Object\Command\RotationCommand.cpp">
-      <Filter>Source\Object\Command</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Object\Command\ScaleCommand.cpp">
-      <Filter>Source\Object\Command</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Object\Command\PivotCommand.cpp">
-      <Filter>Source\Object\Command</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Object\Pivot.cpp">
       <Filter>Source\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Object\Command\NameCommand.cpp">
-      <Filter>Source\Object\Command</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Object\Command\TextureNumCommand.cpp">
-      <Filter>Source\Object\Command</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Object\Command\Receiver.cpp">
-      <Filter>Source\Object\Command</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Object\Command\Client.cpp">
-      <Filter>Source\Object\Command</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Object\IOFile.cpp">
       <Filter>Source\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Object\Command\CreateSpriteCommand.cpp">
-      <Filter>Source\Object\Command</Filter>
+    <ClCompile Include="Sources\Object\Client\Client.cpp">
+      <Filter>Source\Object\Client</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Object\Command\DeleteCommand.cpp">
-      <Filter>Source\Object\Command</Filter>
+    <ClCompile Include="Sources\Object\Client\Receiver.cpp">
+      <Filter>Source\Object\Client</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Object\Command\ParentCommand.cpp">
-      <Filter>Source\Object\Command</Filter>
+    <ClCompile Include="Sources\Object\Client\Command\PositionCommand.cpp">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Client\Command\RotationCommand.cpp">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Client\Command\ScaleCommand.cpp">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Client\Command\TextureNumCommand.cpp">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Client\Command\CreateSpriteCommand.cpp">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Client\Command\DeleteCommand.cpp">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Client\Command\NameCommand.cpp">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Client\Command\ParentCommand.cpp">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Client\Command\PivotCommand.cpp">
+      <Filter>Source\Object\Client\Command</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -124,47 +121,47 @@
     <ClInclude Include="Sources\Object\LoadAddTexture.h">
       <Filter>Source\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Object\Command\ICommand.h">
-      <Filter>Source\Object\Command</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Object\Command\PositionCommand.h">
-      <Filter>Source\Object\Command</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Object\Command\RotationCommand.h">
-      <Filter>Source\Object\Command</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Object\Command\ScaleCommand.h">
-      <Filter>Source\Object\Command</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Object\Command\PivotCommand.h">
-      <Filter>Source\Object\Command</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Object\Pivot.h">
       <Filter>Source\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Object\Command\NameCommand.h">
-      <Filter>Source\Object\Command</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Object\Command\TextureNumCommand.h">
-      <Filter>Source\Object\Command</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Object\Command\Receiver.h">
-      <Filter>Source\Object\Command</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Object\Command\Client.h">
-      <Filter>Source\Object\Command</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Object\IOFile.h">
       <Filter>Source\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Object\Command\CreateSpriteCommand.h">
-      <Filter>Source\Object\Command</Filter>
+    <ClInclude Include="Sources\Object\Client\Client.h">
+      <Filter>Source\Object\Client</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Object\Command\DeleteCommand.h">
-      <Filter>Source\Object\Command</Filter>
+    <ClInclude Include="Sources\Object\Client\Receiver.h">
+      <Filter>Source\Object\Client</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Object\Command\ParentCommand.h">
-      <Filter>Source\Object\Command</Filter>
+    <ClInclude Include="Sources\Object\Client\Command\PivotCommand.h">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\Command\PositionCommand.h">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\Command\RotationCommand.h">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\Command\ScaleCommand.h">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\Command\TextureNumCommand.h">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\Command\CreateSpriteCommand.h">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\Command\DeleteCommand.h">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\Command\ICommand.h">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\Command\NameCommand.h">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\Command\ParentCommand.h">
+      <Filter>Source\Object\Client\Command</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

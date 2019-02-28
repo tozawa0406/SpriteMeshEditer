@@ -1,5 +1,5 @@
 #include "PositionCommand.h"
-#include "Receiver.h"
+#include "../Receiver.h"
 
 PositionCommand::PositionCommand(void) : 
 	prevPosition_(0)

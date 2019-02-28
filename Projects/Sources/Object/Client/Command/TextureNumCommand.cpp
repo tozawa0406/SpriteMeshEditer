@@ -1,5 +1,5 @@
 #include "TextureNumCommand.h"
-#include "Receiver.h"
+#include "../Receiver.h"
 
 TextureNumCommand::TextureNumCommand(void) : 
 	prevTexNum_(0)

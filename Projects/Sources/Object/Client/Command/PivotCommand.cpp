@@ -1,5 +1,5 @@
 #include "PivotCommand.h"
-#include "Receiver.h"
+#include "../Receiver.h"
 
 PivotCommand::PivotCommand(void) : 
 	prevPivot_(0)

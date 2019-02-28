@@ -2,8 +2,8 @@
 #define _PARENT_COMMAND_H_
 
 #include "ICommand.h"
-#include "Receiver.h"
-#include "Client.h"
+#include "../Receiver.h"
+#include "../Client.h"
 
 class ParentCommand : public ICommand
 {
@@ -20,11 +20,11 @@ public:
 	/* @brief	–ß‚é		*/
 	virtual void Redo(void)		override;
 
-	inline void SetChiled(Receiver* chiled, bool add) { chiled_ = chiled; add_ = add; }
+	inline void SetChiled(Receiver* child, bool add) { child_ = child; add_ = add; }
 
 private:
 	bool		add_;
-	Receiver*	chiled_;
+	Receiver*	child_;
 };
 
 #endif // _PARENT_COMMAND_H_

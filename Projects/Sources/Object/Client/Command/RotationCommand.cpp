@@ -1,5 +1,5 @@
 #include "RotationCommand.h"
-#include "Receiver.h"
+#include "../Receiver.h"
 
 RotationCommand::RotationCommand(void) : 
 	prevRotation_(0)

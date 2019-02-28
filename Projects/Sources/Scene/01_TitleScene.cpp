@@ -1,9 +1,9 @@
 #include "01_TitleScene.h"
 #include <FrameWork/Scene/SceneManager.h>
 
-#include "../Object/Command/PositionCommand.h"
+#include "../Object/Client/Command/PositionCommand.h"
 
-#include "../Object/Command/Client.h"
+#include "../Object/Client/Client.h"
 #include "../Object/Pivot.h"
 
 TitleScene::TitleScene(void) : GUI(Systems::Instance(), nullptr, "SceneTitle")

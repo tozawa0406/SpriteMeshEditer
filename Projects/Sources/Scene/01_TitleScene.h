@@ -8,7 +8,7 @@
 #define _TITLE_SCENE_H_
 
 #include <FrameWork/Scene/BaseScene.h>
-#include "../Object/Command/Receiver.h"
+#include "../Object/Client/Receiver.h"
 #include <FrameWork/Object/ObjectManager.h>
 
 class Client;

@@ -1,5 +1,5 @@
 #include "NameCommand.h"
-#include "Receiver.h"
+#include "../Receiver.h"
 
 NameCommand::NameCommand(void) : 
 	prevName_("")

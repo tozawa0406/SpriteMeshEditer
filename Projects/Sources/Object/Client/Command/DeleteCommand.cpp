@@ -1,5 +1,4 @@
 #include "DeleteCommand.h"
-#include "Receiver.h"
 
 DeleteCommand::DeleteCommand(void) :
 	place_(-1)
@@ -27,6 +26,17 @@ void DeleteCommand::Invoke(void)
 	place_ = client_->RemoveSprite(receiver_);
 	parent_ = receiver_->GetParent();
 	receiver_->SetParent(nullptr);
+
+	auto children = receiver_->GetChild();
+	for(auto& child : children)
+	{
+		if(child)
+		{ 
+			child->SetParent(nullptr);
+			children_.emplace_back(child);
+		}
+	}
+
 	if (SpriteRenderer* renderer = const_cast<SpriteRenderer*>(receiver_->GetSpriteRenderer()))
 	{
 		renderer->SetEnable(false);
@@ -39,6 +49,16 @@ void DeleteCommand::Undo(void)
 
 	client_->AddSprite(receiver_, place_);	
 	receiver_->SetParent(parent_);
+
+	for (auto& child : children_)
+	{
+		if (child)
+		{
+			child->SetParent(receiver_);
+		}
+	}
+	children_.clear();
+
 	if (SpriteRenderer* renderer = const_cast<SpriteRenderer*>(receiver_->GetSpriteRenderer()))
 	{
 		renderer->SetEnable(true);
@@ -54,6 +74,17 @@ void DeleteCommand::Redo(void)
 	place_ = client_->RemoveSprite(receiver_);
 	parent_ = receiver_->GetParent();
 	receiver_->SetParent(nullptr);
+
+	auto children = receiver_->GetChild();
+	for (auto& child : children)
+	{
+		if (child)
+		{
+			child->SetParent(nullptr);
+			children_.emplace_back(child);
+		}
+	}
+
 	if (SpriteRenderer* renderer = const_cast<SpriteRenderer*>(receiver_->GetSpriteRenderer()))
 	{
 		renderer->SetEnable(false);

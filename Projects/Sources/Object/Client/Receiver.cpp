@@ -1,14 +1,14 @@
 #include "Receiver.h"
 #include "Client.h"
 
-#include "PositionCommand.h"
-#include "RotationCommand.h"
-#include "ScaleCommand.h"
-#include "PivotCommand.h"
-#include "NameCommand.h"
-#include "TextureNumCommand.h"
-#include "DeleteCommand.h"
-#include "ParentCommand.h"
+#include "Command/PositionCommand.h"
+#include "Command/RotationCommand.h"
+#include "Command/ScaleCommand.h"
+#include "Command/PivotCommand.h"
+#include "Command/NameCommand.h"
+#include "Command/TextureNumCommand.h"
+#include "Command/DeleteCommand.h"
+#include "Command/ParentCommand.h"
 
 Receiver::Receiver(void) :
 	ctrl_(nullptr)
@@ -378,7 +378,6 @@ void Receiver::SetParent(Receiver* parent)
 	}
 	else
 	{
-		parent_->SetChild(this, false);
 		parent_ = nullptr;
 		transform_.parent = nullptr;
 	}

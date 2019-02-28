@@ -1,17 +1,17 @@
-#ifndef _CREATE_SPRITE_COMMAND_H_
-#define _CREATE_SPRITE_COMMAND_H_
+#ifndef _DELETE_COMMAND_H_
+#define _DELETE_COMMAND_H_
 
 #include "ICommand.h"
-#include "Receiver.h"
-#include "Client.h"
+#include "../Receiver.h"
+#include "../Client.h"
 
-class CreateSpriteCommand : public ICommand
+class DeleteCommand : public ICommand
 {
 public:
 	/* @brief	コンストラクタ		*/
-	CreateSpriteCommand(void);
+	DeleteCommand(void);
 	/* @brief	デストラクタ		*/
-	~CreateSpriteCommand(void);
+	~DeleteCommand(void);
 
 	/* @brief	後処理		*/
 	virtual void Uninit(void) override;
@@ -28,6 +28,8 @@ public:
 private:
 	int			place_;
 	Client*		client_;
+	Receiver*	parent_;
+	std::vector<Receiver*> children_;
 };
 
-#endif // _CREATE_SPRITE_COMMAND_H_
+#endif // _DELETE_COMMAND_H_

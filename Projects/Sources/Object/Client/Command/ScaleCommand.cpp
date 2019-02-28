@@ -1,5 +1,5 @@
 #include "ScaleCommand.h"
-#include "Receiver.h"
+#include "../Receiver.h"
 
 ScaleCommand::ScaleCommand(void) : 
 	prevScale_(0)

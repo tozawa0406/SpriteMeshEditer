@@ -1,7 +1,7 @@
 #ifndef _RECEIVER_H_
 #define _RECEIVER_H_
 
-#include "ICommand.h"
+#include "Command/ICommand.h"
 #include "../IOFile.h"
 
 class Client;

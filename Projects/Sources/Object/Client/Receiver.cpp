@@ -9,6 +9,7 @@
 #include "Command/TextureNumCommand.h"
 #include "Command/DeleteCommand.h"
 #include "Command/ParentCommand.h"
+#include "Command/LayerCommand.h"
 
 Receiver::Receiver(void) :
 	ctrl_(nullptr)
@@ -55,6 +56,7 @@ void Receiver::Init(Client* client)
 	if (beforeData_.spriteRenderer && spriteRenderer_)
 	{
 		beforeData_.spriteRenderer->SetPivot(spriteRenderer_->GetPivot());
+		beforeData_.spriteRenderer->SetLayer(spriteRenderer_->GetLayer());
 		beforeData_.spriteRenderer->SetTexture(spriteRenderer_->GetTexture());
 	}
 
@@ -215,8 +217,7 @@ bool Receiver::LoadData(IOFile& file, bool parentCall)
 	textureName_.resize(size);
 	file.ReadParam(&textureName_[0], sizeof(char) * size);
 
-	if (loadAdd_) { 
-		spriteRenderer_->SetTexture(loadAdd_->SetTexture(textureName_)); }
+	if (loadAdd_) { spriteRenderer_->SetTexture(loadAdd_->SetTexture(textureName_)); }
 
 	size = 0;
 	file.ReadParam(&size, sizeof(size_t));
@@ -248,6 +249,7 @@ bool Receiver::LoadData(IOFile& file, bool parentCall)
 	if (spriteRenderer_ && spriteRenderer_)
 	{
 		beforeData_.spriteRenderer->SetPivot(spriteRenderer_->GetPivot());
+		beforeData_.spriteRenderer->SetLayer(spriteRenderer_->GetLayer());
 		beforeData_.spriteRenderer->SetTexture(spriteRenderer_->GetTexture());
 	}
 	return true;
@@ -261,7 +263,17 @@ void Receiver::SelectParam(void)
 
 	int layer = static_cast<int>(spriteRenderer_->GetLayer());
 	ImGui::InputInt("layer", &layer);
-	spriteRenderer_->SetLayer(static_cast<uint8>(layer));
+	if (static_cast<uint8>(layer) != spriteRenderer_->GetLayer())
+	{
+		spriteRenderer_->SetLayer(static_cast<uint8>(layer));
+		if (InvokeCommand<LayerCommand>())
+		{
+			if (client_)
+			{
+				client_->AddMessage("\"Layer reflected change\" in Sprite");
+			}
+		}
+	}
 
 	if (loadAdd_)
 	{

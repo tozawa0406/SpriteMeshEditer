@@ -86,6 +86,9 @@
     <ClCompile Include="Sources\Object\Client\Command\PivotCommand.cpp">
       <Filter>Source\Object\Client\Command</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Object\Client\Command\LayerCommand.cpp">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Object\ObjectTag.h">
@@ -161,6 +164,9 @@
       <Filter>Source\Object\Client\Command</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Object\Client\Command\ParentCommand.h">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\Command\LayerCommand.h">
       <Filter>Source\Object\Client\Command</Filter>
     </ClInclude>
   </ItemGroup>

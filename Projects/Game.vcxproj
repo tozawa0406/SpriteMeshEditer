@@ -23,6 +23,7 @@
     <ClCompile Include="Sources\Object\Client\Client.cpp" />
     <ClCompile Include="Sources\Object\Client\Command\CreateSpriteCommand.cpp" />
     <ClCompile Include="Sources\Object\Client\Command\DeleteCommand.cpp" />
+    <ClCompile Include="Sources\Object\Client\Command\LayerCommand.cpp" />
     <ClCompile Include="Sources\Object\Client\Command\NameCommand.cpp" />
     <ClCompile Include="Sources\Object\Client\Command\ParentCommand.cpp" />
     <ClCompile Include="Sources\Object\Client\Command\PivotCommand.cpp" />
@@ -46,6 +47,7 @@
     <ClInclude Include="Sources\Object\Client\Command\CreateSpriteCommand.h" />
     <ClInclude Include="Sources\Object\Client\Command\DeleteCommand.h" />
     <ClInclude Include="Sources\Object\Client\Command\ICommand.h" />
+    <ClInclude Include="Sources\Object\Client\Command\LayerCommand.h" />
     <ClInclude Include="Sources\Object\Client\Command\NameCommand.h" />
     <ClInclude Include="Sources\Object\Client\Command\ParentCommand.h" />
     <ClInclude Include="Sources\Object\Client\Command\PivotCommand.h" />

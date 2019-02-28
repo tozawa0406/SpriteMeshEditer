@@ -277,7 +277,7 @@ void Client::CreateReceiver(IOFile* file)
 void Client::SaveData(void)
 {
 	// ディレクトリ名の生成
-	string directory = Define::ResourceDirectoryName + "Export/" + name_;
+	string directory = "Export/" + name_;
 
 	for (size_t i = directory.size() - 1; i > 0; --i)
 	{
@@ -308,7 +308,7 @@ void Client::SaveData(void)
 void Client::LoadData(void)
 {
 	// ディレクトリ名の生成
-	string directory = Define::ResourceDirectoryName + "Export/";
+	string directory = "Export/";
 
 	std::vector<string> list;
 	SearchFile search;

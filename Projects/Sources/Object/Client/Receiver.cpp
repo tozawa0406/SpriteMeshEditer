@@ -295,7 +295,7 @@ void Receiver::SelectParam(void)
 
 	ImGui::InputFloat3("position", transform_.position, 2);
 	VECTOR3 rot = transform_.rotation / 0.01744444f;
-	ImGui::InputFloat3("rotation", rot, 1);
+	ImGui::InputFloat3("rotation", rot, 2);
 	transform_.rotation = rot * 0.01744444f;
 	ImGui::InputFloat3("scale", transform_.scale, 2);
 

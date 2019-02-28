@@ -37,7 +37,7 @@ int LoadAddTexture::SetUpLoading(Loading* loading, int sceneNum)
 	if (search_)
 	{
 		std::vector<string> temp;
-		search_->Search(Define::ResourceDirectoryName + "Edit/", "jpg", temp);
+		search_->Search("Edit/", "jpg", temp);
 		for (auto name : temp)
 		{
 			ADD_TEXTURE_DATA add;
@@ -46,7 +46,7 @@ int LoadAddTexture::SetUpLoading(Loading* loading, int sceneNum)
 			list_.emplace_back(add);
 		}
 		temp.clear();
-		search_->Search(Define::ResourceDirectoryName + "Edit/", "png", temp);
+		search_->Search("Edit/", "png", temp);
 		for (auto name : temp)
 		{
 			ADD_TEXTURE_DATA add;
@@ -148,9 +148,22 @@ int LoadAddTexture::SelectTexture(string& textureName)
 
 int LoadAddTexture::SetTexture(const string& texName)
 {
+	string name = "";
+	if (texName.size() <= 0) { return 0; }
+	for (size_t i = texName.size() - 1; i > 0 && texName[i] != '/'; --i)
+	{
+		name.insert(name.begin(), texName[i]);
+	}
+
 	for (auto& obj : list_)
 	{
-		if (texName == obj.name)
+		string listName = "";
+		for (size_t i = obj.name.size() - 1; i > 0 && obj.name[i] != '/'; --i)
+		{
+			listName.insert(listName.begin(), obj.name[i]);
+		}
+
+		if (name == listName)
 		{
 			return obj.texNum;
 		}

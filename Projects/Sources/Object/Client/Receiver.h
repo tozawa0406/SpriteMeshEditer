@@ -25,10 +25,10 @@ public:
 
 	void SetName(const string& name)				{ name_ = name;				}
 	void SetTransform(const Transform& transform)	{ transform_ = transform;	}
-
 	void SetBeforeData(const RECEIVER_DATA& beforeData) { beforeData_ = beforeData; }
-
 	void SetCtrl(Controller* ctrl) { ctrl_ = ctrl; }
+
+	void SetEnable(bool enable);
 
 	void SaveData(SPRITE_MESH_RESOURCE& resource);
 	bool LoadData(SPRITE_MESH_RESOURCE& resource);

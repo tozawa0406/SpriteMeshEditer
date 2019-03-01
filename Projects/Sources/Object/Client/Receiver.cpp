@@ -94,7 +94,7 @@ void Receiver::Update(void)
 	}
 	if (ImGui::Button("enable")) 
 	{
-		spriteRenderer_->SetEnable(!spriteRenderer_->IsEnable());
+		SetEnable(!spriteRenderer_->IsEnable());
 	}
 
 	SelectParam();
@@ -172,6 +172,19 @@ bool Receiver::InvokeCommand(void)
 		return true;
 	}
 	return false;
+}
+
+void Receiver::SetEnable(bool enable)
+{
+	if (spriteRenderer_)
+	{
+		spriteRenderer_->SetEnable(enable);
+	}
+
+	for(auto& child : child_)
+	{
+		child->SetEnable(enable);
+	}
 }
 
 void Receiver::SaveData(SPRITE_MESH_RESOURCE& resource)

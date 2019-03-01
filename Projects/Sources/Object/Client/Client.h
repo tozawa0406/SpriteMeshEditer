@@ -92,6 +92,10 @@ private:
 	string					name_;
 	//! ピボット
 	Pivot*					pivot_;
+	//! ダブルクリック判定
+	int						selectedCnt_;
+	//! ワークスペース
+	Receiver*				workReceiver_;
 	//! ヒエラルキービュー
 	std::vector<Receiver*>	receiverList_;
 	//! 現在のワークスペース

@@ -11,6 +11,8 @@ Client::Client(void) : Object(ObjectTag::STATIC)
 	, ctrl_(nullptr)
 	, pivot_(nullptr)
 	, name_("")
+	, selectedCnt_(0)
+	, workReceiver_(nullptr)
 {
 }
 
@@ -55,6 +57,17 @@ void Client::Update(void)
 		else if (ctrl_->Trigger(Input::GAMEPAD_START, DIK_S))
 		{
 			SaveData();
+		}
+	}
+
+	if (selectedCnt_ > 0)
+	{
+		selectedCnt_++;
+		if (selectedCnt_ > 20)
+		{
+			selectedCnt_ = 0; 
+			currentReceiver_ = workReceiver_;
+			workReceiver_ = nullptr;
 		}
 	}
 }
@@ -145,8 +158,9 @@ void Client::DrawHierarchy(Receiver* draw, string& blank)
 		// 選択されたら現在のワークスペースに
 		if (select) 
 		{
-			currentReceiver_ = draw; 
-			draw->SetHierarchyChild(!draw->IsHierarchChild());
+			workReceiver_ = draw;
+			if (selectedCnt_ > 0) { draw->SetHierarchyChild(!draw->IsHierarchChild()); }
+			else { selectedCnt_++; } 			
 		}
 
 		// 描画済み状態

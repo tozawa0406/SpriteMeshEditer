@@ -70,9 +70,7 @@ void Client::InspectorView(void)
 	// ピボットの位置調整
 	if (pivot_ && currentReceiver_)
 	{
-		Transform transform = currentReceiver_->GetTransform();
-		transform.position.z -= 1;
-		pivot_->SetTransform(transform);
+		pivot_->SetTransform(currentReceiver_->GetTransform());
 	}
 }
 

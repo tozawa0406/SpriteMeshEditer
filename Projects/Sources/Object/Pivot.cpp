@@ -3,6 +3,7 @@
 Pivot::Pivot(void) : Object(ObjectTag::STATIC)
 	, pivot_(nullptr)
 {
+	transform_.parent = nullptr;
 }
 
 Pivot::~Pivot(void)
@@ -16,12 +17,11 @@ void Pivot::Init(void)
 	{
 		pivot_->Init(static_cast<int>(Resources::Texture::Base::PIVOT), &transform_);
 		transform_.position.z = -1;
+		transform_.scale = 0.1f;
 
 		MATERIAL m;
 		m.diffuse = COLOR(1, 0, 0, 1);
 		pivot_->SetMaterial(m);
-
-		transform_.scale = VECTOR3(0.25f);
 	}
 }
 

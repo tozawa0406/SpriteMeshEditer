@@ -84,6 +84,19 @@ void Receiver::Update(void)
 	if (!ctrl_) { return; }
 	if (!spriteRenderer_) { return; }
 
+	if (spriteRenderer_->IsEnable())
+	{
+		ImGui::TextAlign("true ");
+	}
+	else
+	{
+		ImGui::TextAlign("false");
+	}
+	if (ImGui::Button("enable")) 
+	{
+		spriteRenderer_->SetEnable(!spriteRenderer_->IsEnable());
+	}
+
 	SelectParam();
 
 	if (!client_) { return; }

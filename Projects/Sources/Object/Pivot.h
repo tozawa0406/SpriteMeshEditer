@@ -20,7 +20,7 @@ public:
 	virtual void Update(void)	override;
 
 	/* @brief	トランスフォームの設定	*/
-	void SetTransform(const Transform& transform) { transform_.position = transform.position; }
+	void SetTransform(const Transform& transform) { transform_.parent = &transform; }
 
 private:
 	//! トランスフォーム

@@ -161,33 +161,22 @@ bool Receiver::InvokeCommand(void)
 	return false;
 }
 
-void Receiver::SaveData(IOFile& file, bool parentCall)
+void Receiver::SaveData(SPRITE_MESH_RESOURCE& resource)
 {
 	if (!spriteRenderer_) { return; }
 
-	bool isParent = (parent_) ? true : false;
-	if (isParent && !parentCall) { return; }
-	file.WriteParam(&isParent, sizeof(bool));
+	resource.name			= name_;
+	resource.transform		= transform_;
+	resource.pivot			= spriteRenderer_->GetPivot();
+	resource.layer			= spriteRenderer_->GetLayer();
+	resource.textureName	= textureName_;
 
-	size_t size = name_.size();
-	file.WriteParam(&size, sizeof(size_t));
-	file.WriteParam(&name_[0], sizeof(char) * name_.size());
-	file.WriteParam(&transform_.position, sizeof(VECTOR3));
-	file.WriteParam(&transform_.rotation, sizeof(VECTOR3));
-	file.WriteParam(&transform_.scale	, sizeof(VECTOR3));
-	VECTOR2 pivot = spriteRenderer_->GetPivot();
-	file.WriteParam(&pivot, sizeof(VECTOR2));
-	uint8 layer = spriteRenderer_->GetLayer();
-	file.WriteParam(&layer, sizeof(uint8));
-	size = textureName_.size();
-	file.WriteParam(&size, sizeof(size_t));
-	file.WriteParam(&textureName_[0], sizeof(char) * textureName_.size());
-
-	size = child_.size();
-	file.WriteParam(&size, sizeof(size_t));
-	for (int i = 0; i < size; ++i)
+	size_t size = child_.size();
+	for (size_t i = 0; i < size; ++i)
 	{
-		child_[i]->SaveData(file, true);
+		SPRITE_MESH_RESOURCE child;
+		child_[i]->SaveData(child);
+		resource.children.emplace_back(child);
 	}
 }
 

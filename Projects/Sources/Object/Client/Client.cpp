@@ -288,21 +288,26 @@ void Client::SaveData(void)
 
 	directory += ".bin";
 
-	// 書き込み
-	IOFile file;
-	if (file.OpenFile(directory, std::ios::out))
+	SPRITE_MESH_RESOURCE temp;
+
+	Receiver* root = nullptr;
+	for (auto& receiver : receiverList_)
 	{
-		// 書き込む量を先に指定
-		size_t size = receiverList_.size();
-		file.WriteParam(&size, sizeof(size_t));
-		for (auto& receiver : receiverList_)
+		if (receiver && !receiver->GetParent())
 		{
-			// それぞれを書き込む
-			if (receiver) { receiver->SaveData(file, false); }
+			if (root) 
+			{
+				AddMessage("[error]\"Failed to Save\" because there were more parents");
+				return;
+			}
+			root = receiver;
 		}
-		// 終了
-		file.CloseFile();
 	}
+
+	root->SaveData(temp);
+
+	LoadSpriteMesh loader;
+	loader.Save(directory, temp);
 
 	AddMessage("\"Save\" is complete");
 }
@@ -339,27 +344,7 @@ void Client::LoadData(void)
 
 	CreateReceiver(&temp);
 
-	//// 読み込み
-	//IOFile file;
-	//if (file.OpenFile(list[0], std::ios::in))
-	//{
-	//	// 全体量の取得
-	//	size_t size = 0;
-	//	file.ReadParam(&size, sizeof(size_t));
-
-	//	for (size_t i = 0; i < size; ++i)
-	//	{
-	//		// 子要素読み込みで全体量に達したら
-	//		if (receiverList_.size() >= size) { break; }
-
-	//		// それぞれの読込
-	//		CreateReceiver(&file);
-	//	}
-	//	// 終了
-	//	file.CloseFile();
-
-		AddMessage("\"Load\" is complete");
-//	}
+	AddMessage("\"Load\" is complete");
 }
 
 int Client::RemoveSprite(Receiver* receiver)

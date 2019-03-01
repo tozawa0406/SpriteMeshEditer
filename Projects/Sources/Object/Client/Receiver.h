@@ -2,7 +2,6 @@
 #define _RECEIVER_H_
 
 #include "Command/ICommand.h"
-#include "../IOFile.h"
 #include "SpriteMesh.h"
 
 class Client;
@@ -31,7 +30,7 @@ public:
 
 	void SetCtrl(Controller* ctrl) { ctrl_ = ctrl; }
 
-	void SaveData(IOFile& file, bool parentCall);
+	void SaveData(SPRITE_MESH_RESOURCE& resource);
 	bool LoadData(SPRITE_MESH_RESOURCE& resource);
 
 	void SetParent(Receiver* parent);

@@ -3,7 +3,6 @@
 
 #include "Command/ICommand.h"
 #include <FrameWork/Object/Object.h>
-#include "../IOFile.h"
 #include "SpriteMesh.h"
 
 class Pivot;

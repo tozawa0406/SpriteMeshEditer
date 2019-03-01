@@ -2,25 +2,24 @@
 
 SPRITE_MESH_RESOURCE LoadSpriteMesh::Load(string fileName)
 {
-	readNum_ = 0;
 	SPRITE_MESH_RESOURCE temp;
 
 	// 読み込み
 	IOFile file;
 	if (file.OpenFile(fileName, std::ios::in))
 	{
-		// 全体量の取得
+		string ver;
 		size_t size = 0;
 		file.ReadParam(&size, sizeof(size_t));
+		ver.resize(size);
+		file.ReadParam(&ver[0], sizeof(char) * size);
 
-		for (size_t i = 0; i < size; ++i)
+		// それぞれの読込
+		if (ver == "ver.1.0")
 		{
-			// 読み込みで全体量に達したら
-			if (readNum_ >= size) { break; }
-
-			// それぞれの読込
-			GetSpriteMesh(file, temp, false);
+			GetSpriteMeshVer1_1(file, temp);
 		}
+
 		// 終了
 		file.CloseFile();
 	}
@@ -28,14 +27,8 @@ SPRITE_MESH_RESOURCE LoadSpriteMesh::Load(string fileName)
 	return temp;
 }
 
-void LoadSpriteMesh::GetSpriteMesh(IOFile& file, SPRITE_MESH_RESOURCE& spriteMesh, bool parent)
+void LoadSpriteMesh::GetSpriteMeshVer1_1(IOFile& file, SPRITE_MESH_RESOURCE& spriteMesh)
 {
-	bool isParent = false;
-	file.ReadParam(&isParent, sizeof(bool));
-	if (!parent && isParent) { return; }
-
-	readNum_++;
-
 	size_t size = 0;
 	file.ReadParam(&size, sizeof(size_t));
 	spriteMesh.name.resize(size);
@@ -55,12 +48,45 @@ void LoadSpriteMesh::GetSpriteMesh(IOFile& file, SPRITE_MESH_RESOURCE& spriteMes
 	for (int i = 0; i < size; ++i)
 	{
 		SPRITE_MESH_RESOURCE temp;
-		GetSpriteMesh(file, temp, true);
+		GetSpriteMeshVer1_1(file, temp);
 		spriteMesh.children.emplace_back(temp);
 	}
 }
 
-void LoadSpriteMesh::Save(string fileName, SPRITE_MESH_RESOURCE resource)
+void LoadSpriteMesh::Save(string fileName, const SPRITE_MESH_RESOURCE& resource)
 {
+	// 読み込み
+	IOFile file;
+	if (file.OpenFile(fileName, std::ios::out))
+	{
+		size_t size = version.size();
+		file.WriteParam(&size, sizeof(size_t));
+		file.WriteParam(&version[0], sizeof(char) * size);
 
+		SetSpriteMeshVer1_1(file, resource);
+
+		file.CloseFile();
+	}
+}
+
+void LoadSpriteMesh::SetSpriteMeshVer1_1(IOFile& file, const SPRITE_MESH_RESOURCE& spriteMesh)
+{
+	size_t size = spriteMesh.name.size();
+	file.WriteParam(&size, sizeof(size_t));
+	file.WriteParam(&spriteMesh.name[0], sizeof(char) * size);
+	file.WriteParam(&spriteMesh.transform.position, sizeof(VECTOR3));
+	file.WriteParam(&spriteMesh.transform.rotation, sizeof(VECTOR3));
+	file.WriteParam(&spriteMesh.transform.scale, sizeof(VECTOR3));
+	file.WriteParam(&spriteMesh.pivot, sizeof(VECTOR2));
+	file.WriteParam(&spriteMesh.layer, sizeof(uint8));
+	size = spriteMesh.textureName.size();
+	file.WriteParam(&size, sizeof(size_t));
+	file.WriteParam(&spriteMesh.textureName[0], sizeof(char) * size);
+
+	size = spriteMesh.children.size();
+	file.WriteParam(&size, sizeof(size_t));
+	for (int i = 0; i < size; ++i)
+	{
+		SetSpriteMeshVer1_1(file, spriteMesh.children[i]);
+	}
 }

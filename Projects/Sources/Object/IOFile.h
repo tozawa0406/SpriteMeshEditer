@@ -26,7 +26,7 @@ public:
 	/* @brief	フォイルへの書き込み
 	 * @param	(param)		書き込む内容のポインタ
 	 * @param	(size)		バイト数	*/
-	void WriteParam(void* param, size_t size);
+	void WriteParam(const void* param, size_t size);
 	
 	/* @brief	フォイルからの読込
 	 * @param	(param)		読み込む内容のポインタ

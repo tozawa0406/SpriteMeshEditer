@@ -10,12 +10,11 @@ class LoadSpriteMesh
 {
 public:
 	SPRITE_MESH_RESOURCE Load(string fileName);
-	void Save(string fileName, SPRITE_MESH_RESOURCE resource);
+	void Save(string fileName, const SPRITE_MESH_RESOURCE& resource);
 
 private:
-	void GetSpriteMesh(IOFile& file, SPRITE_MESH_RESOURCE& spriteMesh, bool parent);
-
-	int readNum_;
+	void GetSpriteMeshVer1_1(IOFile& file, SPRITE_MESH_RESOURCE& spriteMesh);
+	void SetSpriteMeshVer1_1(IOFile& file, const SPRITE_MESH_RESOURCE& spriteMesh);
 };
 
 #endif // _LOAD_SPRITE_MESH_H_

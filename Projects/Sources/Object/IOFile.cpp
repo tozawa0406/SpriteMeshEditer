@@ -21,7 +21,7 @@ void IOFile::CloseFile(void)
 	if (fs_) { fs_.close(); }
 }
 
-void IOFile::WriteParam(void* param, size_t size)
+void IOFile::WriteParam(const void* param, size_t size)
 {
 	if (fs_) { fs_.write((const char*)param, size); }
 }

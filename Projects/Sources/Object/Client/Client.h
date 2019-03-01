@@ -4,6 +4,7 @@
 #include "Command/ICommand.h"
 #include <FrameWork/Object/Object.h>
 #include "../IOFile.h"
+#include "SpriteMesh.h"
 
 class Pivot;
 class Receiver;
@@ -73,8 +74,8 @@ private:
 
 	/* @brief	スプライトの生成
 	 * @sa		HierarchyView(), LoadData()
-	 * @param	(file)	ファイルポインタ(ロード時は処理が少し変わる)	*/
-	void CreateReceiver(IOFile* file = nullptr);
+	 * @param	(resource)	元データ(ロード時は処理が少し変わる)	*/
+	void CreateReceiver(SPRITE_MESH_RESOURCE* resource = nullptr);
 
 	/* @brief	セーブ		*/
 	void SaveData(void);

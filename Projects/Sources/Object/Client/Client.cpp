@@ -4,6 +4,8 @@
 #include "../Search.h"
 #include "Command/CreateSpriteCommand.h"
 
+#include "LoadSpriteMesh.h"
+
 Client::Client(void) : Object(ObjectTag::STATIC)
 	, currentReceiver_(nullptr)
 	, ctrl_(nullptr)
@@ -226,41 +228,41 @@ void Client::Redo(void)
 	AddMessage("performed \"Redo\" process");
 }
 
-void Client::CreateReceiver(IOFile* file)
+void Client::CreateReceiver(SPRITE_MESH_RESOURCE* resouce)
 {
 	// コマンド発行
 	CreateSpriteCommand* command = new CreateSpriteCommand;
 	if (command)
 	{
 		// スプライト生成
-		Receiver* client = new Receiver;
-		if (client)
+		Receiver* receiver = new Receiver;
+		if (receiver)
 		{
 			// スプライト初期化
-			client->SetCtrl(ctrl_);
-			client->Init(this);
+			receiver->SetCtrl(ctrl_);
+			receiver->Init(this);
 
 			// リストに追加
-			receiverList_.emplace_back(client);
+			receiverList_.emplace_back(receiver);
 
 			// ロード時
-			if (file)
+			if (resouce)
 			{
 				// コマンドは積まない
 				DeletePtr(command);
 				// データのロード
-				if (!client->LoadData(*file, false))
+				if (!receiver->LoadData(*resouce))
 				{
 					// 失敗した場合、スプライトのメモリ解放
-					RemoveVector(receiverList_, client);
-					UninitDeletePtr(client);
+					RemoveVector(receiverList_, receiver);
+					UninitDeletePtr(receiver);
 					return;
 				}
 			}
 			else
 			{
 				// コマンドの実行
-				command->SetReceiver(client);
+				command->SetReceiver(receiver);
 				command->SetClient(this);
 				command->Invoke();
 
@@ -269,7 +271,7 @@ void Client::CreateReceiver(IOFile* file)
 			}
 
 			// ワークスペースとして扱う
-			currentReceiver_ = client;
+			currentReceiver_ = receiver;
 		}
 	}
 }
@@ -293,10 +295,10 @@ void Client::SaveData(void)
 		// 書き込む量を先に指定
 		size_t size = receiverList_.size();
 		file.WriteParam(&size, sizeof(size_t));
-		for (auto& client : receiverList_)
+		for (auto& receiver : receiverList_)
 		{
 			// それぞれを書き込む
-			if (client) { client->SaveData(file, false); }
+			if (receiver) { receiver->SaveData(file, false); }
 		}
 		// 終了
 		file.CloseFile();
@@ -331,27 +333,33 @@ void Client::LoadData(void)
 	name_.erase(name_.begin() + num);
 	name_.resize(256);
 
-	// 読み込み
-	IOFile file;
-	if (file.OpenFile(list[0], std::ios::in))
-	{
-		// 全体量の取得
-		size_t size = 0;
-		file.ReadParam(&size, sizeof(size_t));
+	LoadSpriteMesh loader;
 
-		for (size_t i = 0; i < size; ++i)
-		{
-			// 子要素読み込みで全体量に達したら
-			if (receiverList_.size() >= size) { break; }
+	SPRITE_MESH_RESOURCE temp =  loader.Load(list[0]);
 
-			// それぞれの読込
-			CreateReceiver(&file);
-		}
-		// 終了
-		file.CloseFile();
+	CreateReceiver(&temp);
+
+	//// 読み込み
+	//IOFile file;
+	//if (file.OpenFile(list[0], std::ios::in))
+	//{
+	//	// 全体量の取得
+	//	size_t size = 0;
+	//	file.ReadParam(&size, sizeof(size_t));
+
+	//	for (size_t i = 0; i < size; ++i)
+	//	{
+	//		// 子要素読み込みで全体量に達したら
+	//		if (receiverList_.size() >= size) { break; }
+
+	//		// それぞれの読込
+	//		CreateReceiver(&file);
+	//	}
+	//	// 終了
+	//	file.CloseFile();
 
 		AddMessage("\"Load\" is complete");
-	}
+//	}
 }
 
 int Client::RemoveSprite(Receiver* receiver)

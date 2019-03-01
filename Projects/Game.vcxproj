@@ -31,7 +31,10 @@
     <ClCompile Include="Sources\Object\Client\Command\RotationCommand.cpp" />
     <ClCompile Include="Sources\Object\Client\Command\ScaleCommand.cpp" />
     <ClCompile Include="Sources\Object\Client\Command\TextureNumCommand.cpp" />
+    <ClCompile Include="Sources\Object\Client\LoadSpriteMesh.cpp" />
     <ClCompile Include="Sources\Object\Client\Receiver.cpp" />
+    <ClCompile Include="Sources\Object\Client\SpriteMesh.cpp" />
+    <ClCompile Include="Sources\Object\Client\SpriteMeshRenderer.cpp" />
     <ClCompile Include="Sources\Object\IOFile.cpp" />
     <ClCompile Include="Sources\Object\LoadAddTexture.cpp" />
     <ClCompile Include="Sources\Object\Pivot.cpp" />
@@ -55,7 +58,10 @@
     <ClInclude Include="Sources\Object\Client\Command\RotationCommand.h" />
     <ClInclude Include="Sources\Object\Client\Command\ScaleCommand.h" />
     <ClInclude Include="Sources\Object\Client\Command\TextureNumCommand.h" />
+    <ClInclude Include="Sources\Object\Client\LoadSpriteMesh.h" />
     <ClInclude Include="Sources\Object\Client\Receiver.h" />
+    <ClInclude Include="Sources\Object\Client\SpriteMesh.h" />
+    <ClInclude Include="Sources\Object\Client\SpriteMeshRenderer.h" />
     <ClInclude Include="Sources\Object\IOFile.h" />
     <ClInclude Include="Sources\Object\LoadAddTexture.h" />
     <ClInclude Include="Sources\Object\ObjectTag.h" />

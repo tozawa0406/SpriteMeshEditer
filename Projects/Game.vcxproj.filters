@@ -89,6 +89,15 @@
     <ClCompile Include="Sources\Object\Client\Command\LayerCommand.cpp">
       <Filter>Source\Object\Client\Command</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Object\Client\LoadSpriteMesh.cpp">
+      <Filter>Source\Object\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Client\SpriteMeshRenderer.cpp">
+      <Filter>Source\Object\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Client\SpriteMesh.cpp">
+      <Filter>Source\Object\Client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Object\ObjectTag.h">
@@ -168,6 +177,15 @@
     </ClInclude>
     <ClInclude Include="Sources\Object\Client\Command\LayerCommand.h">
       <Filter>Source\Object\Client\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\LoadSpriteMesh.h">
+      <Filter>Source\Object\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\SpriteMeshRenderer.h">
+      <Filter>Source\Object\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\SpriteMesh.h">
+      <Filter>Source\Object\Client</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

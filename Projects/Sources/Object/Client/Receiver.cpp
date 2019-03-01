@@ -191,37 +191,19 @@ void Receiver::SaveData(IOFile& file, bool parentCall)
 	}
 }
 
-bool Receiver::LoadData(IOFile& file, bool parentCall)
+bool Receiver::LoadData(SPRITE_MESH_RESOURCE& resource)
 {
 	if (!spriteRenderer_) { return false; }
 
-	bool isParent = false;
-	file.ReadParam(&isParent, sizeof(bool));
-	if (!parentCall && isParent) { return false; }
-
-	size_t size = 0;
-	file.ReadParam(&size, sizeof(size_t));
-	file.ReadParam(&name_[0], sizeof(char) * size);
-	file.ReadParam(&transform_.position, sizeof(VECTOR3));
-	file.ReadParam(&transform_.rotation, sizeof(VECTOR3));
-	file.ReadParam(&transform_.scale, sizeof(VECTOR3));
-	VECTOR2 pivot = VECTOR2(0);
-	file.ReadParam(&pivot, sizeof(VECTOR2));
-	spriteRenderer_->SetPivot(pivot);
-	uint8 layer = 0;
-	file.ReadParam(&layer, sizeof(uint8));
-	spriteRenderer_->SetLayer(layer);
-
-	size = 0;
-	file.ReadParam(&size, sizeof(size_t));
-	textureName_.resize(size);
-	file.ReadParam(&textureName_[0], sizeof(char) * size);
+	name_			= resource.name;
+	transform_		= resource.transform;
+	textureName_	= resource.textureName;
+	spriteRenderer_->SetPivot(resource.pivot);
+	spriteRenderer_->SetLayer(resource.layer);
 
 	if (loadAdd_) { spriteRenderer_->SetTexture(loadAdd_->SetTexture(textureName_)); }
 
-	size = 0;
-	file.ReadParam(&size, sizeof(size_t));
-	for (int i = 0; i < size; ++i)
+	for (int i = 0; i < resource.children.size(); ++i)
 	{
 		Receiver* receiver = new Receiver;
 		if (receiver)
@@ -229,7 +211,7 @@ bool Receiver::LoadData(IOFile& file, bool parentCall)
 			receiver->SetCtrl(ctrl_);
 			receiver->Init(client_);
 
-			receiver->LoadData(file, true);
+			receiver->LoadData(resource.children[i]);
 			receiver->SetParent(this);
 
 			client_->AddSprite(receiver, 0);

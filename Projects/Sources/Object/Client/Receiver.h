@@ -3,6 +3,7 @@
 
 #include "Command/ICommand.h"
 #include "../IOFile.h"
+#include "SpriteMesh.h"
 
 class Client;
 class Receiver
@@ -31,7 +32,7 @@ public:
 	void SetCtrl(Controller* ctrl) { ctrl_ = ctrl; }
 
 	void SaveData(IOFile& file, bool parentCall);
-	bool LoadData(IOFile& file, bool parentCall);
+	bool LoadData(SPRITE_MESH_RESOURCE& resource);
 
 	void SetParent(Receiver* parent);
 	Receiver* GetParent(void) { return parent_; }

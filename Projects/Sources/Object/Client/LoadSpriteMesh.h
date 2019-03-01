@@ -4,12 +4,13 @@
 #include "SpriteMesh.h"
 #include "../IOFile.h"
 
-static const string version = "ver.1.0";
+static const string SPRITE_MESH_VARSION		= "ver.1.0";
+static const string SPRITE_MESH_EXTENSION	= "spx";
 
 class LoadSpriteMesh
 {
 public:
-	SPRITE_MESH_RESOURCE Load(string fileName);
+	SPRITE_MESH_RESOURCE Load(string fileName, string& version);
 	void Save(string fileName, const SPRITE_MESH_RESOURCE& resource);
 
 private:

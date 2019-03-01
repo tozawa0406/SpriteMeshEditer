@@ -1,6 +1,6 @@
 #include "LoadSpriteMesh.h"
 
-SPRITE_MESH_RESOURCE LoadSpriteMesh::Load(string fileName)
+SPRITE_MESH_RESOURCE LoadSpriteMesh::Load(string fileName, string& version)
 {
 	SPRITE_MESH_RESOURCE temp;
 
@@ -14,6 +14,7 @@ SPRITE_MESH_RESOURCE LoadSpriteMesh::Load(string fileName)
 		ver.resize(size);
 		file.ReadParam(&ver[0], sizeof(char) * size);
 
+		version = ver;
 		// ÇªÇÍÇºÇÍÇÃì«çû
 		if (ver == "ver.1.0")
 		{
@@ -59,9 +60,9 @@ void LoadSpriteMesh::Save(string fileName, const SPRITE_MESH_RESOURCE& resource)
 	IOFile file;
 	if (file.OpenFile(fileName, std::ios::out))
 	{
-		size_t size = version.size();
+		size_t size = SPRITE_MESH_VARSION.size();
 		file.WriteParam(&size, sizeof(size_t));
-		file.WriteParam(&version[0], sizeof(char) * size);
+		file.WriteParam(&SPRITE_MESH_VARSION[0], sizeof(char) * size);
 
 		SetSpriteMeshVer1_1(file, resource);
 

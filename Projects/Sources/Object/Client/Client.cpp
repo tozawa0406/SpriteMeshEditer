@@ -286,7 +286,7 @@ void Client::SaveData(void)
 		if (directory[i] == 0) { directory.erase(directory.begin() + i); }
 	}
 
-	directory += ".bin";
+	directory += "." + SPRITE_MESH_EXTENSION;
 
 	SPRITE_MESH_RESOURCE temp;
 
@@ -319,7 +319,7 @@ void Client::LoadData(void)
 
 	std::vector<string> list;
 	SearchFile search;
-	search.Search(directory, "bin", list);
+	search.Search(directory, SPRITE_MESH_EXTENSION, list);
 	if (list.size() <= 0) { return; }
 
 	for (size_t i = list[0].size() - 1; list[0][i] != '/' && i > 0; --i)
@@ -340,11 +340,12 @@ void Client::LoadData(void)
 
 	LoadSpriteMesh loader;
 
-	SPRITE_MESH_RESOURCE temp =  loader.Load(list[0]);
+	string version = "";
+	SPRITE_MESH_RESOURCE temp =  loader.Load(list[0], version);
 
 	CreateReceiver(&temp);
 
-	AddMessage("\"Load\" is complete");
+	AddMessage("\"Load\" is complete " + version);
 }
 
 int Client::RemoveSprite(Receiver* receiver)

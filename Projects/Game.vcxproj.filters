@@ -21,6 +21,9 @@
     <Filter Include="Source\Object\Client\Command">
       <UniqueIdentifier>{63dfb7db-911d-4ee0-b83a-03c0f2e74af1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Camera">
+      <UniqueIdentifier>{d57079ee-1fce-400c-8c0e-e11e38d74441}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\main.cpp">
@@ -97,6 +100,9 @@
     </ClCompile>
     <ClCompile Include="Sources\Object\Client\SpriteMesh.cpp">
       <Filter>Source\Object\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Camera\LookCamera.cpp">
+      <Filter>Source\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -186,6 +192,9 @@
     </ClInclude>
     <ClInclude Include="Sources\Object\Client\SpriteMesh.h">
       <Filter>Source\Object\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Camera\LookCamera.h">
+      <Filter>Source\Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -126,8 +126,8 @@ void Client::HierarchyView(void)
 				DrawHierarchy(list, blank);
 			}
 		}
-		ImGui::EndChild();
 	}
+	ImGui::EndChild();
 
 	// ƒZ[ƒuˆ—
 	if (ImGui::Button("Save", ImVec2(400, 40))) { SaveData(); }

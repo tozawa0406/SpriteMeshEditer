@@ -386,8 +386,8 @@ void Receiver::Delete(void)
 			ImGui::SameLine(); 
 			ImGui::TextAlign(" ");
 			if (ImGui::Button("no", ImVec2(72.5f, 40))) { delete_ = false; }
-			ImGui::End();
 		}
+		ImGui::End();
 	}
 }
 

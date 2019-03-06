@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Sources\Camera\LookCamera.cpp" />
     <ClCompile Include="Sources\main.cpp" />
     <ClCompile Include="Sources\Object\Client\Client.cpp" />
     <ClCompile Include="Sources\Object\Client\Command\CreateSpriteCommand.cpp" />
@@ -46,6 +47,7 @@
     <ClCompile Include="Sources\Scene\ResourceInfoManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\Camera\LookCamera.h" />
     <ClInclude Include="Sources\Object\Client\Client.h" />
     <ClInclude Include="Sources\Object\Client\Command\CreateSpriteCommand.h" />
     <ClInclude Include="Sources\Object\Client\Command\DeleteCommand.h" />

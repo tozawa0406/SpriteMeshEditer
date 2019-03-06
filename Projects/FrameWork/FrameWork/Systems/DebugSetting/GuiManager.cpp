@@ -116,6 +116,14 @@ void GuiManager::GuiUpdate(void)
 	}
 	float padding = 50;
 
+	for (auto& obj : obj_)
+	{
+		if (obj)
+		{
+			obj->GuiUpdate();
+		}
+	}
+
 	ImGui::SetNextWindowPos(ImVec2(Windows::WIDTH - padding - 450, padding), ImGuiSetCond_Once);
 	ImGui::SetNextWindowSize(ImVec2(450, 500), ImGuiSetCond_Once);
 
@@ -136,14 +144,14 @@ void GuiManager::GuiUpdate(void)
 				texture->GuiUpdate();
 			}
 		}
-		ImGui::End();
 	}
+	ImGui::End();
 
 	float w = Windows::WIDTH - padding * 2;
 	float h = 250;
 	ImGui::SetNextWindowPos(ImVec2(Half(Windows::WIDTH) - Half(w), (Windows::HEIGHT - padding) - h), ImGuiSetCond_Once);
 	ImGui::SetNextWindowSize(ImVec2(w, h), ImGuiSetCond_Once);
-
+	
 	if (ImGui::Begin("Console"))
 	{
 		for (auto& obj : obj_)
@@ -153,13 +161,12 @@ void GuiManager::GuiUpdate(void)
 				obj->ConsoleView();
 			}
 		}
-
-		ImGui::End();
 	}
+	ImGui::End();
 
 	ImGui::SetNextWindowPos(ImVec2(padding, padding), ImGuiSetCond_Once);
 	ImGui::SetNextWindowSize(ImVec2(450, 700), ImGuiSetCond_Once);
-
+	
 	if (ImGui::Begin("Hierarchy"))
 	{
 		for (auto& obj : obj_)
@@ -181,11 +188,8 @@ void GuiManager::GuiUpdate(void)
 		{
 			target->GuiUpdate();
 		}
-
-		ImGui::End();
 	}
-
-
+	ImGui::End();
 #endif
 }
 

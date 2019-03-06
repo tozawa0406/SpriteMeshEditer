@@ -6,7 +6,7 @@
 #include "../Object/Client/Client.h"
 #include "../Object/Pivot.h"
 
-#include <FrameWork/Systems/Camera/MoveCamera.h>
+#include "../Camera/LookCamera.h"
 
 TitleScene::TitleScene(void) : GUI(Systems::Instance(), nullptr, "SceneTitle")
 	, client_(nullptr)
@@ -42,7 +42,7 @@ void TitleScene::Init(SceneList sceneNum)
 		client_->Load();
 	}
 
-	MoveCamera* camera = cameraManager_->Create<MoveCamera>();
+	LookCamera* camera = cameraManager_->Create<LookCamera>();
 	if (camera)
 	{
 		camera->SetPosition(VECTOR3(0, 0, -100));

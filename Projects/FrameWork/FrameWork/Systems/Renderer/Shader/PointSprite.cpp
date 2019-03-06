@@ -41,8 +41,8 @@ HRESULT PointSpriteShader::SetParam(const MATRIX& mtx, const COLOR& color, VECTO
 
 	CONSTANT cbuf;
 	cbuf.world = mtx;
-	cbuf.view = systems->GetSceneManager()->GetCameraManager()->GetView();
-	cbuf.proj = systems->GetSceneManager()->GetCameraManager()->GetProj();
+	cbuf.view = systems->GetSceneManager()->GetScene()->GetCameraManager()->GetView();
+	cbuf.proj = systems->GetSceneManager()->GetScene()->GetCameraManager()->GetProj();
 
 	VECTOR4 t = { color.r, color.g, color.b, color.a };
 	cbuf.diffuse = t;

@@ -40,8 +40,8 @@ HRESULT DefaultShader::SetParam(const MATRIX& mtx, const COLOR& color, VECTOR4 t
 	CONSTANT cbuf;
 	memcpy_s(&cbuf.world, sizeof(MATRIX), &mtx, sizeof(MATRIX));
 	cbuf.world._44 = 1;
-	memcpy_s(&cbuf.view , sizeof(MATRIX), &systems->GetSceneManager()->GetCameraManager()->GetView(), sizeof(MATRIX));
-	memcpy_s(&cbuf.proj , sizeof(MATRIX), &systems->GetSceneManager()->GetCameraManager()->GetProj(), sizeof(MATRIX));
+	memcpy_s(&cbuf.view , sizeof(MATRIX), &systems->GetSceneManager()->GetScene()->GetCameraManager()->GetView(), sizeof(MATRIX));
+	memcpy_s(&cbuf.proj , sizeof(MATRIX), &systems->GetSceneManager()->GetScene()->GetCameraManager()->GetProj(), sizeof(MATRIX));
 
 	cbuf.texcoord = texcoord;
 	VECTOR4 t = { color.r, color.g, color.b, color.a };

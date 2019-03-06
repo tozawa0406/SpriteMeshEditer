@@ -122,8 +122,8 @@ void MeshRenderer::Skinning(void)
 
 	DefaultShader::CONSTANT cbuf;
 	MATRIX initMtx = MATRIX().Identity();
-	memcpy_s(&cbuf.view , sizeof(MATRIX), &systems->GetSceneManager()->GetCameraManager()->GetView(), sizeof(MATRIX));
-	memcpy_s(&cbuf.proj , sizeof(MATRIX), &systems->GetSceneManager()->GetCameraManager()->GetProj(), sizeof(MATRIX));
+	memcpy_s(&cbuf.view , sizeof(MATRIX), &systems->GetSceneManager()->GetScene()->GetCameraManager()->GetView(), sizeof(MATRIX));
+	memcpy_s(&cbuf.proj , sizeof(MATRIX), &systems->GetSceneManager()->GetScene()->GetCameraManager()->GetProj(), sizeof(MATRIX));
 
 	cbuf.texcoord = VECTOR4(0, 0, 1, 1);
 	memcpy_s(&cbuf.diffuse, sizeof(float) * 4, &GetMaterial().diffuse, sizeof(float) * 4);

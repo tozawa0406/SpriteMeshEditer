@@ -41,8 +41,8 @@ HRESULT CSSkinningRenderShader::SetParam(const MATRIX& mtx, const COLOR& color, 
 	CONSTANT cbuf;
 	memcpy_s(&cbuf.world, sizeof(MATRIX), &mtx, sizeof(MATRIX));
 	cbuf.world._44 = 1;
-	memcpy_s(&cbuf.view , sizeof(MATRIX), &systems->GetSceneManager()->GetCameraManager()->GetView(), sizeof(MATRIX));
-	memcpy_s(&cbuf.proj , sizeof(MATRIX), &systems->GetSceneManager()->GetCameraManager()->GetProj(), sizeof(MATRIX));
+	memcpy_s(&cbuf.view , sizeof(MATRIX), &systems->GetSceneManager()->GetScene()->GetCameraManager()->GetView(), sizeof(MATRIX));
+	memcpy_s(&cbuf.proj , sizeof(MATRIX), &systems->GetSceneManager()->GetScene()->GetCameraManager()->GetProj(), sizeof(MATRIX));
 
 	cbuf.texcoord = VECTOR4(0, 0, 1, 1);
 	VECTOR4 t = { color.r, color.g, 1, 1 };

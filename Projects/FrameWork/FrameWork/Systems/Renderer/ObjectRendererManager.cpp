@@ -26,18 +26,27 @@ void ObjectRendererManager::Sort(void)
 	VECTOR3 wPos;
 	VECTOR3 cameraPos;
 	if (!systems_->GetSceneManager()) { return; }
-	cameraPos = systems_->GetSceneManager()->GetCameraManager()->GetCamera()->GetPos();
+	if (const auto& scene = systems_->GetSceneManager()->GetScene())
+	{
+		cameraPos = scene->GetCameraManager()->GetMainCamera()->GetPosition();
+	}
 
 	for (auto obj : obj_)
 	{
+		float vecTemp = 0;
+
 		wPos = obj->GetTransform()->position - cameraPos;
-		float vecTemp;
 		vecTemp = VecLengthSq(wPos);
+		if (obj->GetType() == ObjectRenderer::RendererType::SPRITE)
+		{
+			vecTemp = obj->GetTransform()->position.z - cameraPos.z;
+			vecTemp -= LAYER_DIST * static_cast<SpriteRenderer*>(obj)->GetLayer();
+		}
 		wVec.emplace_back(vecTemp);
 	}
 
 	bool sort = false;
-	for (int j = 0; j < size; ++j)
+	for (;;)
 	{
 		sort = false;
 		for (int i = 0; i < size; ++i)

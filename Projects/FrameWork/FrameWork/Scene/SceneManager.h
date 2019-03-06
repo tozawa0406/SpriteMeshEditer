@@ -19,12 +19,9 @@
 
 #include "../Systems/Loading.h"
 
-class CameraManager;
+class BaseScene;
 class SceneManager : public Interface
 {
-	//! @def	カメラデバッグ
-	static constexpr int CAMERA_DEBUG = 1;
-
 	//! @def	フェードインの時間(フレーム単位)
 	static constexpr int SCENE_FADE_IN  = 30;
 	//! @def	フェードアウトの時間(フレーム単位)
@@ -70,8 +67,6 @@ public:
 	inline BaseScene*		GetScene(void)         { return scene_;			}
 	/* @brief	ポーズシーンのポインタ取得	*/
 	inline BaseScene*		GetPause(void)         { return pause_;			}
-	/* @brief	カメラ管理のポインタ取得	*/
-	inline CameraManager*	GetCameraManager(void) { return camera_;		}
 	/* @brief	ポーズ状態取得				*/
 	inline bool				IsPause(void)          { return isPause_;		}
 	/* @brief	ポーズ状態設定				*/
@@ -116,7 +111,6 @@ private:
 
 	Loading*		loading_;		//! ロードクラス
 	bool			startLoad_;		//! ロードフラグ
-	CameraManager*	camera_;		//1 カメラマネージャー
 };
 
 #endif // _SCENE_MANAGER_H_

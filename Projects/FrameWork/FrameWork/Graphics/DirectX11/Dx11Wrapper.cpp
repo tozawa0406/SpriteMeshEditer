@@ -462,7 +462,7 @@ void Dx11Wrapper::Draw(const SpriteRenderer* obj, const Shader* shader)
 
 	// ƒŒƒCƒ„[‚Ì”½‰f
 	Transform temp = *obj->GetTransform();
-	temp.position.z += -0.0025f * obj->GetLayer();
+	temp.position.z += LAYER_DIST * obj->GetLayer();
 
 	// Transform
 	mtx.Create(&temp);
@@ -788,11 +788,14 @@ void Dx11Wrapper::BeginDrawCanvasRenderer(void)
 	{
 		if (const auto& systems = window->GetSystems())
 		{
-			if (const auto& scene = systems->GetSceneManager())
+			if (const auto& sceneManager = systems->GetSceneManager())
 			{
-				if (const auto& camera = scene->GetCameraManager())
+				if (const auto& scene = sceneManager->GetScene())
 				{
-					inverse_.Billboard(camera->GetView());
+					if (const auto& camera = scene->GetCameraManager())
+					{
+						inverse_.Billboard(camera->GetView());
+					}
 				}
 			}
 		}
@@ -832,7 +835,12 @@ void Dx11Wrapper::BeginDrawObjectRenderer(void)
 	pContext->OMSetDepthStencilState(NULL, 1);
 
 	SHADER_DEFAULT_SCENE sg;
-	const auto& cameraManager = directX11_->GetWindow()->GetSystems()->GetSceneManager()->GetCameraManager();
+	CameraManager* cameraManager = nullptr;
+	if (const auto& scene = directX11_->GetWindow()->GetSystems()->GetSceneManager()->GetScene())
+	{
+		cameraManager = scene->GetCameraManager();
+	}
+	if (!cameraManager) { return; }
 	sg.view = cameraManager->GetView();
 	sg.proj = cameraManager->GetProj();
 

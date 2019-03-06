@@ -1,9 +1,3 @@
-//-----------------------------------------------------------------------------
-//
-//	カメラ[Camera.cpp]
-//	Auther : 戸澤翔太
-//																	2017/11/07
-//-----------------------------------------------------------------------------
 #include "MoveCamera.h"
 #include "../../Graphics/DirectX11/DirectX11.h"
 #include "../../Scene/SceneManager.h"
@@ -11,17 +5,23 @@
 #include "../GameSystems.h"
 #include "../Input/KeyInput.h"
 
-// コンストラクタ
-MoveCamera::MoveCamera(CameraManager* parent, int number, VECTOR3 pos, VECTOR3 at) : Camera(parent, number, pos, at)
+//! 移動速度
+static constexpr float MOVE_SPEED = 0.06f;
+//! 回転速度
+static constexpr float ROTATION_SPEED = 0.002f;
+
+MoveCamera::MoveCamera(void) : 
+	dir_(VECTOR2(0))
+	, velocity_(VECTOR2(0))
+	, rotVelocity_(VECTOR2(0))
+	, rotAtVelocity_(VECTOR2(0))
 {
 }
 
-// デストラクタ
 MoveCamera::~MoveCamera(void)
 {
 }
 
-// 更新処理
 void MoveCamera::Update(void)
 {
 	// 平行移動
@@ -37,11 +37,10 @@ void MoveCamera::Update(void)
 	Input();
 }
 
-// 平行移動
 void MoveCamera::MoveTrans(void)
 {
 	// 前ベクトルを算出
-	front_ = at_ - pos_;
+	front_ = at_ - position_;
 	front_.y = 0;
 	front_ = VecNorm(front_);
 
@@ -49,34 +48,33 @@ void MoveCamera::MoveTrans(void)
 	right_ = VecNorm(VecCross(front_, up_));
 
 	// 速度が 0でない時
-	if (velocity.x != 0 || velocity.y != 0)
+	if (velocity_.x != 0 || velocity_.y != 0)
 	{
 		// y座標移動
-		pos_ += front_ * velocity.y;
-		at_  += front_ * velocity.y;
+		position_	+= front_ * velocity_.y;
+		at_			+= front_ * velocity_.y;
 		// x座標移動
-		pos_ += right_ * velocity.x;
-		at_  += right_ * velocity.x;
+		position_	+= right_ * velocity_.x;
+		at_			+= right_ * velocity_.x;
 
 		// 慣性
-		velocity *= 0.9f;
+		velocity_ *= 0.9f;
 	}
 }
 
-// 自分を中心に回転
 void MoveCamera::MoveRotation(void)
 {
 	// 速度が 0でない時
-	if ( rotVelocity.x != 0 || rotVelocity.y != 0 )
+	if ( rotVelocity_.x != 0 || rotVelocity_.y != 0 )
 	{
 		// 回転行列
 		MATRIX rotY, rotX;
 		// y軸回転
-		rotY.Identity().Rotation(VECTOR3(0, 1, 0), rotVelocity.y);
+		rotY.Identity().Rotation(VECTOR3(0, 1, 0), rotVelocity_.y);
 		// x軸回転
-		rotX.Identity().Rotation(right_, rotVelocity.x);
+		rotX.Identity().Rotation(right_, rotVelocity_.x);
 
-		VECTOR3 vec = at_ - pos_;		// 方向ベクトル
+		VECTOR3 vec = at_ - position_;		// 方向ベクトル
 		// ベクトルの座標変換
 		vec = VecTransform(vec, rotY);
 		vec = VecTransform(vec, rotX);
@@ -91,37 +89,32 @@ void MoveCamera::MoveRotation(void)
 		if (Abs(limit) >= 0.1f)
 		{
 			// 回転
-			at_ = pos_ + vec;
+			at_ = position_ + vec;
 		}
 		else
 		{
 			// 制限なら速度を 0にする
-			rotVelocity = { 0.0f, 0.0f }; 
+			rotVelocity_ = VECTOR2(0); 
 		}
 
 		// 慣性
-		rotVelocity *= 0.9f;
+		rotVelocity_ *= 0.9f;
 	}
 }
 
-// 注視点を中心に回転
 void MoveCamera::MoveAtRotation(void)
 {
 	// 速度が 0でない時
-	if (rotAtVelocity.x != 0 || rotAtVelocity.y != 0)
+	if (rotAtVelocity_.x != 0 || rotAtVelocity_.y != 0)
 	{
 		// 回転行列
 		MATRIX rotY, rotX;
 		// y軸回転
-		rotY.Identity().Rotation(VECTOR3(0, 1, 0), rotAtVelocity.x);
+		rotY.Identity().Rotation(VECTOR3(0, 1, 0), rotAtVelocity_.x);
 		// x軸回転
-		rotX.Identity().Rotation(right_, rotAtVelocity.y);
+		rotX.Identity().Rotation(right_, rotAtVelocity_.y);
 
-		//ROTATION rot;		// 回転行列
-		//D3DXMatrixRotationY(&rot.y, rotAtVelocity.x);				// y軸回転
-		//D3DXMatrixRotationAxis(&rot.x, &D3DX(right), rotAtVelocity.y);	// 右ベクトル軸回転
-
-		VECTOR3 vec = pos_ - at_;		// 方向ベクトル
+		VECTOR3 vec = position_ - at_;		// 方向ベクトル
 		// ベクトルの座標変換	
 		vec = VecTransform(vec, rotY);
 		vec = VecTransform(vec, rotX);
@@ -136,16 +129,16 @@ void MoveCamera::MoveAtRotation(void)
 		if (Abs(limit) >= 0.1f)
 		{
 			// 回転
-			pos_ = at_ + vec;
+			position_ = at_ + vec;
 		}
 		else
 		{
 			// 制限なら速度を 0にする
-			rotAtVelocity = { 0.0f, 0.0f };
+			rotAtVelocity_ = VECTOR2(0);
 		}
 
 		// 慣性
-		rotAtVelocity *= 0.9f;
+		rotAtVelocity_ *= 0.9f;
 	}
 }
 
@@ -153,23 +146,31 @@ void MoveCamera::MoveAtRotation(void)
 void MoveCamera::Input(void)
 {
 	// 今自分がメインカメラでないなら操作不可
-	if (parent_->GetMainNum() != number_) { return; }
+	if (manager_->GetMainCamera() != this) { return; }
 
-	const auto& ctrl = systems_->GetInput()->GetCtrl(0);
+	Controller* ctrl = nullptr;
+	if (const auto& systems = Systems::Instance())
+	{
+		if (const auto& input = systems->GetInput())
+		{
+			ctrl = input->GetCtrl(0);
+		}
+	}
+	if (!ctrl) { return; }
 
 	// 平行移動
-	velocity.x -= static_cast<float>(ctrl->PressRange(Input::AXIS_LX, DIK_A, DIK_D)) * MOVE_SPEED;
-	velocity.y += static_cast<float>(ctrl->PressRange(Input::AXIS_LY, DIK_S, DIK_W)) * MOVE_SPEED;
+	velocity_.x -= static_cast<float>(ctrl->PressRange(Input::AXIS_LX, DIK_A, DIK_D)) * MOVE_SPEED;
+	velocity_.y += static_cast<float>(ctrl->PressRange(Input::AXIS_LY, DIK_S, DIK_W)) * MOVE_SPEED;
 
 	// 自分を中心に回転
-	if      (ctrl->Press(Input::GAMEPAD_LEFT , DIK_J)) { rotVelocity.y +=  ROTATION_SPEED; }
-	else if (ctrl->Press(Input::GAMEPAD_RIGHT, DIK_L)) { rotVelocity.y += -ROTATION_SPEED; }
-	if      (ctrl->Press(Input::GAMEPAD_UP   , DIK_I)) { rotVelocity.x += -ROTATION_SPEED; }
-	else if (ctrl->Press(Input::GAMEPAD_DOWN , DIK_K)) { rotVelocity.x +=  ROTATION_SPEED; }
+	if      (ctrl->Press(Input::GAMEPAD_LEFT , DIK_J)) { rotVelocity_.y +=  ROTATION_SPEED; }
+	else if (ctrl->Press(Input::GAMEPAD_RIGHT, DIK_L)) { rotVelocity_.y += -ROTATION_SPEED; }
+	if      (ctrl->Press(Input::GAMEPAD_UP   , DIK_I)) { rotVelocity_.x += -ROTATION_SPEED; }
+	else if (ctrl->Press(Input::GAMEPAD_DOWN , DIK_K)) { rotVelocity_.x +=  ROTATION_SPEED; }
 
 	// 注視点を中心に回転
-	rotAtVelocity.x -= static_cast<float>(ctrl->PressRange(Input::AXIS_RX, DIK_Q, DIK_E)) * ROTATION_SPEED;
-	rotAtVelocity.y -= static_cast<float>(ctrl->PressRange(Input::AXIS_RY, DIK_G, DIK_T)) * ROTATION_SPEED;
+	rotAtVelocity_.x -= static_cast<float>(ctrl->PressRange(Input::AXIS_RX, DIK_Q, DIK_E)) * ROTATION_SPEED;
+	rotAtVelocity_.y -= static_cast<float>(ctrl->PressRange(Input::AXIS_RY, DIK_G, DIK_T)) * ROTATION_SPEED;
 }
 
 // GUI

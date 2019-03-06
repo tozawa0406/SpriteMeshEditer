@@ -41,7 +41,10 @@ void ParticleManager::Sort(void)
 	VECTOR3 wPos;
 	VECTOR3 cameraPos;
 	if (!systems_->GetSceneManager()) { return; }
-	cameraPos = systems_->GetSceneManager()->GetCameraManager()->GetCamera()->GetPos();
+	if (const auto& scene = systems_->GetSceneManager()->GetScene())
+	{
+		cameraPos = scene->GetCameraManager()->GetMainCamera()->GetPosition();
+	}
 
 	for (auto obj : obj_)
 	{

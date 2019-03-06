@@ -1,81 +1,92 @@
-//-----------------------------------------------------------------------------
-//
-//	カメラ[Camera.h]
-//	Auther : 戸澤翔太
-//																	2017/11/07
-//-----------------------------------------------------------------------------
+/*
+ * @file		Camera.h
+ * @brief		カメラ基底クラス
+ * @author		戸澤翔太
+ * @data		2019/03/06
+ */
 #ifndef _CAMERA_H_
 #define _CAMERA_H_
 
 #include "../../Define/Define.h"
 #include "../DebugSetting/GUI.h"
 
-//-----------------------------------------------------------------------------
-//	クラス宣言
-//-----------------------------------------------------------------------------
-class Object;
-class Systems;
+class CameraManager;
 class Camera : public GUI
 {
-	friend class CameraManager;
 public:
-	// 画角
-	static constexpr int FOV = 80;
-	// ニアクリップ
-	static constexpr float C_NEAR = 0.1f;
-	// ファークリップ
-	static constexpr float C_FAR = 1000.0f;
+	//! 画角
+	static constexpr int	FOV = 60;
+	//! ニアクリップ
+	static constexpr float	C_NEAR = 0.1f;
+	//! ファークリップ
+	static constexpr float	C_FAR = 1000.0f;
 
-	// カメラの初期座標
-	static constexpr float POS_X = 0.0f;
-	static constexpr float POS_Y = 0.0f;
-	static constexpr float POS_Z = -50.0f;
+	//! カメラの初期座標X
+	static constexpr float	POSITION_X = 0.0f;
+	//! カメラの初期座標Y
+	static constexpr float	POSITION_Y = 0.0f;
+	//! カメラの初期座標Z
+	static constexpr float	POSITION_Z = -50.0f;
 
-	// デストラクタ
-	virtual ~Camera(void) {};
+	/* @brief	コンストラクタ		*/
+	Camera(void);
+	/* @brief	デストラクタ		*/
+	virtual ~Camera(void)		{}
 
-	virtual void Update(void) {};			// 更新処理
+	/* @brief	初期化処理			*/
+	virtual void Init(void)		{}
+	/* @brief	更新処理			*/
+	virtual void Update(void)	{}
 
-	// Getter
-	const VECTOR3& GetPos(void) { return pos_; }
-	const VECTOR3& GetAt(void)  { return at_;  }
-	const VECTOR3& GetUp(void)  { return up_;  }
+	/* @brief	位置取得			*/
+	inline const VECTOR3& GetPosition(void) { return position_; }
+	/* @brief	注視点取得			*/
+	inline const VECTOR3& GetAt(void) { return at_; }
+	/* @brief	上ベクトル取得		*/
+	inline const VECTOR3& GetUp(void) { return up_; }
+	/* @brief	前ベクトル取得		*/
+	inline const VECTOR3& GetFront(void) { return front_; }
+	/* @brief	右ベクトル取得		*/
+	inline const VECTOR3& GetRight(void) { return right_; }
 
-	const VECTOR3& GetFront(void) { return front_; }
-	const VECTOR3& GetRight(void) { return right_; }
+	/* @brief	x-z平面の前ベクトルの取得		*/
+	inline const VECTOR3& GetFrontXPlane(void) { return frontXPlane_; }
+	/* @brief	x-z平面の右ベクトルの取得		*/
+	inline const VECTOR3& GetRightXPlane(void) { return rightXPlane_; }
 
-	const VECTOR3& GetFrontXPlane(void) { return frontXPlane_; }
-	const VECTOR3& GetRightXPlane(void) { return rightXPlane_; }
+	/* @brief	マネージャーの設定	*/
+	inline void SetManager(CameraManager* manager) { manager_ = manager; }
+	/* @brief	位置設定			*/
+	inline void SetPosition(VECTOR3 position) { position_ = position; }
+	/* @brief	注視点設定			*/
+	inline void SetAt(VECTOR3 at) { at_ = at; }
 
-	// Setter
-	void SetPos(VECTOR3 pos) { pos_ = pos; }
-	void SetAt(VECTOR3 at)   { at_ = at; }
-
+	/* @brief	カメラの情報を設定	*/
 	void SetCamera(Camera* camera)
 	{
-		pos_ = camera->pos_;
-		at_  = camera->at_;
+		position_ = camera->GetPosition();
+		at_ = camera->GetAt();
 	}
 
 protected:
-	// コンストラクタ
-	Camera(CameraManager* parent, int number, VECTOR3 pos = VECTOR3(POS_X, POS_Y, POS_Z),
-		VECTOR3 at = VECTOR3(0.0f, 0.0f, 0.0f));
+	//! マネージャー
+	CameraManager* manager_;
 
-	// 親クラス
-	CameraManager* parent_;
+	//! 位置座標
+	VECTOR3 position_;
+	//! 注視点
+	VECTOR3 at_;
+	//! 上ベクトル
+	VECTOR3 up_;
+	//! 前ベクトル
+	VECTOR3 front_;
+	//! 右ベクトル
+	VECTOR3 right_;
 
-	int     number_;
-	VECTOR3 pos_;		// カメラの位置座標
-	VECTOR3 at_;		// 注視点座標
-	VECTOR3 up_;		// カメラの上を表す
-	VECTOR3 front_;		// 前ベクトル
-	VECTOR3 right_;		// 右ベクトル
-
-	VECTOR3 frontXPlane_;	//! 前ベクトルから高さ成分(y)を消した値
-	VECTOR3 rightXPlane_;	//! 前ベクトルから高さ成分(y)を消した値
-
-	Systems* systems_;
+	//! x-z平面での前ベクトル
+	VECTOR3 frontXPlane_;
+	//! x-z平面での右ベクトル
+	VECTOR3 rightXPlane_;
 };
 
 #endif // _CAMERA_H_

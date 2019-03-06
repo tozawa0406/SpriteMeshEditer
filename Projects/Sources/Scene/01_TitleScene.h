@@ -10,6 +10,7 @@
 #include <FrameWork/Scene/BaseScene.h>
 #include "../Object/Client/Receiver.h"
 #include <FrameWork/Object/ObjectManager.h>
+#include <FrameWork/Systems/Camera/CameraManager.h>
 
 class Client;
 class TitleScene : public BaseScene, public GUI
@@ -47,8 +48,6 @@ public:
 	void ConsoleView(void) override;
 
 private:
-	ObjectManager*	objectManager_;
-
 	Client* client_;
 };
 

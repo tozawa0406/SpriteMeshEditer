@@ -42,8 +42,8 @@ HRESULT DepthShadow::SetParam(const MATRIX& mtxWorld, const COLOR& color, VECTOR
 
 	CONSTANT cbuf;
 	cbuf.world = mtxWorld;
-	cbuf.view = systems->GetSceneManager()->GetCameraManager()->GetView();
-	cbuf.proj = systems->GetSceneManager()->GetCameraManager()->GetProj();
+	cbuf.view = systems->GetSceneManager()->GetScene()->GetCameraManager()->GetView();
+	cbuf.proj = systems->GetSceneManager()->GetScene()->GetCameraManager()->GetProj();
 
 	cbuf.texcoord = texcoord;
 

@@ -42,7 +42,7 @@ HRESULT ZTexture::BeginDraw(void)
 {
 	const auto& graphics = manager_->GetSystems()->GetGraphics();
 
-	const auto& camera = manager_->GetSystems()->GetSceneManager()->GetCameraManager()->GetCamera();
+	const auto& camera = manager_->GetSystems()->GetSceneManager()->GetScene()->GetCameraManager()->GetMainCamera();
 	VECTOR3 at = camera->GetAt();
 	VECTOR3 up = camera->GetUp();
 

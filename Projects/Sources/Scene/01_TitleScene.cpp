@@ -6,8 +6,9 @@
 #include "../Object/Client/Client.h"
 #include "../Object/Pivot.h"
 
+#include <FrameWork/Systems/Camera/MoveCamera.h>
+
 TitleScene::TitleScene(void) : GUI(Systems::Instance(), nullptr, "SceneTitle")
-	, objectManager_(nullptr)
 	, client_(nullptr)
 {
 }
@@ -19,6 +20,12 @@ TitleScene::~TitleScene(void)
 void TitleScene::Init(SceneList sceneNum)
 {
 	BaseScene::Init(sceneNum);
+
+	cameraManager_ = new CameraManager(this);
+	if (cameraManager_)
+	{
+		cameraManager_->Init();
+	}
 
 	objectManager_ = new ObjectManager(this);
 	if (objectManager_)
@@ -34,11 +41,19 @@ void TitleScene::Init(SceneList sceneNum)
 
 		client_->Load();
 	}
+
+	MoveCamera* camera = cameraManager_->Create<MoveCamera>();
+	if (camera)
+	{
+		camera->SetPosition(VECTOR3(0, 0, -100));
+	}
+
 }
 
 void TitleScene::Uninit(void)
 {
 	UninitDeletePtr(objectManager_);
+	UninitDeletePtr(cameraManager_);
 }
 
 SceneList TitleScene::Update(void)
@@ -47,6 +62,7 @@ SceneList TitleScene::Update(void)
 	const auto& ctrl = GetCtrl(0);
 	if (!ctrl) { return SceneList::NOTCHANGE; }
 
+	if (cameraManager_) { cameraManager_->Update(); }
 	if (objectManager_) { objectManager_->Update(); }
 
 	// ‘JˆÚˆ—

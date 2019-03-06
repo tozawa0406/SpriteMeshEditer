@@ -51,13 +51,16 @@ void CascadeManager::ComputeShadowMatrixPSSM(void)
 				else { return; }
 			}
 			else { return; }
-			if (const auto& cameraManager = sceneManager->GetCameraManager())
+			if (const auto& scene = sceneManager->GetScene())
 			{
-				camera = cameraManager->GetCamera();
+				if (const auto& cameraManager = scene->GetCameraManager())
+				{
+					camera = cameraManager->GetMainCamera();
+				}
 			}
 		}
 	}
-	cameraPosition_ = camera->GetPos();
+	cameraPosition_ = camera->GetPosition();
 
 	// ライトの方向ベクトル
 	lightDirection_ = VecNorm(info.direction);
@@ -87,7 +90,7 @@ void CascadeManager::ComputeShadowMatrixPSSM(void)
 		convexHull[7] = VECTOR3( aria,  aria,  aria);
 
 		// カメラの行列を求める
-		VECTOR3 pos = camera->GetPos();
+		VECTOR3 pos = camera->GetPosition();
 		VECTOR3 dir = camera->GetFront();
 		Transform t;
 		t.position = pos;

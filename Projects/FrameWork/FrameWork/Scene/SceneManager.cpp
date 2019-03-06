@@ -25,9 +25,6 @@ SceneManager::~SceneManager(void)
 
 HRESULT SceneManager::Init(void)
 {
-	camera_ = new CameraManager(this);
-	assert(camera_);
-
 #ifdef _DEBUG
 	int scene = static_cast<int>(EachScene::DEBUG_START_SCENE) - 1;
 	if (scene < 0) { scene = static_cast<int>(SceneList::MAX); }
@@ -67,7 +64,6 @@ void SceneManager::Uninit(void)
 	UninitDeletePtr(loading_);
 	UninitDeletePtr(pause_);
 	UninitDeletePtr(scene_);
-	DeletePtr(camera_);
 }
 
 void SceneManager::Update(void)
@@ -84,8 +80,6 @@ void SceneManager::Update(void)
 
 void SceneManager::Draw(void)
 {
-	camera_->Draw();
-
 	// フェード処理
 	Fade();
 }
@@ -94,7 +88,6 @@ void SceneManager::SceneUpdate(void)
 {	
 	if (!isPause_)
 	{
-		camera_->Update();
 		if (!GetSystems()->GetDebug()->GetDebugPause())
 		{
 			if (scene_)

@@ -21,6 +21,8 @@
 class SceneManager;
 class Light;
 class MeshField;
+class ObjectManager;
+class CameraManager;
 class BaseScene
 {
 public:
@@ -47,14 +49,16 @@ public:
 	 * @return	なし				*/
 	void SetManager(SceneManager* manager);
 
-	/* @brief	ライト取得処理		*/
-	inline Light*		GetLight(void)		{ return light_;		}
-
+	/* @brief	ライト取得処理					*/
+	inline Light*			GetLight(void)			{ return light_;			}
 	/* @brief	メッシュフィールド取得処理		*/
-	inline MeshField*	GetMeshField(void)	{ return meshField_;	}
-
+	inline MeshField*		GetMeshField(void)		{ return meshField_;		}
+	/* @brief	オブジェクトマネージャーの取得	*/
+	inline ObjectManager*	GetObjectManager(void)	{ return objectManager_;	}
+	/* @brief	カメラめねージャーの取得		*/
+	inline CameraManager*	GetCameraManager(void)	{ return cameraManager_;	}
 	/* @brief	シーン番号の取得	*/
-	inline SceneList GetSceneNum(void) { return sceneNum_; }
+	inline SceneList		GetSceneNum(void)		{ return sceneNum_;			}
 
 protected:	
 	/* @brief	コントローラの取得処理
@@ -75,6 +79,10 @@ protected:
 	Light*			light_;
 	//! メッシュフィールド
 	MeshField*		meshField_;
+	//! オブジェクトのマネージャー
+	ObjectManager*	objectManager_;
+	//! カメラのマネージャー
+	CameraManager*	cameraManager_;
 	//! 自分のシーン番号
 	SceneList		sceneNum_;
 };

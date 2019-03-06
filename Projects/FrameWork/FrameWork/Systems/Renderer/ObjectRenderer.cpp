@@ -4,7 +4,7 @@ ObjectRenderer::ObjectRenderer(RendererType type) :
 	manager_(nullptr)
 	, wrapper_(nullptr)
 	, transform_(nullptr)
-	, flag_(FLAG_ENABLE)
+	, flag_(FLAG_ENABLE | FLAG_SORT)
 	, type_(type)
 	, shader_(Shader::ENUM::UNKOUWN)
 {

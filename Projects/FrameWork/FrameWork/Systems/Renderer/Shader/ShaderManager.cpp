@@ -46,9 +46,9 @@ HRESULT ShaderManager::Init(void)
 	if (window->ErrorMessage("シェーダーの作成に失敗しました", "エラー", shader_[(int)Shader::ENUM::ZTEXTURE]->Init()))
 	{ return E_FAIL; }
 
-	shader_[(int)Shader::ENUM::DEPTH_SHADOW] = new DepthShadow(this);
-	if (window->ErrorMessage("シェーダーの作成に失敗しました", "エラー", shader_[(int)Shader::ENUM::DEPTH_SHADOW]->Init()))
-	{ return E_FAIL; }
+	//shader_[(int)Shader::ENUM::DEPTH_SHADOW] = new DepthShadow(this);
+	//if (window->ErrorMessage("シェーダーの作成に失敗しました", "エラー", shader_[(int)Shader::ENUM::DEPTH_SHADOW]->Init()))
+	//{ return E_FAIL; }
 
 	shader_[(int)Shader::ENUM::POINT_SPRITE] = new PointSpriteShader(this);
 	if (window->ErrorMessage("シェーダーの作成に失敗しました", "エラー", shader_[(int)Shader::ENUM::POINT_SPRITE]->Init()))
@@ -58,19 +58,19 @@ HRESULT ShaderManager::Init(void)
 	if (window->ErrorMessage("シェーダーの作成に失敗しました", "エラー", shader_[(int)Shader::ENUM::BILLBOARD]->Init()))
 	{ return E_FAIL; }
 
-	shader_[(int)Shader::ENUM::CIRCLE_GAUGE] = new CircleGaugeShader(this);
-	if (window->ErrorMessage("シェーダーの作成に失敗しました", "エラー", shader_[(int)Shader::ENUM::CIRCLE_GAUGE]->Init()))
-	{ return E_FAIL; }
+	//shader_[(int)Shader::ENUM::CIRCLE_GAUGE] = new CircleGaugeShader(this);
+	//if (window->ErrorMessage("シェーダーの作成に失敗しました", "エラー", shader_[(int)Shader::ENUM::CIRCLE_GAUGE]->Init()))
+	//{ return E_FAIL; }
 
 	//shader_[(int)Shader::ENUM::CS_SKINNING] = new CSSkinningRenderShader(this);
 	//if (window->ErrorMessage("シェーダーの作成に失敗しました", "エラー", shader_[(int)Shader::ENUM::CS_SKINNING]->Init()))
 	//{ return E_FAIL; }
 	//shader_[(int)Shader::ENUM::CS_SKINNING]->SetConstantBuffer(shader_[(int)Shader::ENUM::DEFAULT]->GetConstantBuffer(1));
 
-	shader_[(int)Shader::ENUM::SKINNING_SHADOW] = new SkinningShadowShader(this);
-	if (window->ErrorMessage("シェーダーの作成に失敗しました", "エラー", shader_[(int)Shader::ENUM::SKINNING_SHADOW]->Init()))
-	{ return E_FAIL; }
-	shader_[(int)Shader::ENUM::SKINNING_SHADOW]->SetConstantBuffer(shader_[(int)Shader::ENUM::DEFAULT]->GetConstantBuffer(1));
+	//shader_[(int)Shader::ENUM::SKINNING_SHADOW] = new SkinningShadowShader(this);
+	//if (window->ErrorMessage("シェーダーの作成に失敗しました", "エラー", shader_[(int)Shader::ENUM::SKINNING_SHADOW]->Init()))
+	//{ return E_FAIL; }
+	//shader_[(int)Shader::ENUM::SKINNING_SHADOW]->SetConstantBuffer(shader_[(int)Shader::ENUM::DEFAULT]->GetConstantBuffer(1));
 
 
 	return S_OK;

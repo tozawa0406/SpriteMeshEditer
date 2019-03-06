@@ -1,9 +1,3 @@
-//-----------------------------------------------------------------------------
-//
-//	カメラ管理[CameraManager.cpp]
-//	Auther : 戸澤翔太
-//																	2018/01/24
-//-----------------------------------------------------------------------------
 #include "CameraManager.h"
 #include "../../Windows/Windows.h"
 #include "../GameSystems.h"
@@ -12,37 +6,37 @@
 #include "../DebugSetting/GuiManager.h"
 #include "MoveCamera.h"
 
-// コンストラクタ
-CameraManager::CameraManager(SceneManager* parent) : parent_(parent), mainCamera_(0), cameraNum_(0), look_(false), frame_(0)
+CameraManager::CameraManager(BaseScene* scene) :
+	scene_(scene)
+	, debugCamera_(nullptr)
+	, mainCamera_(0)
+	, look_(false)
+	, frame_(0)
 {
-	// 初期化
-	for (int i = 0; i < MAX_CAMERA; ++i)
-	{
-		camera_[i] = nullptr;
-	}
-
-	camera_[cameraNum_] = new Camera(this, cameraNum_);
-	cameraNum_++;
-
-	debugCamera_ = new MoveCamera(this, -1);
 }
 
-// デストラクタ
 CameraManager::~CameraManager(void)
+{
+}
+
+void CameraManager::Init(void)
+{
+	Create<Camera>();
+	debugCamera_ = new MoveCamera;
+	if (debugCamera_)
+	{
+		debugCamera_->SetManager(this);
+	}
+}
+
+void CameraManager::Uninit(void)
 {
 	// カメラの削除
 	for (auto obj : camera_) { DeletePtr(obj); }
 	DeletePtr(debugCamera_);
 }
 
-void CameraManager::Draw(void)
-{
-	// View行列をProj行列の生成
-	CreateMatrix();
-}
-
-// 更新処理
-int CameraManager::Update(void)
+void CameraManager::Update(void)
 {
 	// デバッグカメラへの移行
 	DebugMove();
@@ -50,26 +44,37 @@ int CameraManager::Update(void)
 	// カメラの更新処理
 	for (auto obj : camera_)
 	{
-		if (obj != nullptr)
+		if (obj)
 		{
 			obj->Update();
 		}
 	}
 	debugCamera_->Update();
-	return 0;
+
+	// View行列をProj行列の生成
+	CreateMatrix();
 }
 
-// デバッグカメラへの移行
 void CameraManager::DebugMove(void)
 {
 	VECTOR3 temp = { 0, 0, 0 };
 	// ImGuiで選択されているオブジェクトのpos
 	const VECTOR3* selectObj = nullptr;
 
+	GuiManager* guiManager = nullptr;
+	if (const auto& systems = Systems::Instance())
+	{
+		if (const auto& debug = systems->GetDebug())
+		{
+			guiManager = debug->GetGuiManager();
+		}
+	}
+	if (!guiManager) { return; }
+
 #ifdef _SELF_DEBUG
-	selectObj = parent_->GetSystems()->GetDebug()->GetGuiManager()->GetSelect();
+	selectObj = guiManager->GetSelect();
 #endif
-	if (!parent_->GetSystems()->GetDebug()->GetGuiManager()->GetLookObject())
+	if (!guiManager->GetLookObject())
 	{
 		selectObj = nullptr;
 	}
@@ -85,7 +90,7 @@ void CameraManager::DebugMove(void)
 			// 現在のカメラのposとatをデバッグ用のカメラに設定
 			debugCamera_->SetCamera(camera_[mainCamera_]);
 			// 現在カメラのposとatを保存
-			posOld_ = camera_[mainCamera_]->GetPos();
+			posOld_ = camera_[mainCamera_]->GetPosition();
 			atOld_  = camera_[mainCamera_]->GetAt();
 			// メインカメラの設定を配列外へ
 			mainOld_    = mainCamera_;
@@ -110,7 +115,7 @@ void CameraManager::DebugMove(void)
 			// フレーム数ををマイナスにする
 			frame_ = -GuiManager::SELECT_GUI;
 			diff_ = (atOld_ - debugCamera_->GetAt()) / (float)GuiManager::SELECT_GUI;
-			diffPos_ = (posOld_ - debugCamera_->GetPos()) / (float)GuiManager::SELECT_GUI;
+			diffPos_ = (posOld_ - debugCamera_->GetPosition()) / (float)GuiManager::SELECT_GUI;
 		}
 		// 規定のフレーム間
 		else if (frame_++ < 0)
@@ -119,8 +124,8 @@ void CameraManager::DebugMove(void)
 			temp = debugCamera_->GetAt() + diff_;
 			debugCamera_->SetAt(temp);
 			// 位置の移動
-			temp = debugCamera_->GetPos() + diffPos_;
-			debugCamera_->SetPos(temp);
+			temp = debugCamera_->GetPosition() + diffPos_;
+			debugCamera_->SetPosition(temp);
 		}
 		// 規定のフレーム数を終えたら
 		else
@@ -133,7 +138,6 @@ void CameraManager::DebugMove(void)
 	}
 }
 
-// 行列の作成
 void CameraManager::CreateMatrix(void)
 {
 	// メインカメラの取得
@@ -144,32 +148,7 @@ void CameraManager::CreateMatrix(void)
 	if (main == nullptr) { return; }
 
 	// ビュー変換
-	mtxView_ = CreateViewMatrix(main->GetPos(), main->GetAt(), main->GetUp());
+	mtxView_ = CreateViewMatrix(main->GetPosition(), main->GetAt(), main->GetUp());
 	//プロジェクション行列の作成
 	mtxProj_ = CreateProjectionMatrix(Camera::FOV, Windows::WIDTH / (float)Windows::HEIGHT, Camera::C_NEAR, Camera::C_FAR);
-}
-
-// 追従カメラの削除
-void CameraManager::DestroyObjCamera(Camera* obj)
-{
-	// 配列の中からカメラを探す
-	for (int i = 0; i < MAX_CAMERA; ++i)
-	{
-		if (camera_[i] == obj)
-		{
-			VECTOR3 pos = obj->GetPos();
-			VECTOR3 at  = obj->GetAt();
-			DeletePtr(camera_[i]);
-			camera_[i] = new Camera(this, i);
-			break;
-		}
-	}
-	cameraNum_--;
-}
-
-// Get処理
-Camera* CameraManager::GetCamera(void)
-{
-	if (mainCamera_ >= 0) { return camera_[mainCamera_]; }
-	else { return debugCamera_; }
 }

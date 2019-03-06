@@ -12,35 +12,39 @@
 
 class MoveCamera : public Camera
 {
-	friend class CameraManager;
-
-	// 移動速度
-	static constexpr float MOVE_SPEED = 0.06f;
-	// 回転速度
-	static constexpr float ROTATION_SPEED = 0.002f;
-
 public:
-	// デストラクタ
-	~MoveCamera(void);
+	/* @brief	コンストラクタ		*/
+	MoveCamera(void);
+	/* @brief	デストラクタ		*/
+	virtual ~MoveCamera(void);
 
-	void Update(void);			// 更新処理
-	void GuiUpdate(void);		// GUI
+	/* @brief	更新処理			*/
+	virtual void Update(void)		override;
+	/* @brief	Guiの更新処理		*/
+	virtual void GuiUpdate(void)	override;
 
 private:
-	// コンストラクタ
-	MoveCamera(CameraManager* parent, int number, VECTOR3 pos = VECTOR3(Camera::POS_X, Camera::POS_Y, Camera::POS_Z),
-		VECTOR3 at = VECTOR3(0.0f, 0.0f, 0.0f));
-	void Input(void);			// キー入力
-	void MoveTrans(void);		// 平行移動
-	void MoveRotation(void);	// 自分を中心に回転
-	void MoveAtRotation(void);	// 注視点を中心に回転
+	/* @brief	キー入力処理
+	 * @sa		Update()			*/
+	void Input(void);
+	/* @brief	平行移動
+	 * @sa		Update()			*/
+	void MoveTrans(void);
+	/* @brief	自分を中心に回転
+	 * @sa		Update()			*/
+	void MoveRotation(void);
+	/* @brief	注視点を中心に回転
+	 * @sa		Update()			*/
+	void MoveAtRotation(void);
 
-	// 方向
-	VECTOR2 dir = { 0, 0 };
-	// 速度
-	VECTOR2 velocity = { 0, 0 };
-	VECTOR2 rotVelocity = { 0, 0 };
-	VECTOR2 rotAtVelocity = { 0, 0 };
+	//! 方向
+	VECTOR2 dir_;
+	//! 速度
+	VECTOR2 velocity_;
+	//! 回転速度
+	VECTOR2 rotVelocity_;
+	//! 注視点の回転速度
+	VECTOR2 rotAtVelocity_;
 };
 
-#endif // _CAMERA_H_
+#endif // _MOVE_CAMERA_H_

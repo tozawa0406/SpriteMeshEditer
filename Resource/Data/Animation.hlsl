@@ -176,6 +176,7 @@ OUT_PS PS_Main(OUT_VS In)
 
 	OUT_PS outPS;
 	outPS.target0 = Out;
+	outPS.target0 = In.color * DiffuseTexture.Sample(DiffuseSampler, In.texcoord);
 	outPS.target1 = In.worldPosition;
 	outPS.target2 = In.worldNormal;
 	return outPS;

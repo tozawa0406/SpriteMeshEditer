@@ -159,7 +159,11 @@ void Client::DrawHierarchy(Receiver* draw, string& blank)
 		if (select) 
 		{
 			workReceiver_ = draw;
-			if (selectedCnt_ > 0) { draw->SetHierarchyChild(!draw->IsHierarchChild()); }
+			if (selectedCnt_ > 0) 
+			{
+				draw->SetHierarchyChild(!draw->IsHierarchChild()); 
+				selectedCnt_ = 0;
+			}
 			else { selectedCnt_++; } 			
 		}
 

@@ -114,7 +114,6 @@ void GuiManager::GuiUpdate(void)
 	{
 		return;
 	}
-	float padding = 50;
 
 	for (auto& obj : obj_)
 	{
@@ -123,73 +122,6 @@ void GuiManager::GuiUpdate(void)
 			obj->GuiUpdate();
 		}
 	}
-
-	ImGui::SetNextWindowPos(ImVec2(Windows::WIDTH - padding - 450, padding), ImGuiSetCond_Once);
-	ImGui::SetNextWindowSize(ImVec2(450, 500), ImGuiSetCond_Once);
-
-	if (ImGui::Begin("Inspector"))
-	{
-		for (auto& obj : obj_)
-		{
-			if (obj)
-			{
-				obj->InspectorView();
-			}
-		}
-
-		if (systems_)
-		{
-			if (const auto& texture = systems_->GetTexture())
-			{
-				texture->GuiUpdate();
-			}
-		}
-	}
-	ImGui::End();
-
-	float w = Windows::WIDTH - padding * 2;
-	float h = 250;
-	ImGui::SetNextWindowPos(ImVec2(Half(Windows::WIDTH) - Half(w), (Windows::HEIGHT - padding) - h), ImGuiSetCond_Once);
-	ImGui::SetNextWindowSize(ImVec2(w, h), ImGuiSetCond_Once);
-	
-	if (ImGui::Begin("Console"))
-	{
-		for (auto& obj : obj_)
-		{
-			if (obj)
-			{
-				obj->ConsoleView();
-			}
-		}
-	}
-	ImGui::End();
-
-	ImGui::SetNextWindowPos(ImVec2(padding, padding), ImGuiSetCond_Once);
-	ImGui::SetNextWindowSize(ImVec2(450, 700), ImGuiSetCond_Once);
-	
-	if (ImGui::Begin("Hierarchy"))
-	{
-		for (auto& obj : obj_)
-		{
-			if (obj)
-			{
-				obj->HierarchyView();
-			}
-		}
-
-		const auto& graphics = window->GetGraphics();
-		if (!graphics) { return; }
-		graphics->GuiUpdate();
-		if (const auto& wrapper = graphics->GetWrapper())
-		{
-			wrapper->GuiUpdate();
-		}
-		if (const auto& target = graphics->GetRenderTarget())
-		{
-			target->GuiUpdate();
-		}
-	}
-	ImGui::End();
 #endif
 }
 

@@ -41,9 +41,7 @@
     <ClCompile Include="Sources\Object\Pivot.cpp" />
     <ClCompile Include="Sources\Object\Search.cpp" />
     <ClCompile Include="Sources\Scene\00_EachScene.cpp" />
-    <ClCompile Include="Sources\Scene\01_TitleScene.cpp" />
-    <ClCompile Include="Sources\Scene\04_PauseScene.cpp" />
-    <ClCompile Include="Sources\Scene\DontDestroyOnLoad.cpp" />
+    <ClCompile Include="Sources\Scene\01_EditScene.cpp" />
     <ClCompile Include="Sources\Scene\ResourceInfoManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -70,9 +68,7 @@
     <ClInclude Include="Sources\Object\Pivot.h" />
     <ClInclude Include="Sources\Object\Search.h" />
     <ClInclude Include="Sources\Scene\00_EachScene.h" />
-    <ClInclude Include="Sources\Scene\01_TitleScene.h" />
-    <ClInclude Include="Sources\Scene\04_PauseScene.h" />
-    <ClInclude Include="Sources\Scene\DontDestroyOnLoad.h" />
+    <ClInclude Include="Sources\Scene\01_EditScene.h" />
     <ClInclude Include="Sources\Scene\ResourceInfoManager.h" />
     <ClInclude Include="Sources\Scene\ResourcesModel.h" />
     <ClInclude Include="Sources\Scene\ResourcesSound.h" />

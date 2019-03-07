@@ -1,13 +1,20 @@
+/*
+ * @file		Client.h
+ * @brief		クライアント
+ * @author		戸澤翔太
+ * @data		2019/03/07
+ */
 #ifndef _CLIENT_H_
 #define _CLIENT_H_
 
 #include "Command/ICommand.h"
 #include <FrameWork/Object/Object.h>
+#include <FrameWork/Systems/DebugSetting/GUI.h>
 #include "SpriteMesh.h"
 
 class Pivot;
 class Receiver;
-class Client : public Object
+class Client : public Object, public GUI
 {
 public:
 	/* @brief	コンストラクタ		*/
@@ -25,12 +32,8 @@ public:
 	/* @brief	ロード処理			*/
 	void Load(void);
 
-	/* @brief	インスペクタの描画	*/
-	void InspectorView(void);
-	/* @brief	コンソールの描画	*/
-	void ConsoleView(void);
-	/* @brief	ヒエラルキーの描画	*/
-	void HierarchyView(void);
+	/* @brief	Gui更新処理			*/
+	virtual void GuiUpdate(void) override;
 
 	/* @brief	コマンドの追加
 	 * @param	(command)	追加するコマンド	*/
@@ -48,11 +51,10 @@ public:
 
 	/* @brief	ヒエラルキーから消去
 	 * @param	(receiver)	消去するスプライト	*/
-	int  RemoveSprite(Receiver* receiver);
+	void RemoveSprite(Receiver* receiver);
 	/* @brief	ヒエラルキーへの追加
-	 * @param	(receiver)	新規スプライト
-	 * @param	(place)		配列番号(Undo時)	*/
-	void AddSprite(Receiver* receiver, int place);
+	 * @param	(receiver)	新規スプライト		*/
+	void AddSprite(Receiver* receiver);
 
 	/* @brief	ヒエラルキーのリストを取得		*/
 	const std::vector<Receiver*>& GetReceiverList(void) { return receiverList_; }
@@ -64,6 +66,13 @@ private:
 	/* @brief	進む処理
 	 * @sa		Update(), HierarchyView()		*/
 	void Redo(void);
+
+	/* @brief	インスペクタの描画	*/
+	void InspectorView(void);
+	/* @brief	コンソールの描画	*/
+	void ConsoleView(void);
+	/* @brief	ヒエラルキーの描画	*/
+	void HierarchyView(void);
 
 	/* @brief	ヒエラルキービューに描画
 	 * @sa		HierarchyView(), DrawHierarchy()

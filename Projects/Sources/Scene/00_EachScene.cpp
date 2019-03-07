@@ -1,8 +1,7 @@
 #include "00_EachScene.h"
 #include <FrameWork/Scene/SceneManager.h>
 
-#include "01_TitleScene.h"
-#include "04_PauseScene.h"
+#include "01_EditScene.h"
 
 EachScene::EachScene(void)
 {
@@ -22,7 +21,7 @@ void EachScene::ChangeScene(SceneList sceneChange, SceneList& sceneNum)
 		//リザルトを越えたらタイトルに戻る
 		if (sceneNum >= SceneList::MAX)
 		{
-			sceneNum = SceneList::TITLE;
+			sceneNum = SceneList::EDIT;
 		}
 	}
 	else
@@ -39,7 +38,7 @@ int EachScene::ChangePause(int returnPause)
 		return 0;
 	case 2:
 	case 3:
-		return static_cast<int>(SceneList::TITLE);
+		return static_cast<int>(SceneList::EDIT);
 	}
 
 	return -1;
@@ -51,8 +50,8 @@ BaseScene* EachScene::CreateScene(SceneManager* manager, SceneList sceneNum)
 
 	switch (sceneNum)
 	{
-	case SceneList::TITLE:
-		temp = new TitleScene;
+	case SceneList::EDIT:
+		temp = new EditScene;
 		break;
 	}
 

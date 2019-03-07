@@ -6,7 +6,9 @@
 
 #include "LoadSpriteMesh.h"
 
-Client::Client(void) : Object(ObjectTag::STATIC)
+#include <FrameWork/Systems/GameSystems.h>
+
+Client::Client(void) : Object(ObjectTag::STATIC), GUI(Systems::Instance(), this, "client")
 	, currentReceiver_(nullptr)
 	, ctrl_(nullptr)
 	, pivot_(nullptr)
@@ -70,6 +72,51 @@ void Client::Update(void)
 			workReceiver_ = nullptr;
 		}
 	}
+}
+
+void Client::GuiUpdate(void)
+{
+	float padding = 50;
+
+	ImGui::SetNextWindowPos(ImVec2(Windows::WIDTH - padding - 450, padding), ImGuiSetCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(450, 500), ImGuiSetCond_Once);
+
+	if (ImGui::Begin("Inspector"))
+	{
+		InspectorView();
+	}
+	ImGui::End();
+
+	float w = Windows::WIDTH - padding * 2;
+	float h = 250;
+	ImGui::SetNextWindowPos(ImVec2(Half(Windows::WIDTH) - Half(w), (Windows::HEIGHT - padding) - h), ImGuiSetCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(w, h), ImGuiSetCond_Once);
+
+	if (ImGui::Begin("Console"))
+	{
+		ConsoleView();
+	}
+	ImGui::End();
+
+	ImGui::SetNextWindowPos(ImVec2(padding, padding), ImGuiSetCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(450, 700), ImGuiSetCond_Once);
+
+	if (ImGui::Begin("Hierarchy"))
+	{
+		HierarchyView();
+
+		if (const auto& systems = Systems::Instance())
+		{
+			if (const auto& graphics = systems->GetGraphics())
+			{
+				if (const auto& wrapper = graphics->GetWrapper())
+				{
+					wrapper->GuiUpdate();
+				}
+			}
+		}
+	}
+	ImGui::End();
 }
 
 void Client::InspectorView(void)
@@ -364,7 +411,7 @@ void Client::LoadData(void)
 	AddMessage("\"Load\" is complete " + version);
 }
 
-int Client::RemoveSprite(Receiver* receiver)
+void Client::RemoveSprite(Receiver* receiver)
 {
 	int size = static_cast<int>(receiverList_.size());
 	for (int i = 0; i < size; ++i)
@@ -379,23 +426,13 @@ int Client::RemoveSprite(Receiver* receiver)
 			else { currentReceiver_ = nullptr; }
 
 			receiverList_.erase(receiverList_.begin() + i);
-
-			return i;
+			break;
 		}
 	}
-	return 0;
 }
 
-void Client::AddSprite(Receiver* receiver, int place)
+void Client::AddSprite(Receiver* receiver)
 {
-	if (place > 0)
-	{
-		// êŠw’è‚ª‚ ‚ê‚Î‚»‚±‚É’Ç‰Á
-		receiverList_.insert(receiverList_.begin() + place, receiver);
-	}
-	else
-	{
-		// w’è‚ª‚È‚¯‚ê‚ÎŒã‚ë‚É’Ç‰Á
-		receiverList_.emplace_back(receiver);
-	}
+	// Œã‚ë‚É’Ç‰Á
+	receiverList_.emplace_back(receiver);
 }

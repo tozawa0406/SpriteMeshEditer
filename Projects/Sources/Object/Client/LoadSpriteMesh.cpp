@@ -18,7 +18,7 @@ SPRITE_MESH_RESOURCE LoadSpriteMesh::Load(string fileName, string& version)
 		// ÇªÇÍÇºÇÍÇÃì«çû
 		if (ver == "ver.1.0")
 		{
-			GetSpriteMeshVer1_1(file, temp);
+			GetSpriteMeshVer1_0(file, temp);
 		}
 
 		// èIóπ
@@ -28,7 +28,7 @@ SPRITE_MESH_RESOURCE LoadSpriteMesh::Load(string fileName, string& version)
 	return temp;
 }
 
-void LoadSpriteMesh::GetSpriteMeshVer1_1(IOFile& file, SPRITE_MESH_RESOURCE& spriteMesh)
+void LoadSpriteMesh::GetSpriteMeshVer1_0(IOFile& file, SPRITE_MESH_RESOURCE& spriteMesh)
 {
 	size_t size = 0;
 	file.ReadParam(&size, sizeof(size_t));
@@ -46,10 +46,10 @@ void LoadSpriteMesh::GetSpriteMeshVer1_1(IOFile& file, SPRITE_MESH_RESOURCE& spr
 
 	size = 0;
 	file.ReadParam(&size, sizeof(size_t));
-	for (int i = 0; i < size; ++i)
+	for (size_t i = 0; i < size; ++i)
 	{
 		SPRITE_MESH_RESOURCE temp;
-		GetSpriteMeshVer1_1(file, temp);
+		GetSpriteMeshVer1_0(file, temp);
 		spriteMesh.children.emplace_back(temp);
 	}
 }
@@ -64,13 +64,13 @@ void LoadSpriteMesh::Save(string fileName, const SPRITE_MESH_RESOURCE& resource)
 		file.WriteParam(&size, sizeof(size_t));
 		file.WriteParam(&SPRITE_MESH_VARSION[0], sizeof(char) * size);
 
-		SetSpriteMeshVer1_1(file, resource);
+		SetSpriteMeshVer1_0(file, resource);
 
 		file.CloseFile();
 	}
 }
 
-void LoadSpriteMesh::SetSpriteMeshVer1_1(IOFile& file, const SPRITE_MESH_RESOURCE& spriteMesh)
+void LoadSpriteMesh::SetSpriteMeshVer1_0(IOFile& file, const SPRITE_MESH_RESOURCE& spriteMesh)
 {
 	size_t size = spriteMesh.name.size();
 	file.WriteParam(&size, sizeof(size_t));
@@ -86,8 +86,8 @@ void LoadSpriteMesh::SetSpriteMeshVer1_1(IOFile& file, const SPRITE_MESH_RESOURC
 
 	size = spriteMesh.children.size();
 	file.WriteParam(&size, sizeof(size_t));
-	for (int i = 0; i < size; ++i)
+	for (size_t i = 0; i < size; ++i)
 	{
-		SetSpriteMeshVer1_1(file, spriteMesh.children[i]);
+		SetSpriteMeshVer1_0(file, spriteMesh.children[i]);
 	}
 }

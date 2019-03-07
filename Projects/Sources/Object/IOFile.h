@@ -1,3 +1,9 @@
+/*
+ * @file		IOFile.h
+ * @brief		ƒtƒ@ƒCƒ‹‘€ì
+ * @author		ŒËàVãÄ‘¾
+ * @data		2019/03/07
+ */
 #ifndef _IO_FILE_H_
 #define _IO_FILE_H_
 

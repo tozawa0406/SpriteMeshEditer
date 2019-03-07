@@ -14,7 +14,7 @@ enum class SceneList : uint8
 {
 	NEXT		= 255,	// 次のシーン
 	NOTCHANGE	= 0,	// 遷移なし
-	TITLE,				// タイトル
+	EDIT,				// エディット
 	MAX
 };
 
@@ -28,7 +28,7 @@ public:
 	/* @brief	デストラクタ		*/
 	~EachScene(void);
 
-	static const SceneList DEBUG_START_SCENE = SceneList::TITLE;
+	static const SceneList DEBUG_START_SCENE = SceneList::EDIT;
 
 
 

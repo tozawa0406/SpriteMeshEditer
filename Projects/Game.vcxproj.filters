@@ -32,16 +32,7 @@
     <ClCompile Include="Sources\Scene\00_EachScene.cpp">
       <Filter>Source\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Scene\01_TitleScene.cpp">
-      <Filter>Source\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Scene\04_PauseScene.cpp">
-      <Filter>Source\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Scene\ResourceInfoManager.cpp">
-      <Filter>Source\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Scene\DontDestroyOnLoad.cpp">
       <Filter>Source\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Object\Search.cpp">
@@ -104,18 +95,15 @@
     <ClCompile Include="Sources\Camera\LookCamera.cpp">
       <Filter>Source\Camera</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Scene\01_EditScene.cpp">
+      <Filter>Source\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Object\ObjectTag.h">
       <Filter>Source\Object</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Scene\00_EachScene.h">
-      <Filter>Source\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Scene\01_TitleScene.h">
-      <Filter>Source\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Scene\04_PauseScene.h">
       <Filter>Source\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Scene\ResourceInfoManager.h">
@@ -128,9 +116,6 @@
       <Filter>Source\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Scene\ResourcesModel.h">
-      <Filter>Source\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Scene\DontDestroyOnLoad.h">
       <Filter>Source\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Object\Search.h">
@@ -195,6 +180,9 @@
     </ClInclude>
     <ClInclude Include="Sources\Camera\LookCamera.h">
       <Filter>Source\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Scene\01_EditScene.h">
+      <Filter>Source\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

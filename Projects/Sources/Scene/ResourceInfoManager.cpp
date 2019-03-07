@@ -19,7 +19,7 @@ const string* ResourceInfoManager::LoadTexture(SceneList state, int& size, int& 
 		size = max;
 		return &texture_.baseFileName[0];
 		break;
-	case SceneList::TITLE:
+	case SceneList::EDIT:
 		max = static_cast<int>(Resources::Texture::Title::MAX);
 		size = max - baseMax;
 //		return &texture_.titleFileName[0];
@@ -39,7 +39,7 @@ const string* ResourceInfoManager::LoadModel(SceneList state, int& size, int& ma
 		size = max;
 //		return &model_.baseFileName[0];
 		break;
-	case SceneList::TITLE:
+	case SceneList::EDIT:
 		max = static_cast<int>(Resources::Model::Title::MAX);
 		size = max - baseMax;
 //		return &model_.titleFileName[0];
@@ -59,7 +59,7 @@ const ANIMATION_INFO* ResourceInfoManager::LoadModelAnimation(SceneList state, i
 		size = max;
 //		return &model_..;
 		break;
-	case SceneList::TITLE:
+	case SceneList::EDIT:
 		max = static_cast<int>(Resources::Model::Animation::Title::MAX);
 		size = max - baseMax;
 	//	return &model_.titleFileName[0];
@@ -79,7 +79,7 @@ const SOUNDPARAM* ResourceInfoManager::LoadSound(SceneList state, int& size, int
 		size = max;
 		return &sound_.baseFileName[0];
 		break;
-	case SceneList::TITLE:
+	case SceneList::EDIT:
 		max  = static_cast<int>(Resources::Sound::Title::MAX);
 		size = max - baseMax;
 //		return &sound_.titleFileName[0];

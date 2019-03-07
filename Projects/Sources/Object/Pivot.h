@@ -1,3 +1,9 @@
+/*
+ * @file		Pivot.h
+ * @brief		ピボットの描画
+ * @author		戸澤翔太
+ * @data		2019/03/07
+ */
 #ifndef _PIVOT_H_
 #define _PIVOT_H_
 

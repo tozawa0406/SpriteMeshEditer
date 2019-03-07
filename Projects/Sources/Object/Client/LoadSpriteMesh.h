@@ -14,8 +14,8 @@ public:
 	void Save(string fileName, const SPRITE_MESH_RESOURCE& resource);
 
 private:
-	void GetSpriteMeshVer1_1(IOFile& file, SPRITE_MESH_RESOURCE& spriteMesh);
-	void SetSpriteMeshVer1_1(IOFile& file, const SPRITE_MESH_RESOURCE& spriteMesh);
+	void GetSpriteMeshVer1_0(IOFile& file, SPRITE_MESH_RESOURCE& spriteMesh);
+	void SetSpriteMeshVer1_0(IOFile& file, const SPRITE_MESH_RESOURCE& spriteMesh);
 };
 
 #endif // _LOAD_SPRITE_MESH_H_

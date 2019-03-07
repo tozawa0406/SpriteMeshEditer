@@ -1,3 +1,9 @@
+/*
+ * @file		Search.h
+ * @brief		ƒtƒ@ƒCƒ‹‘–¸
+ * @author		ŒËàVãÄ‘¾
+ * @data		2019/03/07
+ */
 #ifndef _SEARCH_H_
 #define _SEARCH_H_
 

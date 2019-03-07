@@ -50,7 +50,7 @@ public:
 	/* @fn		ChangeCamera
 	 * @brief	メインカメラの変更
 	 * @param	変更したいカメラの配列番号			*/
-	inline void ChangeCamera(int cameraNum) { (cameraNum < camera_.size()) ? mainCamera_ = cameraNum : cameraNum; }
+	inline void ChangeCamera(int cameraNum) { (cameraNum < static_cast<int>(camera_.size())) ? mainCamera_ = cameraNum : cameraNum; }
 
 	/* @breif	メインカメラの取得		*/
 	inline Camera*       GetMainCamera(void)	{ return (mainCamera_ >= 0) ? camera_[mainCamera_] : debugCamera_; }

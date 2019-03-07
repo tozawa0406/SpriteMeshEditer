@@ -1,11 +1,11 @@
 /*
- * @file		TitleScene.h
- * @brief		タイトルシーン
+ * @file		EditScene.h
+ * @brief		エディットシーン
  * @author		戸澤翔太
  * @data		2018/08/18
  */
-#ifndef _TITLE_SCENE_H_
-#define _TITLE_SCENE_H_
+#ifndef _EDIT_SCENE_H_
+#define _EDIT_SCENE_H_
 
 #include <FrameWork/Scene/BaseScene.h>
 #include "../Object/Client/Receiver.h"
@@ -13,13 +13,20 @@
 #include <FrameWork/Systems/Camera/CameraManager.h>
 
 class Client;
-class TitleScene : public BaseScene, public GUI
+class EditScene : public BaseScene, public GUI
 {
+	enum class Mode : uint8
+	{
+		UNKNOWN	= 0,
+		MODEL_EDIT,
+		ANIMATION_EDIT,
+	};
+
 public:
 	/* @brief	コンストラクタ		*/
-	TitleScene(void);
+	EditScene(void);
 	/* @brief	デストラクタ		*/
-	~TitleScene(void);
+	~EditScene(void);
 
 
 	
@@ -37,18 +44,16 @@ public:
 	 * @param	なし
 	 * @return	シーン番号			*/
 	SceneList	Update(void) override;
+
+	virtual void GuiUpdate(void) override;
 	
-	/* @brief	Guiの更新処理
-	 * @param	なし
-	 * @return	なし				*/
-	void InspectorView(void) override;
-
-	void HierarchyView(void) override;
-
-	void ConsoleView(void) override;
-
 private:
+	void SelectMode(void);
+	void CreateModelEdit(void);
+
 	Client* client_;
+	Mode	mode_;
+	bool	create_;
 };
 
-#endif // _TITLE_SCENE_H_
+#endif // _EDIT_SCENE_H_

@@ -12,7 +12,6 @@ SceneManager::SceneManager(Systems* systems) : Interface(systems)
 	, scene_(nullptr)
 	, pause_(nullptr)
 	, eachScene_(nullptr)
-	, dontDestroyOnLoad_(nullptr)
 	, fadeCnt_(SCENE_FADE_OUT - 1)
 	, isPause_(false)
 	, startLoad_(false)
@@ -47,19 +46,12 @@ HRESULT SceneManager::Init(void)
 	eachScene_ = new EachScene;
 	assert(eachScene_);
 
-	dontDestroyOnLoad_ = new DontDestroyOnLoad;
-	if (dontDestroyOnLoad_)
-	{
-		dontDestroyOnLoad_->Init();
-	}
-
 	return S_OK;
 }
 
 void SceneManager::Uninit(void)
 {
 	fade_.Uninit();
-	UninitDeletePtr(dontDestroyOnLoad_);
 	DeletePtr(eachScene_);
 	UninitDeletePtr(loading_);
 	UninitDeletePtr(pause_);

@@ -10,7 +10,6 @@
 #include "../Define/Define.h"
 
 #include <Scene/00_EachScene.h>
-#include <Scene/DontDestroyOnLoad.h>
 #include "BaseScene.h"
 #include "../Systems/Renderer/CanvasRenderer/CanvasRendererImage.h"
 #include "../Systems/Input/Controller.h"
@@ -72,15 +71,10 @@ public:
 	/* @brief	ポーズ状態設定				*/
 	inline void				SetPause(bool pause)   { isPause_ = pause;		}
 
-	/* @brief	シーン間保持変数の取得		*/
-	inline DontDestroyOnLoad* GetDontDestroyOnLoad(void) { return dontDestroyOnLoad_; }
-
 private:
 	BaseScene* scene_;		//! シーン
 	BaseScene* pause_;		//! ポーズ
 	EachScene* eachScene_;	//! シーンの情報を管理
-	//! シーン間で値を保持する
-	DontDestroyOnLoad* dontDestroyOnLoad_;
 
 	/* @brief	シーンの更新
 	 * @param	なし

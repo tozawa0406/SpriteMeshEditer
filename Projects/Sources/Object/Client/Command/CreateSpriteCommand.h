@@ -26,7 +26,6 @@ public:
 	inline void SetClient(Client* client) { client_ = client; }
 
 private:
-	int			place_;
 	Client*		client_;
 };
 

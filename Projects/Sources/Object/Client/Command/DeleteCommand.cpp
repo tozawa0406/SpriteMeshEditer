@@ -1,8 +1,7 @@
 #include "DeleteCommand.h"
 
 DeleteCommand::DeleteCommand(void) :
-	place_(-1)
-	, client_(nullptr)
+	client_(nullptr)
 	, parent_(nullptr)
 {
 }
@@ -13,14 +12,20 @@ DeleteCommand::~DeleteCommand(void)
 
 void DeleteCommand::Uninit(void)
 {
-	if (receiver_ && place_ >= 0)
+	if (receiver_)
 	{
-		UninitDeletePtr(receiver_);
-		if (withChild_)
+		auto list = client_->GetReceiverList();
+		for (auto& receiver : list) { if (receiver == receiver_) { return; } }
+
+		if (receiver_->GetPrevCommand() == this)
 		{
-			for (auto& child : children_)
+			UninitDeletePtr(receiver_);
+			if (withChild_)
 			{
-				UninitChild(child);
+				for (auto& child : children_)
+				{
+					UninitChild(child);
+				}
 			}
 		}
 	}
@@ -41,9 +46,10 @@ void DeleteCommand::Invoke(void)
 {
 	if (!client_ || !receiver_) { return; }
 
-	place_ = client_->RemoveSprite(receiver_);
+	client_->RemoveSprite(receiver_);
 	parent_ = receiver_->GetParent();
 	receiver_->SetParent(nullptr);
+	receiver_->SetPrevDelete(this);
 
 	auto children = receiver_->GetChild();
 	for(auto& child : children)
@@ -73,7 +79,7 @@ void DeleteCommand::Undo(void)
 {
 	if (!client_ || !receiver_) { return; }
 
-	client_->AddSprite(receiver_, place_);
+	client_->AddSprite(receiver_);
 	receiver_->SetParent(parent_);
 
 	for (auto& child : children_)
@@ -97,15 +103,13 @@ void DeleteCommand::Undo(void)
 	{
 		renderer->SetEnable(true);
 	}
-
-	place_ = -1;
 }
 
 void DeleteCommand::Redo(void)
 {
 	if (!client_ || !receiver_) { return; }
 
-	place_ = client_->RemoveSprite(receiver_);
+	client_->RemoveSprite(receiver_);
 	parent_ = receiver_->GetParent();
 	receiver_->SetParent(nullptr);
 
@@ -137,9 +141,10 @@ void DeleteCommand::ChildCtrl(Receiver* child, bool add)
 {
 	if (!child) { return; }
 
+	child->SetPrevDelete(this);
 	if (add)
 	{
-		client_->AddSprite(child, -1);
+		client_->AddSprite(child);
 	}
 	else
 	{

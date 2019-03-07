@@ -16,12 +16,10 @@ Receiver::Receiver(void) :
 	, spriteRenderer_(nullptr)
 	, name_("NoName")
 	, client_(nullptr)
-	, delete_(false)
+	, prevDelete_(nullptr)
 	, parent_(nullptr)
-	, isHierarchy_(false)
 	, textureName_("")
-	, isHierarchyChild_(false)
-	, withChild_(false)
+	, flag_(0)
 {
 }
 
@@ -219,7 +217,8 @@ bool Receiver::LoadData(SPRITE_MESH_RESOURCE& resource)
 
 	if (loadAdd_) { spriteRenderer_->SetTexture(loadAdd_->SetTexture(textureName_)); }
 
-	for (int i = 0; i < resource.children.size(); ++i)
+	int size = static_cast<int>(resource.children.size());
+	for (int i = 0; i < size; ++i)
 	{
 		Receiver* receiver = new Receiver;
 		if (receiver)
@@ -230,7 +229,7 @@ bool Receiver::LoadData(SPRITE_MESH_RESOURCE& resource)
 			receiver->LoadData(resource.children[i]);
 			receiver->SetParent(this);
 
-			client_->AddSprite(receiver, 0);
+			client_->AddSprite(receiver);
 		}
 	}
 
@@ -359,8 +358,8 @@ void Receiver::SelectParam(void)
 
 void Receiver::Delete(void)
 {
-	if (ImGui::Button("delete")) { delete_ = true; }
-	if (delete_)
+	if (ImGui::Button("delete")) { BitSetFlag(true, flag_, FLAG_DELETE); }
+	if (BitCheck(flag_, FLAG_DELETE))
 	{
 		ImGui::SetNextWindowSize(ImVec2(200, 130), ImGuiSetCond_Once);
 		ImGui::SetNextWindowPos(ImVec2(Half(Windows::WIDTH) - 100.f, Half(Windows::HEIGHT) - 25.f - 200), ImGuiSetCond_Once);
@@ -370,19 +369,19 @@ void Receiver::Delete(void)
 
 			if (ImGui::Button("yes", ImVec2(72.5f, 40)))
 			{
-				delete_ = false;
+				BitSetFlag(false, flag_, FLAG_DELETE);
 
-				if (child_.size() > 0)	{ withChild_ = true;			}
-				else					{ InvokeDeleteCommand(false);	}
+				if (child_.size() > 0)	{ BitSetFlag(true, flag_, FLAG_WITH_CHILD); }
+				else					{ InvokeDeleteCommand(false);				}
 			}
 			ImGui::SameLine();
 			ImGui::TextAlign(" ");
-			if (ImGui::Button("no", ImVec2(72.5f, 40))) { delete_ = false; }
+			if (ImGui::Button("no", ImVec2(72.5f, 40))) { BitSetFlag(false, flag_, FLAG_DELETE); }
 		}
 		ImGui::End();
 	}
 
-	if (withChild_)
+	if (BitCheck(flag_, FLAG_WITH_CHILD))
 	{
 		ImGui::SetNextWindowSize(ImVec2(400, 130), ImGuiSetCond_Once);
 		ImGui::SetNextWindowPos(ImVec2(Half(Windows::WIDTH) - 100.f, Half(Windows::HEIGHT) - 25.f - 200), ImGuiSetCond_Once);
@@ -392,7 +391,7 @@ void Receiver::Delete(void)
 
 			if (ImGui::Button("yes", ImVec2(72.5f, 40)))
 			{
-				withChild_ = false;
+				BitSetFlag(false, flag_, FLAG_WITH_CHILD);
 				InvokeDeleteCommand(true);
 			}
 
@@ -400,7 +399,7 @@ void Receiver::Delete(void)
 			ImGui::TextAlign(" ");
 			if (ImGui::Button("no", ImVec2(72.5f, 40))) 
 			{
-				withChild_ = false;
+				BitSetFlag(false, flag_, FLAG_WITH_CHILD);
 				InvokeDeleteCommand(false);
 			}
 		}

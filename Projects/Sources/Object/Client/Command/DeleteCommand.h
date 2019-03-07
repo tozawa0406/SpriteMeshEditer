@@ -31,7 +31,6 @@ private:
 
 	void ChildCtrl(Receiver* child, bool add);
 
-	int			place_;
 	Client*		client_;
 	Receiver*	parent_;
 	bool		withChild_;

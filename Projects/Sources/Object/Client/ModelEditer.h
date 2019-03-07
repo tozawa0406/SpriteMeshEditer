@@ -1,11 +1,11 @@
 /*
- * @file		Client.h
- * @brief		クライアント
+ * @file		ModelEditer.h
+ * @brief		モデルエディタ
  * @author		戸澤翔太
  * @data		2019/03/07
  */
-#ifndef _CLIENT_H_
-#define _CLIENT_H_
+#ifndef _MODEL_EDITER_H_
+#define _MODEL_EDITER_H_
 
 #include "Command/ICommand.h"
 #include <FrameWork/Object/Object.h>
@@ -14,13 +14,14 @@
 
 class Pivot;
 class Receiver;
-class Client : public Object, public GUI
+class AnimationEditer;
+class ModelEditer : public Object, public GUI
 {
 public:
 	/* @brief	コンストラクタ		*/
-	Client(void);
+	ModelEditer(void);
 	/* @brief	デストラクタ		*/
-	virtual ~Client(void);
+	virtual ~ModelEditer(void);
 
 	/* @brief	初期化処理			*/
 	virtual void Init(void)		override;
@@ -112,6 +113,8 @@ private:
 
 	//! コントローラのポインタ
 	Controller*		ctrl_;
+	//! アニメーション
+	AnimationEditer* animation_;
 };
 
-#endif // _CLIENT_H_
+#endif // _MODEL_EDITER_H_

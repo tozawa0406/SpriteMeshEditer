@@ -47,9 +47,6 @@
     <ClCompile Include="Sources\Object\IOFile.cpp">
       <Filter>Source\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Object\Client\Client.cpp">
-      <Filter>Source\Object\Client</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Object\Client\Receiver.cpp">
       <Filter>Source\Object\Client</Filter>
     </ClCompile>
@@ -98,6 +95,12 @@
     <ClCompile Include="Sources\Scene\01_EditScene.cpp">
       <Filter>Source\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Object\Client\ModelEditer.cpp">
+      <Filter>Source\Object\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Client\AnimationEditer.cpp">
+      <Filter>Source\Object\Client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Object\ObjectTag.h">
@@ -129,9 +132,6 @@
     </ClInclude>
     <ClInclude Include="Sources\Object\IOFile.h">
       <Filter>Source\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Object\Client\Client.h">
-      <Filter>Source\Object\Client</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Object\Client\Receiver.h">
       <Filter>Source\Object\Client</Filter>
@@ -183,6 +183,12 @@
     </ClInclude>
     <ClInclude Include="Sources\Scene\01_EditScene.h">
       <Filter>Source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\ModelEditer.h">
+      <Filter>Source\Object\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\AnimationEditer.h">
+      <Filter>Source\Object\Client</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

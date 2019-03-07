@@ -10,7 +10,7 @@
 #include "Command/ICommand.h"
 #include "SpriteMesh.h"
 
-class Client;
+class ModelEditer;
 class Receiver
 {
 	//! フラグ
@@ -27,7 +27,7 @@ public:
 
 	/* @brief	初期化処理
 	 * @param	(client)	クライアント	*/
-	void Init(Client* client);
+	void Init(ModelEditer* client);
 	/* @brief	後処理				*/
 	void Uninit(void);
 	/* @brief	更新処理			*/
@@ -82,6 +82,12 @@ public:
 	/* @brief	直前に影響を受けたデリートコマンドの取得	*/
 	ICommand*	GetPrevCommand(void)				{ return prevDelete_;		}
 
+	void Animation(int frame);
+
+	void AddAnim(int frame);
+	void RemoveAnim(int frame);
+	const std::vector<SPRITE_MESH_ANIM_DATA>& GetAnimData(void) { return anim_; }
+
 private:
 	/* @brief	今度呼び出し処理			*/
 	template<class T>
@@ -114,7 +120,7 @@ private:
 	string			textureName_;
 
 	//! クライアント
-	Client*			client_;
+	ModelEditer*	client_;
 
 	//! コントローラ
 	Controller*		ctrl_;
@@ -128,6 +134,10 @@ private:
 
 	//! 状態フラグ
 	uint8 flag_;
+
+	//! アニメーション
+	std::vector<SPRITE_MESH_ANIM_DATA> anim_;
+	int animCnt_;
 };
 
 #endif // _RECEIVER_H_

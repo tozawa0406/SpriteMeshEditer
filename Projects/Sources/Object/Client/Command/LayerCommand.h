@@ -3,7 +3,7 @@
 
 #include "ICommand.h"
 #include "../Receiver.h"
-#include "../Client.h"
+#include "../ModelEditer.h"
 
 class LayerCommand : public ICommand
 {

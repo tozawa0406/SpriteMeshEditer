@@ -1,4 +1,4 @@
-#include "Client.h"
+#include "ModelEditer.h"
 #include "Receiver.h"
 #include "../Pivot.h"
 #include "../Search.h"
@@ -7,40 +7,47 @@
 #include "LoadSpriteMesh.h"
 
 #include <FrameWork/Systems/GameSystems.h>
+#include "AnimationEditer.h"
 
-Client::Client(void) : Object(ObjectTag::STATIC), GUI(Systems::Instance(), this, "client")
+ModelEditer::ModelEditer(void) : Object(ObjectTag::STATIC), GUI(Systems::Instance(), this, "model")
 	, currentReceiver_(nullptr)
 	, ctrl_(nullptr)
 	, pivot_(nullptr)
 	, name_("")
 	, selectedCnt_(0)
 	, workReceiver_(nullptr)
+	, animation_(nullptr)
 {
 }
 
-Client::~Client(void)
+ModelEditer::~ModelEditer(void)
 {
 }
 
-void Client::Init(void)
+void ModelEditer::Init(void)
 {
 	name_.resize(256);
+
+	animation_ = new AnimationEditer;
+	if (animation_) { animation_->Init(); }
 }
 
-void Client::Load(void)
+void ModelEditer::Load(void)
 {
 	LoadData();
+	if (animation_ && receiverList_.size() > 0) { animation_->SetReceiver(receiverList_[0]); }
 }
 
-void Client::Uninit(void)
+void ModelEditer::Uninit(void)
 {
+	UninitDeletePtr(animation_);
 	for (auto& c : receiverList_) { UninitDeletePtr(c); }
 
 	for (auto& c : prevCommand_) { UninitDeletePtr(c); }
 	for (auto& c : nextCommand_) { UninitDeletePtr(c); }
 }
 
-void Client::Update(void)
+void ModelEditer::Update(void)
 {
 	// キーボード対応
 	if (ctrl_->Press(Input::GAMEPAD_L1, DIK_LCONTROL))
@@ -72,12 +79,13 @@ void Client::Update(void)
 			workReceiver_ = nullptr;
 		}
 	}
+
+	if (animation_) { animation_->Update(); }
 }
 
-void Client::GuiUpdate(void)
+void ModelEditer::GuiUpdate(void)
 {
 	float padding = 50;
-
 	ImGui::SetNextWindowPos(ImVec2(Windows::WIDTH - padding - 450, padding), ImGuiSetCond_Once);
 	ImGui::SetNextWindowSize(ImVec2(450, 500), ImGuiSetCond_Once);
 
@@ -101,7 +109,7 @@ void Client::GuiUpdate(void)
 	ImGui::SetNextWindowPos(ImVec2(padding, padding), ImGuiSetCond_Once);
 	ImGui::SetNextWindowSize(ImVec2(450, 700), ImGuiSetCond_Once);
 
-	if (ImGui::Begin("Hierarchy"))
+	if (ImGui::Begin("Hierarchy", 0, ImGuiWindowFlags_MenuBar))
 	{
 		HierarchyView();
 
@@ -119,7 +127,7 @@ void Client::GuiUpdate(void)
 	ImGui::End();
 }
 
-void Client::InspectorView(void)
+void ModelEditer::InspectorView(void)
 {
 	// 現在のスプライトの情報
 	if (currentReceiver_)
@@ -134,19 +142,36 @@ void Client::InspectorView(void)
 	}
 }
 
-void Client::ConsoleView(void)
+void ModelEditer::ConsoleView(void)
 {
 	// コンソールでメッセージ描画
 	for (auto& m : message_)
 	{
 		ImGui::Text(m.c_str());
 	}
+
+	//ImGui::Button(">" , ImVec2(48, 32));
+	//ImGui::Button("||", ImVec2(48, 32));
+	//ImGui::Button("[]", ImVec2(48, 32));
 }
 
-void Client::HierarchyView(void)
+void ModelEditer::HierarchyView(void)
 {
 	// ヒエラルキー描画情報をリセット
 	for (auto& r : receiverList_) { if (r) { r->SetHierarchy(false); } }
+
+	if (ImGui::BeginMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("Save")) { SaveData(); }
+
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndMenuBar();
+	}
+
 
 	// ファイル名
 	ImGui::InputText("fileName", &name_[0], 256);
@@ -175,12 +200,9 @@ void Client::HierarchyView(void)
 		}
 	}
 	ImGui::EndChild();
-
-	// セーブ処理
-	if (ImGui::Button("Save", ImVec2(400, 40))) { SaveData(); }
 }
 
-void Client::DrawHierarchy(Receiver* draw, string& blank)
+void ModelEditer::DrawHierarchy(Receiver* draw, string& blank)
 {
 	// ヒエラルキービューに描画
 	if (draw && !draw->IsHierarchy())
@@ -231,7 +253,7 @@ void Client::DrawHierarchy(Receiver* draw, string& blank)
 	}
 }
 
-void Client::AddCommand(ICommand* command)
+void ModelEditer::AddCommand(ICommand* command)
 {
 	// 戻る処理の追加
 	prevCommand_.insert(prevCommand_.begin(), command);
@@ -241,7 +263,7 @@ void Client::AddCommand(ICommand* command)
 	nextCommand_.clear();
 }
 
-void Client::AddMessage(const string& message)
+void ModelEditer::AddMessage(const string& message)
 {
 	// メッセージの追加
 	message_.insert(message_.begin(), message);
@@ -253,7 +275,7 @@ void Client::AddMessage(const string& message)
 	}
 }
 
-void Client::Undo(void)
+void ModelEditer::Undo(void)
 {
 	// 戻るコマンドがあるか
 	if (prevCommand_.size() <= 0) { return; }
@@ -272,7 +294,7 @@ void Client::Undo(void)
 	AddMessage("performed \"Undo\" process");
 }
 
-void Client::Redo(void)
+void ModelEditer::Redo(void)
 {
 	// 進むコマンドはあるか
 	if (nextCommand_.size() <= 0) { return; }
@@ -291,7 +313,7 @@ void Client::Redo(void)
 	AddMessage("performed \"Redo\" process");
 }
 
-void Client::CreateReceiver(SPRITE_MESH_RESOURCE* resouce)
+void ModelEditer::CreateReceiver(SPRITE_MESH_RESOURCE* resouce)
 {
 	// コマンド発行
 	CreateSpriteCommand* command = new CreateSpriteCommand;
@@ -326,7 +348,7 @@ void Client::CreateReceiver(SPRITE_MESH_RESOURCE* resouce)
 			{
 				// コマンドの実行
 				command->SetReceiver(receiver);
-				command->SetClient(this);
+				command->SetModelEditer(this);
 				command->Invoke();
 
 				AddCommand(command);
@@ -339,7 +361,7 @@ void Client::CreateReceiver(SPRITE_MESH_RESOURCE* resouce)
 	}
 }
 
-void Client::SaveData(void)
+void ModelEditer::SaveData(void)
 {
 	// ディレクトリ名の生成
 	string directory = "Export/" + name_;
@@ -375,7 +397,7 @@ void Client::SaveData(void)
 	AddMessage("\"Save\" is complete");
 }
 
-void Client::LoadData(void)
+void ModelEditer::LoadData(void)
 {
 	// ディレクトリ名の生成
 	string directory = "Export/";
@@ -411,7 +433,7 @@ void Client::LoadData(void)
 	AddMessage("\"Load\" is complete " + version);
 }
 
-void Client::RemoveSprite(Receiver* receiver)
+void ModelEditer::RemoveSprite(Receiver* receiver)
 {
 	int size = static_cast<int>(receiverList_.size());
 	for (int i = 0; i < size; ++i)
@@ -431,7 +453,7 @@ void Client::RemoveSprite(Receiver* receiver)
 	}
 }
 
-void Client::AddSprite(Receiver* receiver)
+void ModelEditer::AddSprite(Receiver* receiver)
 {
 	// 後ろに追加
 	receiverList_.emplace_back(receiver);

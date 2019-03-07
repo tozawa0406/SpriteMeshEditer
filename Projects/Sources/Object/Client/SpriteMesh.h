@@ -15,6 +15,27 @@ struct SPRITE_MESH_RESOURCE
 	std::vector<SPRITE_MESH_RESOURCE> children;
 };
 
+struct SPRITE_MESH_ANIM_DATA
+{
+	string	spriteMeshName;
+	int		frame;
+	string	textureName;
+	VECTOR3 position;
+	VECTOR3 rotation;
+	VECTOR3 scale;
+
+	SPRITE_MESH_ANIM_DATA(void) : spriteMeshName(""), frame(0), textureName(""), position(0), rotation(0), scale(0) {}
+	void operator = (const SPRITE_MESH_ANIM_DATA& data)
+	{
+		spriteMeshName = data.spriteMeshName;
+		frame = data.frame;
+		textureName = data.textureName;
+		position = data.position;
+		rotation = data.rotation;
+		scale = data.scale;
+	}
+};
+
 class Loading;
 class SpriteMesh :public Interface
 {

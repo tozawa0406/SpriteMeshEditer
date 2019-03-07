@@ -12,16 +12,9 @@
 #include <FrameWork/Object/ObjectManager.h>
 #include <FrameWork/Systems/Camera/CameraManager.h>
 
-class Client;
+class ModelEditer;
 class EditScene : public BaseScene, public GUI
 {
-	enum class Mode : uint8
-	{
-		UNKNOWN	= 0,
-		MODEL_EDIT,
-		ANIMATION_EDIT,
-	};
-
 public:
 	/* @brief	コンストラクタ		*/
 	EditScene(void);
@@ -48,12 +41,7 @@ public:
 	virtual void GuiUpdate(void) override;
 	
 private:
-	void SelectMode(void);
-	void CreateModelEdit(void);
-
-	Client* client_;
-	Mode	mode_;
-	bool	create_;
+	ModelEditer* client_;
 };
 
 #endif // _EDIT_SCENE_H_

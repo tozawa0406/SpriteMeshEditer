@@ -140,8 +140,8 @@ int LoadAddTexture::SelectTexture(string& textureName)
 					ret = obj.texNum;
 				}
 			}
-			ImGui::EndChild();
 		}
+		ImGui::EndChild();
 	}
 	return ret;
 }

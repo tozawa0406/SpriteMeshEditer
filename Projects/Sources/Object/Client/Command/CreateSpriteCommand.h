@@ -3,7 +3,7 @@
 
 #include "ICommand.h"
 #include "../Receiver.h"
-#include "../Client.h"
+#include "../ModelEditer.h"
 
 class CreateSpriteCommand : public ICommand
 {
@@ -23,10 +23,10 @@ public:
 	/* @brief	–ß‚é		*/
 	virtual void Redo(void)		override;
 
-	inline void SetClient(Client* client) { client_ = client; }
+	inline void SetModelEditer(ModelEditer* client) { client_ = client; }
 
 private:
-	Client*		client_;
+	ModelEditer*		client_;
 };
 
 #endif // _CREATE_SPRITE_COMMAND_H_

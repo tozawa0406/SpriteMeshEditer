@@ -164,6 +164,8 @@ public:
 	 * @param	(x)		x‚Ì‰Šú‰»’l
 	 * @param	(y)		y‚Ì‰Šú‰»’l	*/
 	VECINT2(int x, int y);
+
+	operator int*(void) { return &x; }
 };
 
 /* @brief	2ŸŒ³‚Ì“àÏ

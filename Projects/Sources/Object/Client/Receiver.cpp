@@ -1,5 +1,5 @@
 #include "Receiver.h"
-#include "Client.h"
+#include "ModelEditer.h"
 
 #include "Command/PositionCommand.h"
 #include "Command/RotationCommand.h"
@@ -20,6 +20,7 @@ Receiver::Receiver(void) :
 	, parent_(nullptr)
 	, textureName_("")
 	, flag_(0)
+	, animCnt_(0)
 {
 }
 
@@ -27,7 +28,7 @@ Receiver::~Receiver(void)
 {
 }
 
-void Receiver::Init(Client* client)
+void Receiver::Init(ModelEditer* client)
 {
 	client_ = client;
 
@@ -412,7 +413,7 @@ void Receiver::InvokeDeleteCommand(bool withChild)
 	DeleteCommand* command = new DeleteCommand;
 	if (command)
 	{
-		command->SetClient(client_);
+		command->SetModelEditer(client_);
 		command->SetWithChild(withChild);
 		command->SetReceiver(this);
 		command->Invoke();
@@ -461,4 +462,90 @@ void Receiver::SetChild(Receiver* child, bool add)
 	}
 
 	child_.emplace_back(child);
+}
+
+void Receiver::Animation(int frame)
+{
+	if (anim_.size() < 1) { return; }
+
+	int size = static_cast<int>(anim_.size()) - 1;
+	for (int i = 0; i < size; ++i)
+	{
+		if (anim_[i].frame <= frame && frame <= anim_[i + 1].frame)
+		{
+			animCnt_ = i;
+		}
+	}
+
+	int next = animCnt_ + 1;
+	if (next >= static_cast<int>(anim_.size())) { next = 0; }
+
+	int diff = anim_[next].frame - anim_[animCnt_].frame;
+	if (diff <= 0) { return; }
+	float rate = (frame - anim_[animCnt_].frame) / static_cast<float>(diff);
+	rate = min(1, rate);
+
+	transform_.position = anim_[animCnt_].position * (1 - rate) + anim_[next].position * rate;
+	transform_.rotation = anim_[animCnt_].rotation * (1 - rate) + anim_[next].rotation * rate;
+	transform_.scale	= anim_[animCnt_].scale	   * (1 - rate) + anim_[next].scale    * rate;
+
+	for (auto& child : child_)
+	{
+		child->Animation(frame);
+	}
+}
+
+void Receiver::AddAnim(int frame)
+{
+	SPRITE_MESH_ANIM_DATA temp;
+	temp.position		= transform_.position;
+	temp.rotation		= transform_.rotation;
+	temp.scale			= transform_.scale;
+	temp.frame			= frame;
+	temp.spriteMeshName = name_;
+	temp.textureName	= textureName_;
+
+	anim_.emplace_back(temp);
+
+	int size = static_cast<int>(anim_.size()) - 1;
+	for (int i = 0; i < size; ++i)
+	{
+		if (anim_[i].frame > anim_[i + 1].frame) 
+		{
+			SPRITE_MESH_ANIM_DATA work;
+			work = anim_[i];
+			anim_[i] = anim_[i + 1];
+			anim_[i + 1] = work;
+			i = -1;
+		}
+		else if (anim_[i + 1].frame - anim_[i].frame == 0)
+		{
+			RemoveAnim(anim_[i].frame);
+			size = static_cast<int>(anim_.size()) - 1;
+			i = -1;
+		}
+	}
+
+	for (auto& child : child_)
+	{
+		child->AddAnim(frame);
+	}
+}
+
+void Receiver::RemoveAnim(int frame)
+{
+	int size = static_cast<int>(anim_.size());
+	for (int i = 0;i < size;++i)
+	{
+		if (anim_[i].frame == frame)
+		{
+			anim_.erase(anim_.begin() + i);
+			break;
+		}
+	}
+
+	for (auto& child : child_)
+	{
+		child->RemoveAnim(frame);
+	}
 }

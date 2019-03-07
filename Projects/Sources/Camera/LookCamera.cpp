@@ -67,17 +67,23 @@ void LookCamera::Input(void)
 	}
 	if (!ctrl) { return; }
 
-	// ïΩçsà⁄ìÆ
-	velocity_.x += static_cast<float>(ctrl->PressRange(Input::AXIS_LX, DIK_A, DIK_D)) * MOVE_SPEED;
-	velocity_.y -= static_cast<float>(ctrl->PressRange(Input::AXIS_LY, DIK_S, DIK_W)) * MOVE_SPEED;
-	velocity_.z += static_cast<float>(ctrl->PressRange(Input::AXIS_RY, DIK_Q, DIK_E)) * MOVE_SPEED;
+	if (ctrl->Press(Input::GAMEPAD_R1, DIK_LSHIFT))
+	{
+		// ïΩçsà⁄ìÆ
+		velocity_.x += static_cast<float>(ctrl->PressRange(Input::AXIS_LX, DIK_A, DIK_D)) * MOVE_SPEED;
+		velocity_.y -= static_cast<float>(ctrl->PressRange(Input::AXIS_LY, DIK_S, DIK_W)) * MOVE_SPEED;
+		velocity_.z += static_cast<float>(ctrl->PressRange(Input::AXIS_RY, DIK_Q, DIK_E)) * MOVE_SPEED;
+	}
 }
 
 // GUI
 void LookCamera::GuiUpdate(void)
 {
-	//if (ImGui::Begin("test"))
-	//{
-	//	ImGui::End();
-	//}
+	ImGui::SetNextWindowSize(ImVec2(450, 160), ImGuiSetCond_Once);
+	ImGui::SetNextWindowPos(ImVec2(Windows::WIDTH - 450 - 50, Half(Windows::HEIGHT) + 40), ImGuiSetCond_Once);
+	if (ImGui::Begin("camera"))
+	{
+		ImGui::InputFloat3("position", position_);
+	}
+	ImGui::End();
 }

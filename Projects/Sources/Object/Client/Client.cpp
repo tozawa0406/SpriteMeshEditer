@@ -376,8 +376,7 @@ int Client::RemoveSprite(Receiver* receiver)
 				if (i == 0)			{ currentReceiver_ = receiverList_[i + 1]; }
 				else if (i != 0)	{ currentReceiver_ = receiverList_[i - 1]; }
 			}
-			else					{ 
-				currentReceiver_ = nullptr; }
+			else { currentReceiver_ = nullptr; }
 
 			receiverList_.erase(receiverList_.begin() + i);
 

@@ -51,6 +51,7 @@ private:
 	void SetChild(Receiver* child, bool add);
 	void SelectParam(void);
 	void Delete(void);
+	void InvokeDeleteCommand(bool withChild);
 
 	string			name_;
 	SpriteRenderer* spriteRenderer_;
@@ -69,6 +70,7 @@ private:
 
 	bool isHierarchyChild_;
 	bool delete_;
+	bool withChild_;
 	bool isHierarchy_;
 };
 

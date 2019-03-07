@@ -21,6 +21,7 @@ Receiver::Receiver(void) :
 	, isHierarchy_(false)
 	, textureName_("")
 	, isHierarchyChild_(false)
+	, withChild_(false)
 {
 }
 
@@ -361,6 +362,7 @@ void Receiver::Delete(void)
 	if (ImGui::Button("delete")) { delete_ = true; }
 	if (delete_)
 	{
+		ImGui::SetNextWindowSize(ImVec2(200, 130), ImGuiSetCond_Once);
 		ImGui::SetNextWindowPos(ImVec2(Half(Windows::WIDTH) - 100.f, Half(Windows::HEIGHT) - 25.f - 200), ImGuiSetCond_Once);
 		if (ImGui::Begin("warning"))
 		{
@@ -369,30 +371,68 @@ void Receiver::Delete(void)
 			if (ImGui::Button("yes", ImVec2(72.5f, 40)))
 			{
 				delete_ = false;
-				DeleteCommand* command = new DeleteCommand;
-				if (command)
-				{
-					command->SetClient(client_);
-					command->SetReceiver(this);
-					command->Invoke();
 
-					if (client_)
-					{
-						client_->AddCommand(command);
-						client_->AddMessage("\"Delete Sprite\"");
-					}
-				}
+				if (child_.size() > 0)	{ withChild_ = true;			}
+				else					{ InvokeDeleteCommand(false);	}
 			}
-			ImGui::SameLine(); 
+			ImGui::SameLine();
 			ImGui::TextAlign(" ");
 			if (ImGui::Button("no", ImVec2(72.5f, 40))) { delete_ = false; }
 		}
 		ImGui::End();
 	}
+
+	if (withChild_)
+	{
+		ImGui::SetNextWindowSize(ImVec2(400, 130), ImGuiSetCond_Once);
+		ImGui::SetNextWindowPos(ImVec2(Half(Windows::WIDTH) - 100.f, Half(Windows::HEIGHT) - 25.f - 200), ImGuiSetCond_Once);
+		if (ImGui::Begin("warning"))
+		{
+			ImGui::Text("with child?");
+
+			if (ImGui::Button("yes", ImVec2(72.5f, 40)))
+			{
+				withChild_ = false;
+				InvokeDeleteCommand(true);
+			}
+
+			ImGui::SameLine();
+			ImGui::TextAlign(" ");
+			if (ImGui::Button("no", ImVec2(72.5f, 40))) 
+			{
+				withChild_ = false;
+				InvokeDeleteCommand(false);
+			}
+		}
+		ImGui::End();
+	}
+}
+
+void Receiver::InvokeDeleteCommand(bool withChild)
+{
+	DeleteCommand* command = new DeleteCommand;
+	if (command)
+	{
+		command->SetClient(client_);
+		command->SetWithChild(withChild);
+		command->SetReceiver(this);
+		command->Invoke();
+
+		if (client_)
+		{
+			client_->AddCommand(command);
+			client_->AddMessage("\"Delete Sprite\"");
+		}
+	}
 }
 
 void Receiver::SetParent(Receiver* parent)
 {
+	if (parent_)
+	{
+		parent_->SetChild(this, false);
+	}
+
 	if (parent) 
 	{
 		parent_ = parent;

@@ -23,12 +23,18 @@ public:
 	/* @brief	–ß‚é		*/
 	virtual void Redo(void)		override;
 
-	inline void SetClient(Client* client) { client_ = client; }
+	inline void SetClient(Client* client)		{ client_ = client;			}
+	inline void SetWithChild(bool withChild)	{ withChild_ = withChild;	}
 
 private:
+	void UninitChild(Receiver* child);
+
+	void ChildCtrl(Receiver* child, bool add);
+
 	int			place_;
 	Client*		client_;
 	Receiver*	parent_;
+	bool		withChild_;
 	std::vector<Receiver*> children_;
 };
 

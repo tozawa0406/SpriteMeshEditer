@@ -149,10 +149,6 @@ void ModelEditer::ConsoleView(void)
 	{
 		ImGui::Text(m.c_str());
 	}
-
-	//ImGui::Button(">" , ImVec2(48, 32));
-	//ImGui::Button("||", ImVec2(48, 32));
-	//ImGui::Button("[]", ImVec2(48, 32));
 }
 
 void ModelEditer::HierarchyView(void)

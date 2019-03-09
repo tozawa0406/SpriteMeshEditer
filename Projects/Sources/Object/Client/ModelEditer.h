@@ -14,6 +14,7 @@
 
 class Pivot;
 class Receiver;
+class Editer;
 class AnimationEditer;
 class ModelEditer : public Object, public GUI
 {
@@ -36,13 +37,6 @@ public:
 	/* @brief	Gui更新処理			*/
 	virtual void GuiUpdate(void) override;
 
-	/* @brief	コマンドの追加
-	 * @param	(command)	追加するコマンド	*/
-	void AddCommand(ICommand* command);
-	/* @brief	メッセージの追加
-	 * @param	(message)	追加するメッセージ	*/
-	void AddMessage(const string& message);
-
 	/* @brief	コントローラの設定
 	 * @param	(ctrl)	コントローラのポインタ	*/
 	inline void SetCtrl(Controller* ctrl)	{ ctrl_ = ctrl;		}
@@ -60,14 +54,13 @@ public:
 	/* @brief	ヒエラルキーのリストを取得		*/
 	const std::vector<Receiver*>& GetReceiverList(void) { return receiverList_; }
 
-private:
-	/* @brief	戻る処理
-	 * @sa		Update(), HierarchyView()		*/
-	void Undo(void);
-	/* @brief	進む処理
-	 * @sa		Update(), HierarchyView()		*/
-	void Redo(void);
+	/* @brief	セーブ		*/
+	void SaveData(void);
 
+	inline void SetEditer(Editer* editer) { editer_ = editer; }
+	inline Editer* GetEditer(void) { return editer_; }
+
+private:
 	/* @brief	インスペクタの描画	*/
 	void InspectorView(void);
 	/* @brief	コンソールの描画	*/
@@ -86,17 +79,8 @@ private:
 	 * @param	(resource)	元データ(ロード時は処理が少し変わる)	*/
 	void CreateReceiver(SPRITE_MESH_RESOURCE* resource = nullptr);
 
-	/* @brief	セーブ		*/
-	void SaveData(void);
 	/* @brief	ロード		*/
 	void LoadData(void);
-
-	//! 戻るコマンド
-	std::vector<ICommand*>	prevCommand_;
-	//! 進むコマンド
-	std::vector<ICommand*>	nextCommand_;
-	//! メッセージリスト
-	std::vector<string>		message_;
 
 	//! ファイル名
 	string					name_;
@@ -113,6 +97,7 @@ private:
 
 	//! コントローラのポインタ
 	Controller*		ctrl_;
+	Editer*			editer_;
 	//! アニメーション
 	AnimationEditer* animation_;
 };

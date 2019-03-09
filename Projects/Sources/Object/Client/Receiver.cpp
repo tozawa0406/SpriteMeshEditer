@@ -1,5 +1,6 @@
 #include "Receiver.h"
 #include "ModelEditer.h"
+#include "Editer.h"
 
 #include "Command/PositionCommand.h"
 #include "Command/RotationCommand.h"
@@ -125,8 +126,11 @@ void Receiver::Update(void)
 
 							if (client_)
 							{
-								client_->AddCommand(command);
-								client_->AddMessage("\"SetParent\"");
+								if (const auto& editer = client_->GetEditer())
+								{
+									editer->AddCommand(command);
+									editer->AddMessage("\"SetParent\"");
+								}
 							}
 						}
 					}
@@ -146,10 +150,13 @@ void Receiver::Update(void)
 				command->SetChiled(this, false);
 				command->Invoke();
 
-				if (client_) 
+				if (client_)
 				{
-					client_->AddCommand(command); 
-					client_->AddMessage("\"RemoveParent\"");
+					if (const auto& editer = client_->GetEditer())
+					{
+						editer->AddCommand(command);
+						editer->AddMessage("\"RemoveParent\"");
+					}
 				}
 			}
 		}
@@ -167,7 +174,13 @@ bool Receiver::InvokeCommand(void)
 		command->SetReceiver(this);
 		command->Invoke();
 
-		if (client_) { client_->AddCommand(command); }
+		if (client_) 
+		{
+			if (const auto& editer = client_->GetEditer())
+			{
+				editer->AddCommand(command);
+			}
+		}
 
 		return true;
 	}
@@ -256,6 +269,9 @@ bool Receiver::LoadData(SPRITE_MESH_RESOURCE& resource)
 void Receiver::SelectParam(void)
 {
 	if (!spriteRenderer_) { return; }
+	if (!client_) { return; }
+	Editer* editer = client_->GetEditer();
+	if (!editer) { return; }
 
 	ImGui::InputText("name", &name_[0], 256);
 
@@ -266,10 +282,7 @@ void Receiver::SelectParam(void)
 		spriteRenderer_->SetLayer(static_cast<uint8>(layer));
 		if (InvokeCommand<LayerCommand>())
 		{
-			if (client_)
-			{
-				client_->AddMessage("\"Layer reflected change\" in Sprite");
-			}
+			editer->AddMessage("\"Layer reflected change\" in Sprite");
 		}
 	}
 
@@ -283,10 +296,7 @@ void Receiver::SelectParam(void)
 			spriteRenderer_->SetTexture(ret);
 			if (InvokeCommand<TextureNumCommand>())
 			{
-				if (client_)
-				{
-					client_->AddMessage("\"Texture reflected change\" in Sprite");
-				}
+				editer->AddMessage("\"Texture reflected change\" in Sprite");
 			}
 		}
 	}
@@ -307,40 +317,28 @@ void Receiver::SelectParam(void)
 		{
 			if(InvokeCommand<PositionCommand>())
 			{
-				if (client_)
-				{
-					client_->AddMessage("\"Position reflected change\" in transform");
-				}
+				editer->AddMessage("\"Position reflected change\" in transform");
 			}
 		}
 		if (beforeData_.transform->rotation != transform_.rotation)
 		{
 			if (InvokeCommand<RotationCommand>())
 			{
-				if (client_)
-				{
-					client_->AddMessage("\"Rotation reflected change\" in transform");
-				}
+				editer->AddMessage("\"Rotation reflected change\" in transform");
 			}
 		}
 		if (beforeData_.transform->scale != transform_.scale)
 		{
 			if (InvokeCommand<ScaleCommand>())
 			{
-				if (client_)
-				{
-					client_->AddMessage("\"Scale reflected change\" in transform");
-				}
+				editer->AddMessage("\"Scale reflected change\" in transform");
 			}
 		}
 		if (beforeData_.spriteRenderer->GetPivot() != spriteRenderer_->GetPivot())
 		{
 			if (InvokeCommand<PivotCommand>())
 			{
-				if (client_)
-				{
-					client_->AddMessage("\"Pivot reflected change\" in Sprite");
-				}
+				editer->AddMessage("\"Pivot reflected change\" in Sprite");
 			}
 		}
 		if (*beforeData_.name != name_)
@@ -348,10 +346,7 @@ void Receiver::SelectParam(void)
 			if (InvokeCommand<NameCommand>())
 			{
 				*beforeData_.name = name_;
-				if (client_)
-				{
-					client_->AddMessage("\"Name reflected change\" in Sprite");
-				}
+				editer->AddMessage("\"Name reflected change\" in Sprite");
 			}
 		}
 	}
@@ -420,8 +415,11 @@ void Receiver::InvokeDeleteCommand(bool withChild)
 
 		if (client_)
 		{
-			client_->AddCommand(command);
-			client_->AddMessage("\"Delete Sprite\"");
+			if (const auto& editer = client_->GetEditer())
+			{
+				editer->AddCommand(command);
+				editer->AddMessage("\"Delete Sprite\"");
+			}
 		}
 	}
 }

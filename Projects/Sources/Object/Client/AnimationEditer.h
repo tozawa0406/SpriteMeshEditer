@@ -12,6 +12,7 @@
 #include <FrameWork/Systems/DebugSetting/GUI.h>
 #include "SpriteMesh.h"
 
+class Editer;
 class Receiver;
 class AnimationEditer : public Object, public GUI
 {
@@ -30,15 +31,17 @@ public:
 
 	virtual void GuiUpdate(void) override;
 
-	void SetReceiver(Receiver* receiver) { receiver_ = receiver; }
+	void SetReceiver(Receiver* receiver)	{ receiver_ = receiver; }
+	void SetEditer(Editer* editer)			{ editer_ = editer;		}
 
 private:
-	int currentFrame_;
-	int minFrame_;
-	int maxFrame_;
-	bool regeneration_;
+	int				currentFrame_;
+	int				minFrame_;
+	int				maxFrame_;
+	bool			regeneration_;
 
-	Receiver* receiver_;
+	Receiver*		receiver_;
+	Editer*			editer_;
 };
 
 #endif // _ANIMATION_EDITER_H_

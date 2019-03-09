@@ -101,6 +101,9 @@
     <ClCompile Include="Sources\Object\Client\AnimationEditer.cpp">
       <Filter>Source\Object\Client</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Object\Client\Editer.cpp">
+      <Filter>Source\Object\Client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Object\ObjectTag.h">
@@ -188,6 +191,9 @@
       <Filter>Source\Object\Client</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Object\Client\AnimationEditer.h">
+      <Filter>Source\Object\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\Editer.h">
       <Filter>Source\Object\Client</Filter>
     </ClInclude>
   </ItemGroup>

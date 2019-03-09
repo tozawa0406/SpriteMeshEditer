@@ -1,4 +1,5 @@
 #include "ModelEditer.h"
+#include "Editer.h"
 #include "Receiver.h"
 #include "../Pivot.h"
 #include "../Search.h"
@@ -16,6 +17,7 @@ ModelEditer::ModelEditer(void) : Object(ObjectTag::STATIC), GUI(Systems::Instanc
 	, name_("")
 	, selectedCnt_(0)
 	, workReceiver_(nullptr)
+	, editer_(nullptr)
 	, animation_(nullptr)
 {
 }
@@ -35,40 +37,21 @@ void ModelEditer::Init(void)
 void ModelEditer::Load(void)
 {
 	LoadData();
-	if (animation_ && receiverList_.size() > 0) { animation_->SetReceiver(receiverList_[0]); }
+	if (animation_ && receiverList_.size() > 0) 
+	{
+		animation_->SetEditer(editer_);
+		animation_->SetReceiver(receiverList_[0]); 
+	}
 }
 
 void ModelEditer::Uninit(void)
 {
 	UninitDeletePtr(animation_);
 	for (auto& c : receiverList_) { UninitDeletePtr(c); }
-
-	for (auto& c : prevCommand_) { UninitDeletePtr(c); }
-	for (auto& c : nextCommand_) { UninitDeletePtr(c); }
 }
 
 void ModelEditer::Update(void)
 {
-	// キーボード対応
-	if (ctrl_->Press(Input::GAMEPAD_L1, DIK_LCONTROL))
-	{
-		if (ctrl_->Press(Input::GAMEPAD_L2, DIK_LSHIFT))
-		{
-			if (ctrl_->Trigger(Input::GAMEPAD_L1, DIK_Z))
-			{
-				Redo();
-			}
-		}
-		else if (ctrl_->Trigger(Input::GAMEPAD_R1, DIK_Z))
-		{
-			Undo();
-		}
-		else if (ctrl_->Trigger(Input::GAMEPAD_START, DIK_S))
-		{
-			SaveData();
-		}
-	}
-
 	if (selectedCnt_ > 0)
 	{
 		selectedCnt_++;
@@ -144,10 +127,13 @@ void ModelEditer::InspectorView(void)
 
 void ModelEditer::ConsoleView(void)
 {
-	// コンソールでメッセージ描画
-	for (auto& m : message_)
+	if (!editer_) { return; }
+
+	auto list = editer_->GetMessageList();
+	int size = static_cast<int>(list.size());
+	for (int i = size - 1; i >= 0; --i)
 	{
-		ImGui::Text(m.c_str());
+		ImGui::Text(list[i].c_str());
 	}
 }
 
@@ -174,9 +160,12 @@ void ModelEditer::HierarchyView(void)
 
 	// Undo/Redoボタン
 	ImGui::Dummy(ImVec2(0, 5));
-	if (ImGui::Button("Undo")) { Undo(); }
-	ImGui::SameLine();
-	if (ImGui::Button("Redo")) { Redo(); }
+	if (editer_)
+	{
+		if (ImGui::Button("Undo")) { editer_->Undo(); }
+		ImGui::SameLine();
+		if (ImGui::Button("Redo")) { editer_->Redo(); }
+	}
 
 	// スプライト追加
 	if (ImGui::Button("CreateSprite")) { CreateReceiver(); }
@@ -249,66 +238,6 @@ void ModelEditer::DrawHierarchy(Receiver* draw, string& blank)
 	}
 }
 
-void ModelEditer::AddCommand(ICommand* command)
-{
-	// 戻る処理の追加
-	prevCommand_.insert(prevCommand_.begin(), command);
-	for (auto& c : nextCommand_) { UninitDeletePtr(c); }
-
-	// 進む処理のリセット
-	nextCommand_.clear();
-}
-
-void ModelEditer::AddMessage(const string& message)
-{
-	// メッセージの追加
-	message_.insert(message_.begin(), message);
-	int size = static_cast<int>(message_.size());
-	// 一定のメッセージ履歴は消去
-	if (size > 30)
-	{
-		message_.erase(message_.end() - 1);
-	}
-}
-
-void ModelEditer::Undo(void)
-{
-	// 戻るコマンドがあるか
-	if (prevCommand_.size() <= 0) { return; }
-
-	// 先頭を実行
-	if (prevCommand_[0])
-	{
-		prevCommand_[0]->Undo();
-
-		// 進む処理に追加
-		nextCommand_.insert(nextCommand_.begin(), prevCommand_[0]);
-		// 戻る処理からは削除
-		prevCommand_.erase(prevCommand_.begin());
-	}
-
-	AddMessage("performed \"Undo\" process");
-}
-
-void ModelEditer::Redo(void)
-{
-	// 進むコマンドはあるか
-	if (nextCommand_.size() <= 0) { return; }
-
-	// 先頭を実行
-	if (nextCommand_[0])
-	{
-		nextCommand_[0]->Redo();
-
-		// 戻る処理に追加
-		prevCommand_.insert(prevCommand_.begin(), nextCommand_[0]);
-		// 進む処理からは削除
-		nextCommand_.erase(nextCommand_.begin());
-	}
-
-	AddMessage("performed \"Redo\" process");
-}
-
 void ModelEditer::CreateReceiver(SPRITE_MESH_RESOURCE* resouce)
 {
 	// コマンド発行
@@ -347,8 +276,11 @@ void ModelEditer::CreateReceiver(SPRITE_MESH_RESOURCE* resouce)
 				command->SetModelEditer(this);
 				command->Invoke();
 
-				AddCommand(command);
-				AddMessage("\"Create Sprite\"");
+				if (editer_)
+				{
+					editer_->AddCommand(command);
+					editer_->AddMessage("\"Create Sprite\"");
+				}
 			}
 
 			// ワークスペースとして扱う
@@ -378,7 +310,10 @@ void ModelEditer::SaveData(void)
 		{
 			if (root) 
 			{
-				AddMessage("[error]\"Failed to Save\" because there were more parents");
+				if (editer_)
+				{
+					editer_->AddMessage("[error]\"Failed to Save\" because there were more parents");
+				}
 				return;
 			}
 			root = receiver;
@@ -390,7 +325,10 @@ void ModelEditer::SaveData(void)
 	LoadSpriteMesh loader;
 	loader.Save(directory, temp);
 
-	AddMessage("\"Save\" is complete");
+	if (editer_)
+	{
+		editer_->AddMessage("\"Save\" is complete");
+	}
 }
 
 void ModelEditer::LoadData(void)
@@ -426,7 +364,10 @@ void ModelEditer::LoadData(void)
 
 	CreateReceiver(&temp);
 
-	AddMessage("\"Load\" is complete " + version);
+	if (editer_)
+	{
+		editer_->AddMessage("\"Load\" is complete " + version);
+	}
 }
 
 void ModelEditer::RemoveSprite(Receiver* receiver)

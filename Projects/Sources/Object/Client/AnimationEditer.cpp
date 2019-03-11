@@ -3,6 +3,7 @@
 #include "Editer.h"
 
 #include "Command/RangeCommand.h"
+#include "Command/DeleteAnimationCommand.h"
 
 AnimationEditer::AnimationEditer(void) : Object(ObjectTag::STATIC), GUI(Systems::Instance(), this, "animation")
 	, currentFrame_(0)
@@ -90,7 +91,20 @@ void AnimationEditer::GuiUpdate(void)
 				pose += static_cast<char>(cnt);
 				if (ImGui::Button(pose.c_str()) && receiver_)
 				{
-					receiver_->RemoveAnim(a.frame);
+					DeleteAnimationCommand* command = new DeleteAnimationCommand;
+					if (command)
+					{
+						command->SetAnimationEditer(this);
+						command->SetReceiver(receiver_);
+						command->SetFrame(a.frame);
+						command->Invoke();
+
+						if(editer_)
+						{
+							editer_->AddCommand(command);
+							editer_->AddMessage("\"Delete\"Animation");
+						}
+					}
 				}
 
 				ImGui::TextAlign("    ");

@@ -47,6 +47,8 @@ public:
 	inline void SetRange(int range, bool min)	{ (min) ? minFrame_ = range : maxFrame_ = range;	}
 	inline int	GetRange(bool min)				{ return (min) ? minFrame_ : maxFrame_;				}
 
+	inline int GetCurrentFrame(void) { return currentFrame_; }
+
 private:
 	void ChangeRange(int& range, bool min);
 

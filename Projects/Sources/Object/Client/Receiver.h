@@ -10,6 +10,12 @@
 #include "Command/ICommand.h"
 #include "SpriteMesh.h"
 
+struct STORAGE_ANIMATION
+{
+	SPRITE_MESH_ANIM_DATA anim;
+	std::vector<STORAGE_ANIMATION> child;
+};
+
 class ModelEditer;
 class Receiver
 {
@@ -85,6 +91,7 @@ public:
 	void Animation(int frame);
 
 	void AddAnim(int frame);
+	void AddAnim(int frame, const STORAGE_ANIMATION& anim);
 	void RemoveAnim(int frame);
 	const std::vector<SPRITE_MESH_ANIM_DATA>& GetAnimData(void) { return anim_; }
 

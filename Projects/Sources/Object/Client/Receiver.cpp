@@ -530,6 +530,48 @@ void Receiver::AddAnim(int frame)
 	}
 }
 
+void Receiver::AddAnim(int frame, const STORAGE_ANIMATION& anim)
+{
+	SPRITE_MESH_ANIM_DATA temp;
+	temp.position		= anim.anim.position;
+	temp.rotation		= anim.anim.rotation;
+	temp.scale			= anim.anim.scale;
+	temp.frame			= frame;
+	temp.spriteMeshName = anim.anim.spriteMeshName;
+	temp.textureName	= anim.anim.textureName;
+
+	anim_.emplace_back(temp);
+
+	int size = static_cast<int>(anim_.size()) - 1;
+	for (int i = 0; i < size; ++i)
+	{
+		if (anim_[i].frame > anim_[i + 1].frame)
+		{
+			SPRITE_MESH_ANIM_DATA work;
+			work = anim_[i];
+			anim_[i] = anim_[i + 1];
+			anim_[i + 1] = work;
+			i = -1;
+		}
+		else if (anim_[i + 1].frame - anim_[i].frame == 0)
+		{
+			RemoveAnim(anim_[i].frame);
+			size = static_cast<int>(anim_.size()) - 1;
+			i = -1;
+		}
+	}
+
+	int childSize		= static_cast<int>(child_.size());
+	int animChildSize	= static_cast<int>(anim.child.size());
+	if (childSize == animChildSize)
+	{
+		for (int i = 0; i < childSize; ++i)
+		{
+			child_[i]->AddAnim(frame, anim.child[i]);
+		}
+	}
+}
+
 void Receiver::RemoveAnim(int frame)
 {
 	int size = static_cast<int>(anim_.size());

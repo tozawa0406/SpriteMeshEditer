@@ -104,6 +104,9 @@
     <ClCompile Include="Sources\Object\Client\Editer.cpp">
       <Filter>Source\Object\Client</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Object\Client\Command\RangeCommand.cpp">
+      <Filter>Source\Object\Client\Command</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Object\ObjectTag.h">
@@ -195,6 +198,9 @@
     </ClInclude>
     <ClInclude Include="Sources\Object\Client\Editer.h">
       <Filter>Source\Object\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\Command\RangeCommand.h">
+      <Filter>Source\Object\Client\Command</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

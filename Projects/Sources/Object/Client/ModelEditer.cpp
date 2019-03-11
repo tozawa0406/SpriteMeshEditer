@@ -41,6 +41,7 @@ void ModelEditer::Load(void)
 	{
 		animation_->SetEditer(editer_);
 		animation_->SetReceiver(receiverList_[0]); 
+		animation_->SetCtrl(ctrl_);
 	}
 }
 

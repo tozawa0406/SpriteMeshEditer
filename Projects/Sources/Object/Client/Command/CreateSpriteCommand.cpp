@@ -11,6 +11,12 @@ CreateSpriteCommand::~CreateSpriteCommand(void)
 
 void CreateSpriteCommand::Uninit(void)
 {
+	if (receiver_)
+	{
+		auto list = client_->GetReceiverList();
+		for (auto& receiver : list) { if (receiver == receiver_) { return; } }
+	}
+
 	UninitDeletePtr(receiver_);
 }
 

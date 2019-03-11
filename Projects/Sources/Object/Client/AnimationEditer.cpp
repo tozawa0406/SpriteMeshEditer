@@ -1,5 +1,8 @@
 #include "AnimationEditer.h"
 #include "Receiver.h"
+#include "Editer.h"
+
+#include "Command/RangeCommand.h"
 
 AnimationEditer::AnimationEditer(void) : Object(ObjectTag::STATIC), GUI(Systems::Instance(), this, "animation")
 	, currentFrame_(0)
@@ -16,6 +19,8 @@ AnimationEditer::~AnimationEditer(void)
 
 void AnimationEditer::Init(void)
 {
+	beforeData_.min = minFrame_;
+	beforeData_.max = maxFrame_;
 }
 
 void AnimationEditer::Uninit(void)
@@ -40,24 +45,16 @@ void AnimationEditer::GuiUpdate(void)
 	ImGui::SetNextWindowSize(ImVec2(size.x, size.y), ImGuiSetCond_Once);
 	if (ImGui::Begin("Animation"))
 	{
-		ImGui::PushItemWidth(68);
-		float f = static_cast<float>(minFrame_);
-		ImGui::InputFloat("##min", &f, 0, 0, "%.0f");
-		minFrame_ = static_cast<int>(f);
+		ChangeRange(minFrame_, true);
 		ImGui::SameLine();
 		string temp = (regeneration_) ? "||" : ">";
-		ImGui::PopItemWidth();
 		ImGui::PushItemWidth(400);
 		if (ImGui::Button(temp.c_str(), ImVec2(48, 38))) { regeneration_ = !regeneration_; }
 		ImGui::SameLine();
 		ImGui::SliderInt("##frame", &currentFrame_, minFrame_, maxFrame_);
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
-		ImGui::PushItemWidth(68);
-		f = static_cast<float>(maxFrame_);
-		ImGui::InputFloat("##max", &f, 0, 0, "%.0f");
-		maxFrame_ = static_cast<int>(f);
-		ImGui::PopItemWidth();
+		ChangeRange(maxFrame_, false);
 
 		if (receiver_)
 		{
@@ -101,4 +98,49 @@ void AnimationEditer::GuiUpdate(void)
 		}
 	}
 	ImGui::End();
+}
+
+void AnimationEditer::ChangeRange(int& range, bool min)
+{
+	ImGui::PushItemWidth(68);
+	float f = static_cast<float>(range);
+	string label = (min) ? "##min" : "##max";
+	ImGui::InputFloat(label.c_str() , &f, 0, 0, "%.0f");
+
+	if ((min && f >= maxFrame_) ||
+		!min && f <= minFrame_)
+	{
+		f = static_cast<float>(range);
+	}
+
+	if (ctrl_->Trigger(Input::GAMEPAD_CIRCLE, DIK_RETURN))
+	{
+		if((min && range != beforeData_.min) ||
+		  (!min && range != beforeData_.max))
+		{
+			RangeCommand* command = new RangeCommand;
+			if (command)
+			{
+				command->SetReceiver(receiver_);
+				command->SetAnimationEditer(this);
+				command->SetMin(min);
+				command->Invoke();
+
+				if (editer_)
+				{
+					editer_->AddCommand(command);
+					string message = "Set ";
+					message += (min) ? "\"min\" " : "\"max\" ";
+					message += "value";
+					editer_->AddMessage(message);
+				}
+			}
+
+			int& temp = (min) ? beforeData_.min : beforeData_.max;
+			temp = range;
+		}
+	}
+	range = static_cast<int>(f);
+
+	ImGui::PopItemWidth();
 }

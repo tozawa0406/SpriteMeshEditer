@@ -3,7 +3,7 @@
 #include "Editer.h"
 
 #include "Command/RangeCommand.h"
-#include "Command/DeleteAnimationCommand.h"
+#include "Command/AddDeleteAnimationCommand.h"
 
 AnimationEditer::AnimationEditer(void) : Object(ObjectTag::STATIC), GUI(Systems::Instance(), this, "animation")
 	, currentFrame_(0)
@@ -61,7 +61,25 @@ void AnimationEditer::GuiUpdate(void)
 		{
 			if (ImGui::Button("Add", ImVec2(68, 38)))
 			{
-				if (receiver_) { receiver_->AddAnim(currentFrame_); }
+				if (receiver_) 
+				{
+					receiver_->AddAnim(currentFrame_); 
+					AddDeleteAnimationCommand* command = new AddDeleteAnimationCommand;
+					if (command)
+					{
+						command->SetAnimationEditer(this);
+						command->SetReceiver(receiver_);
+						command->SetFrame(currentFrame_);
+						command->SetAdd(true);
+						command->Invoke();
+
+						if (editer_)
+						{
+							editer_->AddCommand(command);
+							editer_->AddMessage("\"Add\"Animation");
+						}
+					}
+				}
 			}
 			ImGui::SameLine();
 
@@ -91,7 +109,7 @@ void AnimationEditer::GuiUpdate(void)
 				pose += static_cast<char>(cnt);
 				if (ImGui::Button(pose.c_str()) && receiver_)
 				{
-					DeleteAnimationCommand* command = new DeleteAnimationCommand;
+					AddDeleteAnimationCommand* command = new AddDeleteAnimationCommand;
 					if (command)
 					{
 						command->SetAnimationEditer(this);

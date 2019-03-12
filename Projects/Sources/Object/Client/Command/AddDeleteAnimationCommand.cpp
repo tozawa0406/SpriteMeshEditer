@@ -1,8 +1,9 @@
-#include "DeleteAnimationCommand.h"
+#include "AddDeleteAnimationCommand.h"
 
-DeleteAnimationCommand::DeleteAnimationCommand(void) :
+AddDeleteAnimationCommand::AddDeleteAnimationCommand(void) :
 	frame_(0)
 	, animationEditer_(nullptr)
+	, add_(false)
 {
 	anim_.anim.frame		= 0;
 	anim_.anim.position		= VECTOR3(0);
@@ -12,19 +13,20 @@ DeleteAnimationCommand::DeleteAnimationCommand(void) :
 	anim_.anim.textureName		= "";
 }
 
-DeleteAnimationCommand::~DeleteAnimationCommand(void)
+AddDeleteAnimationCommand::~AddDeleteAnimationCommand(void)
 {
 }
 
-void DeleteAnimationCommand::Invoke(void)
+void AddDeleteAnimationCommand::Invoke(void)
 {
 	if (!receiver_) { return; }
 
 	GetAnim(receiver_, anim_);
-	receiver_->RemoveAnim(frame_);
+
+	if (!add_) { receiver_->RemoveAnim(frame_); }
 }
 
-void DeleteAnimationCommand::GetAnim(Receiver* receiver, STORAGE_ANIMATION& animData)
+void AddDeleteAnimationCommand::GetAnim(Receiver* receiver, STORAGE_ANIMATION& animData)
 {
 	auto receiverAnimData = receiver->GetAnimData();
 	int size = static_cast<int>(receiverAnimData.size());
@@ -45,16 +47,18 @@ void DeleteAnimationCommand::GetAnim(Receiver* receiver, STORAGE_ANIMATION& anim
 	}
 }
 
-void DeleteAnimationCommand::Undo(void)
+void AddDeleteAnimationCommand::Undo(void)
 {
 	if (!receiver_) { return; }
 
-	receiver_->AddAnim(frame_, anim_);
+	if (add_)	{ receiver_->RemoveAnim(frame_);		}
+	else		{ receiver_->AddAnim(frame_, anim_);	}
 }
 
-void DeleteAnimationCommand::Redo(void)
+void AddDeleteAnimationCommand::Redo(void)
 {
 	if (!receiver_) { return; }
 
-	receiver_->RemoveAnim(frame_);
+	if (add_)	{ receiver_->AddAnim(frame_, anim_);	}
+	else		{ receiver_->RemoveAnim(frame_);		}
 }

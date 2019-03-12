@@ -107,7 +107,7 @@
     <ClCompile Include="Sources\Object\Client\Command\RangeCommand.cpp">
       <Filter>Source\Object\Client\Command</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Object\Client\Command\DeleteAnimationCommand.cpp">
+    <ClCompile Include="Sources\Object\Client\Command\AddDeleteAnimationCommand.cpp">
       <Filter>Source\Object\Client\Command</Filter>
     </ClCompile>
   </ItemGroup>
@@ -205,7 +205,7 @@
     <ClInclude Include="Sources\Object\Client\Command\RangeCommand.h">
       <Filter>Source\Object\Client\Command</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Object\Client\Command\DeleteAnimationCommand.h">
+    <ClInclude Include="Sources\Object\Client\Command\AddDeleteAnimationCommand.h">
       <Filter>Source\Object\Client\Command</Filter>
     </ClInclude>
   </ItemGroup>

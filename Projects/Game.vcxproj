@@ -22,7 +22,7 @@
     <ClCompile Include="Sources\Camera\LookCamera.cpp" />
     <ClCompile Include="Sources\main.cpp" />
     <ClCompile Include="Sources\Object\Client\AnimationEditer.cpp" />
-    <ClCompile Include="Sources\Object\Client\Command\DeleteAnimationCommand.cpp" />
+    <ClCompile Include="Sources\Object\Client\Command\AddDeleteAnimationCommand.cpp" />
     <ClCompile Include="Sources\Object\Client\Command\RangeCommand.cpp" />
     <ClCompile Include="Sources\Object\Client\Editer.cpp" />
     <ClCompile Include="Sources\Object\Client\ModelEditer.cpp" />
@@ -51,7 +51,7 @@
   <ItemGroup>
     <ClInclude Include="Sources\Camera\LookCamera.h" />
     <ClInclude Include="Sources\Object\Client\AnimationEditer.h" />
-    <ClInclude Include="Sources\Object\Client\Command\DeleteAnimationCommand.h" />
+    <ClInclude Include="Sources\Object\Client\Command\AddDeleteAnimationCommand.h" />
     <ClInclude Include="Sources\Object\Client\Command\RangeCommand.h" />
     <ClInclude Include="Sources\Object\Client\Editer.h" />
     <ClInclude Include="Sources\Object\Client\ModelEditer.h" />

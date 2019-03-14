@@ -23,14 +23,23 @@ public:
 
 	/* @brief	アニメーション情報の設定		*/
 	inline void SetAnimationEditer(AnimationEditer* animationEditer) { animationEditer_ = animationEditer; }
-	inline void SetFrame(int frame) { frame_ = frame; }
-	inline void SetAdd(bool add) { add_ = add; }
+	/* @brief	フレーム数の設定				*/
+	inline void SetFrame(int frame) { frame_	= frame;	}
+	/* @brief	追加処理か削除処理か			*/
+	inline void SetAdd(bool add)	{ add_		= add;		}
 
 private:
+	/* @brief	レシーバーからアニメーション情報の取得
+	 * @sa		Invoke()
+	 * @param	(receiver)	アニメーションを取得したいレシーバー
+	 * @param	(animData)	取得した情報を格納する		*/
 	void GetAnim(Receiver* receiver, STORAGE_ANIMATION& animData);
 
+	//! アニメーション情報
 	STORAGE_ANIMATION	anim_;
+	//! アニメーションのフレーム数
 	int					frame_;
+	//! 追加処理か削除処理か
 	bool				add_;
 
 	AnimationEditer*	animationEditer_;

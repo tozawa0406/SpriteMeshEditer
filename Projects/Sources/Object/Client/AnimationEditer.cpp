@@ -176,3 +176,8 @@ void AnimationEditer::ChangeRange(int& range, bool min)
 
 	ImGui::PopItemWidth();
 }
+
+void AnimationEditer::HierarchyView(void)
+{
+
+}

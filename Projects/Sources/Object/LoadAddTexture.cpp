@@ -71,15 +71,14 @@ HRESULT LoadAddTexture::Load(int sceneNum)
 	{
 		if (const auto& wrapper = graphics->GetWrapper())
 		{
-			int max = static_cast<int>(list_.size()) + static_cast<int>(Resources::Texture::Base::MAX);
+			int max = static_cast<int>(list_.size());
 			for (int i = 0; i < max; ++i)
 			{
-				if (i < static_cast<int>(Resources::Texture::Base::MAX)) { continue; }
+				ITextureResource* temp = wrapper->LoadTexture(list_[i].name, i);
+				if (!temp) { return E_FAIL; }
+				list_[i].texNum = i;
 
-				int arrayNum = i - static_cast<int>(Resources::Texture::Base::MAX);
-				HRESULT hr = wrapper->LoadTexture(list_[arrayNum].name, i);
-				if (FAILED(hr)) { return E_FAIL; }
-				list_[arrayNum].texNum = i;
+				textureList_.emplace_back(temp);
 				loading_->AddLoading();
 			}
 		}
@@ -99,14 +98,12 @@ void LoadAddTexture::Release(bool uninit)
 	int baseMax = static_cast<int>(Resources::Texture::Base::MAX);
 	if (uninit) { baseMax = 0; }
 
-	if (const auto& graphics = systems_->GetGraphics())
+	for (auto& texture : textureList_)
 	{
-		if (const auto& wrapper = graphics->GetWrapper())
+		if (texture) 
 		{
-			for (int i = max - 1; i >= baseMax; --i)
-			{
-				wrapper->ReleaseTexture(i);
-			}
+			texture->Release(); 
+			DeletePtr(texture);
 		}
 	}
 }
@@ -115,9 +112,9 @@ void LoadAddTexture::GuiUpdate(void)
 {
 }
 
-int LoadAddTexture::SelectTexture(string& textureName)
+ITextureResource* LoadAddTexture::SelectTexture(string& textureName)
 {
-	int ret = -1;
+	ITextureResource* ret = nullptr;
 	ImGui::Dummy(ImVec2(0, 5));
 	if (ImGui::CollapsingHeader("TextureList"))
 	{
@@ -137,7 +134,7 @@ int LoadAddTexture::SelectTexture(string& textureName)
 				if (select)
 				{
 					textureName = obj.name;
-					ret = obj.texNum;
+					ret = textureList_[obj.texNum];
 				}
 			}
 		}
@@ -146,7 +143,7 @@ int LoadAddTexture::SelectTexture(string& textureName)
 	return ret;
 }
 
-int LoadAddTexture::SetTexture(const string& texName)
+ITextureResource* LoadAddTexture::SetTexture(const string& texName)
 {
 	string name = "";
 	if (texName.size() <= 0) { return 0; }
@@ -165,8 +162,8 @@ int LoadAddTexture::SetTexture(const string& texName)
 
 		if (name == listName)
 		{
-			return obj.texNum;
+			return textureList_[obj.texNum];
 		}
 	}
-	return 0;
+	return nullptr;
 }

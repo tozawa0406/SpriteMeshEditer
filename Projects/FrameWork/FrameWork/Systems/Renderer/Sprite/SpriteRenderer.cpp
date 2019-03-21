@@ -5,7 +5,7 @@
 #include "../Shader/Default.h"
 
 SpriteRenderer::SpriteRenderer(void) : ObjectRenderer(ObjectRenderer::RendererType::SPRITE)
-	, texNum_(static_cast<int>(Resources::Texture::Base::UNOWN))
+	, texture_(nullptr)
 	, pattern_(0)
 	, split_(VECTOR2(1))
 	, flagBillboard_(0)
@@ -34,7 +34,10 @@ void SpriteRenderer::Init(int texNum, const Transform* transform)
 
 	ObjectRenderer::Init(systems->GetObjectRenderer(), transform);
 
-	texNum_ = texNum;
+	if (const auto& texture = systems->GetTexture())
+	{
+		texture_ = texture->GetTextureResource(texNum);
+	}
 
 	VECTOR2 inv		= { 1 / split_.x, 1 / split_.y };
 	int		splitX	= static_cast<int>(split_.x);
@@ -75,6 +78,17 @@ void SpriteRenderer::Init(int texNum, const Transform* transform)
 	indexBuffer_ = wrapper->CreateIndexBuffer(index, 6);
 
 	shader_ = Shader::ENUM::DEFAULT;
+}
+
+void SpriteRenderer::SetTexture(int texNum)
+{
+	if (const auto systems = Systems::Instance())
+	{
+		if (const auto& texture = systems->GetTexture())
+		{
+			texture_ = texture->GetTextureResource(texNum);
+		}
+	}
 }
 
 bool SpriteRenderer::Animation(float add)

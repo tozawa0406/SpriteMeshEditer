@@ -95,6 +95,11 @@ private:
 	//! 現在のワークスペース
 	Receiver*				currentReceiver_;
 
+	//! フラグ
+	uint8					flag_;
+	//! アニメーションフラグ
+	static constexpr uint8 FLAG_ANIMATION = 0x01;
+
 	//! コントローラのポインタ
 	Controller*		ctrl_;
 	Editer*			editer_;

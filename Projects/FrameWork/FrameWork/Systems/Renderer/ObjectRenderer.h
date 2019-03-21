@@ -13,6 +13,7 @@
 #include "Sprite/Texture.h"
 #include "Model/Model.h"
 #include "Shader/ShaderManager.h"
+#include "../../Graphics/Utility/Utility.h"
 
 class ObjectRendererManager;
 class ObjectRenderer

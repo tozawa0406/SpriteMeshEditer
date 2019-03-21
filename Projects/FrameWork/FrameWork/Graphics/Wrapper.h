@@ -8,6 +8,7 @@
 #define _WRAPPER_H_
 
 #include "../Define/Define.h"
+#include "Utility/Utility.h"
 
 // 前方定義
 namespace CanvasRenderer { class Image; }
@@ -116,7 +117,7 @@ public:
 	virtual void    EndDrawRenderer(void)			= 0;
 
 	/* @brief	テクスチャの設定処理			*/
-	virtual void    SetTexture(int stage, int texNum = -1, int modelNum = -1) = 0;
+	virtual void    SetTexture(int stage, ITextureResource* resource) = 0;
 
 	/* @brief	2D描画処理						*/
 	virtual void    Draw(const CanvasRenderer::Image*   obj, const Shader* shader) = 0;
@@ -133,9 +134,7 @@ public:
 	virtual void DrawQuad(VECTOR2 position, VECTOR2 size, COLOR color = COLOR(1, 1, 1, 1)) = 0;
 
 	/* @brief	テクスチャの読み込み			*/
-	virtual HRESULT LoadTexture(string fileName, int texNum, int modelNum = -1) = 0;
-	/* @brief	テクスチャの解放				*/
-	virtual void    ReleaseTexture(int texNum, int modelNum = -1) = 0;
+	virtual ITextureResource* LoadTexture(string fileName, int texNum, int modelNum = -1) = 0;
 	/* @brief	テクスチャのサイズ取得			*/
 	virtual VECTOR2 GetTextureSize(int texNum) = 0;
 

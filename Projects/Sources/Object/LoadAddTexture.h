@@ -2,6 +2,7 @@
 #define _LOAD_ADD_TEXTURE_H_
 
 #include <FrameWork/Define/Define.h>
+#include <FrameWork/Graphics/Utility/Utility.h>
 #include <FrameWork/Systems/BaseManager.h>
 
 #include "Search.h"
@@ -26,8 +27,8 @@ public:
 
 	void GuiUpdate(void);
 
-	int SelectTexture(string& textureName);
-	int SetTexture(const string& texName);
+	ITextureResource* SelectTexture(string& textureName);
+	ITextureResource* SetTexture(const string& texName);
 
 private:
 	LoadAddTexture(Systems* systems);
@@ -39,6 +40,7 @@ private:
 
 	SearchFile*						search_;
 	std::vector<ADD_TEXTURE_DATA>	list_;
+	std::vector<ITextureResource*>	textureList_;
 };
 
 #endif // _LOAD_ADD_TEXTURE_H_

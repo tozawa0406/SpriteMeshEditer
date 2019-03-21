@@ -66,7 +66,6 @@ void CanvasRendererManager::Draw(void)
 					m._11 = img->GetAngle();
 					shader->SetParam(m, img->GetColor(), VECTOR4(0, 0, 1, 1));
 				}
-				dev->SetTexture(0, img->GetTexNum());
 				dev->Draw(img, shader);
 				if (draw != Shader::ENUM::UNKOUWN)
 				{

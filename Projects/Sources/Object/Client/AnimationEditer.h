@@ -49,6 +49,8 @@ public:
 
 	inline int GetCurrentFrame(void) { return currentFrame_; }
 
+	void HierarchyView(void);
+
 private:
 	void ChangeRange(int& range, bool min);
 

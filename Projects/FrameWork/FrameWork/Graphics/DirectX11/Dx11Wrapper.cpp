@@ -369,19 +369,21 @@ void Dx11Wrapper::ReleaseBuffer(uint number, Wrapper::FVF fvf)
 	}
 }
 
-void Dx11Wrapper::SetTexture(int stage, int texNum, int modelNum)
+void Dx11Wrapper::SetTexture(int stage, ITextureResource* resource)
 {
 	const auto& pContext = directX11_->GetDeviceContext();
 	if (!pContext) { return; }
 
-	if(texNum < 0)
+	ID3D11ShaderResourceView* temp = nullptr;
+	if (resource)
 	{
-		ID3D11ShaderResourceView* temp = nullptr;
+		TextureResource* tex = static_cast<TextureResource*>(resource);
+		temp = tex->GetResource();
 		pContext->PSSetShaderResources(stage, 1, &temp);
 	}
 	else
 	{
-		pContext->PSSetShaderResources(stage, 1, &texture_[modelNum + 1][texNum].data);
+		pContext->PSSetShaderResources(stage, 1, &temp);
 	}
 }
 
@@ -392,7 +394,8 @@ void Dx11Wrapper::Draw(const CanvasRenderer::Image *obj, const Shader* shader)
 
 	int pixelNum = 0;
 	// テクスチャを使用しない場合
-	if (obj->GetTexNum() < (int)Resources::Texture::Base::WHITE) { pixelNum = 1; }
+	ITextureResource* texture = obj->GetTexture();
+	if (!texture) { pixelNum = 1; }
 
 	ID3D11VertexShader* vertex = nullptr;
 	ID3D11PixelShader*  pixel = nullptr;
@@ -412,6 +415,7 @@ void Dx11Wrapper::Draw(const CanvasRenderer::Image *obj, const Shader* shader)
 		pixel  = pixelShader_[shader->GetPixelShader()].shader;
 	}
 
+	SetTexture(0, texture);
 	const auto& constant = constantBuffer_[shader_[0].constantBuffer[1]];
 	SHADER_UI c(*obj);
 	pContext->UpdateSubresource(constant, 0, NULL, &c, 0, 0);
@@ -452,13 +456,17 @@ void Dx11Wrapper::Draw(const SpriteRenderer* obj, const Shader* shader)
 	if (obj->IsBillboard()) { mtx *= inverse_; }
 
 	// テクスチャの大きさ拡大
-	float ratio = 1.f / ratio_;	// 拡大比率
-	const auto& s = texture_[0][obj->GetTexture()].size * ratio;
-	mtx.Scaling(VECTOR3(s.x, s.y, 1));
+	ITextureResource* texture = obj->GetTexture();
+	if (texture)
+	{
+		float ratio = 1.f / ratio_;	// 拡大比率
+		const auto& s = texture->GetSize() * ratio;
+		mtx.Scaling(VECTOR3(s.x, s.y, 1));
 
-	// ピボット位置の調整
-	VECTOR2 pivot = VECTOR2(0.5f - obj->GetPivot().x, 0.5f - (1 - obj->GetPivot().y));
-	mtx.Translation(VECTOR3(s.x * pivot.x, s.y * pivot.y, 0));
+		// ピボット位置の調整
+		VECTOR2 pivot = VECTOR2(0.5f - obj->GetPivot().x, 0.5f - (1 - obj->GetPivot().y));
+		mtx.Translation(VECTOR3(s.x * pivot.x, s.y * pivot.y, 0));
+	}
 
 	// レイヤーの反映
 	Transform temp = *obj->GetTransform();
@@ -508,7 +516,7 @@ void Dx11Wrapper::Draw(const SpriteRenderer* obj, const Shader* shader)
 	}
 
 	// テクスチャの設定
-	SetTexture(0, obj->GetTexture());
+	SetTexture(0, texture);
 
 	// テクスチャサンプラの設定
 	pContext->PSSetSamplers(0, 1, &sampler);
@@ -634,11 +642,11 @@ void Dx11Wrapper::Draw(MeshRenderer* obj, const Shader* shader)
 		}
 
 		// テクスチャ設定
-		SetTexture(0, mesh.material.texture[0], modelNum);	
-		if (mesh.material.textureName[1].size() > 0)
-		{
-			SetTexture(2, mesh.material.texture[1], modelNum);
-		}
+		//SetTexture(0, mesh.material.texture[0], modelNum);	
+		//if (mesh.material.textureName[1].size() > 0)
+		//{
+		//	SetTexture(2, mesh.material.texture[1], modelNum);
+		//}
 		// シェーダーの設定
 		pContext->VSSetShader(vertex, NULL, 0);
 		pContext->PSSetShader(pixel, NULL, 0);
@@ -688,7 +696,7 @@ void Dx11Wrapper::Draw(const Particle* obj, const Shader* shader)
 	pContext->GSSetConstantBuffers(0, 1, &constant);
 
 	// テクスチャの設定
-	SetTexture(0, (int)obj->GetTexNum());
+//	SetTexture(0, (int)obj->GetTexNum());
 
 	// プリミティブトポロジーを設定
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
@@ -881,7 +889,7 @@ D3D11_PRIMITIVE_TOPOLOGY Dx11Wrapper::SelectPrimitiveType(PRIMITIVE::TYPE type)
 	return D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
 }
 
-HRESULT Dx11Wrapper::LoadTexture(string fileName, int texNum, int modelNum)
+ITextureResource* Dx11Wrapper::LoadTexture(string fileName, int texNum, int modelNum)
 {
 	if (modelNum < 0)
 	{
@@ -889,23 +897,18 @@ HRESULT Dx11Wrapper::LoadTexture(string fileName, int texNum, int modelNum)
 		if (texture_.size() == 0) { texture_.resize(1); }
 		Dx11Texture temp;
 
-		// ファイルを開いて格納
-		std::wstring name(fileName.begin(), fileName.end());
-		ID3D11Resource* descOriginal;
-		HRESULT hr = DirectX::CreateWICTextureFromFile(directX11_->GetDevice(), name.c_str(), &descOriginal, &temp.data);
-		string na = fileName;
-		string no = "が開けませんでした";
-		na += no;
-		if (directX11_->GetWindow()->ErrorMessage(na.c_str(), "エラー", hr)) { return E_FAIL; }
-		// テクスチャサイズの取得
-		D3D11_TEXTURE2D_DESC desc;
-		static_cast<ID3D11Texture2D*>(descOriginal)->GetDesc(&desc);
-		ReleasePtr(descOriginal);
-
-		temp.size.x = (float)desc.Width;
-		temp.size.y = (float)desc.Height;
-
-		texture_[0].emplace_back(temp);
+		TextureResource* texture = new TextureResource;
+		if (texture)
+		{
+			texture->Setup(fileName);
+			HRESULT hr = texture->Create(directX11_->GetDevice());
+			string na = fileName;
+			string no = "が開けませんでした";
+			na += no;
+			if (directX11_->GetWindow()->ErrorMessage(na.c_str(), "エラー", hr)) { return nullptr; }
+			return texture;
+		}
+		return nullptr;
 	}
 	else
 	{
@@ -923,7 +926,7 @@ HRESULT Dx11Wrapper::LoadTexture(string fileName, int texNum, int modelNum)
 		string na = fileName;
 		string no = "が開けませんでした";
 		na += no;
-		if (directX11_->GetWindow()->ErrorMessage(na.c_str(), "エラー", hr)) { return E_FAIL; }
+		if (directX11_->GetWindow()->ErrorMessage(na.c_str(), "エラー", hr)) { return nullptr; }
 		// テクスチャサイズの取得
 		D3D11_TEXTURE2D_DESC desc;
 		static_cast<ID3D11Texture2D*>(descOriginal)->GetDesc(&desc);
@@ -935,63 +938,7 @@ HRESULT Dx11Wrapper::LoadTexture(string fileName, int texNum, int modelNum)
 		texture_[modelNum + 1].emplace_back(temp);
 	}
 
-	return S_OK;
-}
-
-void Dx11Wrapper::ReleaseTexture(int texNum, int modelNum)
-{
-	for (int i = 0; i < 8; ++i) { SetTexture(i, -1); }
-
-	if (static_cast<uint>(modelNum + 1) >= texture_.size()) { return; }
-	auto& tex = texture_[modelNum + 1];
-
-	if (modelNum >= 0)
-	{
-		int texSize = static_cast<int>(tex.size());
-		for (int i = texSize - 1; i >= 0; --i)
-		{
-			ReleasePtr(tex[i].data);
-
-			auto& thi = tex[i];
-			for (auto itr = tex.begin(); itr != tex.end();)
-			{
-				if (&(*itr) == &thi)
-				{
-					itr = tex.erase(itr);		//配列削除
-					break;
-				}
-				else { itr++; }
-			}
-			tex.shrink_to_fit();
-		}
-		for (auto itr = texture_.begin(); itr != texture_.end();)
-		{
-			if (&(*itr) == &tex)
-			{
-				itr = texture_.erase(itr);		//配列削除
-				break;
-			}
-			else { itr++; }
-		}
-		tex.shrink_to_fit();
-	}
-	else
-	{
-		if (tex.size() <= static_cast<uint>(texNum)) { return; }
-		ReleasePtr(tex[texNum].data);
-
-		auto& thi = tex[texNum];
-		for (auto itr = tex.begin(); itr != tex.end();)
-		{
-			if (&(*itr) == &thi)
-			{
-				itr = tex.erase(itr);		//配列削除
-				break;
-			}
-			else { itr++; }
-		}
-		tex.shrink_to_fit();
-	}
+	return nullptr;
 }
 
 HRESULT Dx11Wrapper::LoadModel(string fileName, int modelNum)
@@ -1048,7 +995,7 @@ HRESULT Dx11Wrapper::LoadModel(string fileName, int modelNum)
 				mesh.material.textureName[j] = tempName.c_str();
 				directory += texName;
 
-				if (SUCCEEDED(LoadTexture(directory, texNum, modelNum)))
+				if (LoadTexture(directory, texNum, modelNum) != nullptr)
 				{
 					mesh.material.texture[j] = texNum;
 					texNum++;
@@ -1124,7 +1071,6 @@ void Dx11Wrapper::ReleaseModel(int modelNum)
 		ReleaseBuffer(mesh.vertexBuffer, Wrapper::FVF::VERTEX_3D);
 		ReleaseBuffer(mesh.indexBuffer, Wrapper::FVF::INDEX);
 	}
-	ReleaseTexture(0, modelNum);
 
 	auto& thi = model_[modelNum];
 

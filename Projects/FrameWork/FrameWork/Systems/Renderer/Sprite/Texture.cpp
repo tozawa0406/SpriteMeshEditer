@@ -29,8 +29,10 @@ HRESULT Texture::Init(void)
 		{
 			for (int i = 0; i < max; ++i)
 			{
-				HRESULT hr = wrapper->LoadTexture(fileName[i], i);
-				if (FAILED(hr)) { return E_FAIL; }
+				ITextureResource* temp = wrapper->LoadTexture(fileName[i], i);
+				if (!temp) { return E_FAIL; }
+
+				list_.emplace_back(temp);
 			}
 		}
 		else { return E_FAIL; }
@@ -88,9 +90,10 @@ HRESULT Texture::Load(int sceneNum)
 			for (int i = 0; i < max; ++i)
 			{
 				if (i < static_cast<int>(Resources::Texture::Base::MAX)) { continue; }
-				HRESULT hr = wrapper->LoadTexture(fileName[i - static_cast<int>(Resources::Texture::Base::MAX)], i);
-				if (FAILED(hr)) { 
-					return E_FAIL; }
+				ITextureResource* temp = wrapper->LoadTexture(fileName[i - static_cast<int>(Resources::Texture::Base::MAX)], i);
+				if (!temp) { return E_FAIL; }
+
+				list_.emplace_back(temp);
 				loading_->AddLoading();
 			}
 		}
@@ -121,21 +124,23 @@ void Texture::Release(bool uninit)
 	int baseMax = static_cast<int>(Resources::Texture::Base::MAX);
 	if (uninit) { baseMax = 0; }
 
-	if (const auto& graphics = systems_->GetGraphics())
+	for (int i = max - 1; i >= baseMax; --i)
 	{
-		if (const auto& wrapper = graphics->GetWrapper())
-		{
-			for (int i = max - 1; i >= baseMax; --i)
-			{
-				wrapper->ReleaseTexture(i);
-			}
-		}
+		list_[i]->Release();
+		DeletePtr(list_[i]);
 	}
 }
 
 VECTOR2 Texture::GetTextureSize(int texNum) const
 {
-	return systems_->GetGraphics()->GetWrapper()->GetTextureSize(texNum);
+	if (list_.size() > static_cast<size_t>(texNum))
+	{
+		if (list_[texNum])
+		{
+			return list_[texNum]->GetSize();
+		}
+	}
+	return VECTOR2(0);
 }
 
 void Texture::GuiUpdate(void)

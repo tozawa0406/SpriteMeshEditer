@@ -8,6 +8,7 @@
 #define _CANVAS_RENDERER_IMAGE_H_
 
 #include "CanvasRendererBase.h"
+#include "../../../Graphics/Utility/Utility.h"
 
 namespace CanvasRenderer
 {
@@ -28,7 +29,7 @@ namespace CanvasRenderer
 		void Uninit(void) override;
 
 		/* @brief	テクスチャ取得				*/
-		inline int				GetTexNum(void)			const { return texNum_;			}
+		inline ITextureResource* GetTexture(void)		const { return texture_; }
 		/* @brief	スケール取得				*/
 		inline const VECTOR2&	GetScale(void)			const { return	scale_;			}
 		/* @brief	スケールのオフセット取得	*/
@@ -52,7 +53,7 @@ namespace CanvasRenderer
 		inline Wrapper::PRIMITIVE::TYPE GetPrimitiveType(void) const { return primitiveType_; }
 
 		/* @brief	テクスチャ設定				*/
-		inline void	SetTexNum(int texNum)						{ texNum_			= texNum;	}
+		void		SetTexture(int texNum);
 		/* @brief	スケール設定				*/
 		inline void	SetScale(const VECTOR2& scale)				{ scale_			= scale;	}
 		/* @brief	スケールのオフセット設定	*/
@@ -77,18 +78,18 @@ namespace CanvasRenderer
 	private:
 		void CreateVertexBuffer(void);
 
-		int				texNum_;			//! テクスチャ
-		VECTOR2			scale_;				//! スケール
-		VECTOR2			scaleOffset_;		//! スケールのオフセット
-		float			angle_;				//! 回転角度
-		VECTOR2			rotationOffset_;	//! 回転のオフセット
-		Shader::ENUM	shader_;			//! 使用するシェーダー
+		ITextureResource*	texture_;			//! テクスチャ
+		VECTOR2				scale_;				//! スケール
+		VECTOR2				scaleOffset_;		//! スケールのオフセット
+		float				angle_;				//! 回転角度
+		VECTOR2				rotationOffset_;	//! 回転のオフセット
+		Shader::ENUM		shader_;			//! 使用するシェーダー
 
-		float			pattern_;			//! アニメーション数
-		VECTOR2			split_;				//! テクスチャ分割数
+		float				pattern_;			//! アニメーション数
+		VECTOR2				split_;				//! テクスチャ分割数
 
-		uint			buffer_;			//! 頂点バッファ
-		byte			primitiveNum_;		//! プリミティブ数
+		uint				buffer_;			//! 頂点バッファ
+		byte				primitiveNum_;		//! プリミティブ数
 		Wrapper::PRIMITIVE::TYPE primitiveType_;	//! プリミティブの種類
 	};
 }

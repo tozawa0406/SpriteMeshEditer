@@ -1,7 +1,7 @@
 #include "CanvasRendererImage.h"
 
 CanvasRenderer::Image::Image(void) : CanvasRendererBase(CanvasType::Image)
-	, texNum_(static_cast<int>(Resources::Texture::Base::UNOWN))
+	, texture_(nullptr)
 	, scale_(VECTOR2(1))
 	, scaleOffset_(VECTOR2(0))
 	, angle_(0)
@@ -23,9 +23,27 @@ void CanvasRenderer::Image::Init(byte priority, int texNum)
 {
 	priority_	= priority;
 	OnInit();
-	texNum_ = texNum;
+
+	if (const auto systems = Systems::Instance())
+	{
+		if (const auto& texture = systems->GetTexture())
+		{
+			texture_ = texture->GetTextureResource(texNum);
+		}
+	}
 
 	CreateVertexBuffer();
+}
+
+void CanvasRenderer::Image::SetTexture(int texNum)
+{
+	if (const auto systems = Systems::Instance())
+	{
+		if (const auto& texture = systems->GetTexture())
+		{
+			texture_ = texture->GetTextureResource(texNum);
+		}
+	}
 }
 
 void CanvasRenderer::Image::Uninit(void)

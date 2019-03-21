@@ -19,6 +19,7 @@ ModelEditer::ModelEditer(void) : Object(ObjectTag::STATIC), GUI(Systems::Instanc
 	, workReceiver_(nullptr)
 	, editer_(nullptr)
 	, animation_(nullptr)
+	, flag_(0)
 {
 }
 
@@ -152,6 +153,14 @@ void ModelEditer::HierarchyView(void)
 			ImGui::EndMenu();
 		}
 
+		if (ImGui::BeginMenu("Mode"))
+		{
+			if (ImGui::MenuItem("Model")) { BitSub(flag_, FLAG_ANIMATION); }
+			if (ImGui::MenuItem("Animation")) { BitAdd(flag_, FLAG_ANIMATION); }
+
+			ImGui::EndMenu();
+		}
+
 		ImGui::EndMenuBar();
 	}
 
@@ -168,24 +177,31 @@ void ModelEditer::HierarchyView(void)
 		if (ImGui::Button("Redo")) { editer_->Redo(); }
 	}
 
-	// スプライト追加
-	if (ImGui::Button("CreateSprite")) { CreateReceiver(); }
-
-	// ヒエラルキーにスプライトの一覧描画
-	ImGui::Dummy(ImVec2(0, 5));
-	if(ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(400, 400)))
+	if (BitCheck(flag_, FLAG_ANIMATION))
 	{
-		for (auto& list : receiverList_)
+		if (animation_) { animation_->HierarchyView(); }
+	}
+	else
+	{
+		// スプライト追加
+		if (ImGui::Button("CreateSprite")) { CreateReceiver(); }
+
+		// ヒエラルキーにスプライトの一覧描画
+		ImGui::Dummy(ImVec2(0, 5));
+		if (ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(400, 400)))
 		{
-			// 親がいないものを描画(子は親から再起で描画される)
-			if (list && !list->GetTransform().parent)
+			for (auto& list : receiverList_)
 			{
-				string blank = " ";
-				DrawHierarchy(list, blank);
+				// 親がいないものを描画(子は親から再起で描画される)
+				if (list && !list->GetTransform().parent)
+				{
+					string blank = " ";
+					DrawHierarchy(list, blank);
+				}
 			}
 		}
+		ImGui::EndChild();
 	}
-	ImGui::EndChild();
 }
 
 void ModelEditer::DrawHierarchy(Receiver* draw, string& blank)

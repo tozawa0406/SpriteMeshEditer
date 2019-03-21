@@ -2,6 +2,7 @@
 #define _TEXTURE_NUM_COMMAND_H_
 
 #include "ICommand.h"
+#include <FrameWork/Graphics/Utility/Utility.h>
 
 class TextureNumCommand : public ICommand
 {
@@ -19,8 +20,8 @@ public:
 	virtual void Redo(void)		override;
 
 private:
-	int prevTexNum_;
-	int nextTexNum_;
+	ITextureResource* prevTexNum_;
+	ITextureResource* nextTexNum_;
 };
 
 #endif // _TEXTURE_NUM_COMMAND_H_

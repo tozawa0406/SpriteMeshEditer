@@ -289,8 +289,8 @@ void Receiver::SelectParam(void)
 	if (loadAdd_)
 	{
 		string name;
-		int ret = loadAdd_->SelectTexture(name);
-		if (ret >= 0)
+		ITextureResource* ret = loadAdd_->SelectTexture(name);
+		if (ret)
 		{
 			textureName_ = name;
 			spriteRenderer_->SetTexture(ret);

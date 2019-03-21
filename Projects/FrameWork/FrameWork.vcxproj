@@ -27,12 +27,14 @@
     <ClInclude Include="FrameWork\Graphics\DirectX11\Dx11Include.h" />
     <ClInclude Include="FrameWork\Graphics\DirectX11\Dx11RenderTarget.h" />
     <ClInclude Include="FrameWork\Graphics\DirectX11\Dx11Utility\Dx11Font.h" />
+    <ClInclude Include="FrameWork\Graphics\DirectX11\Dx11Utility\Dx11Utility.h" />
     <ClInclude Include="FrameWork\Graphics\DirectX11\Dx11Wrapper.h" />
     <ClInclude Include="FrameWork\Graphics\DirectX11\WICTextureLoader.h" />
     <ClInclude Include="FrameWork\Graphics\Graphics.h" />
     <ClInclude Include="FrameWork\Graphics\RenderTarget.h" />
     <ClInclude Include="FrameWork\Graphics\Utility\CascadeManager.h" />
     <ClInclude Include="FrameWork\Graphics\Utility\Font.h" />
+    <ClInclude Include="FrameWork\Graphics\Utility\Utility.h" />
     <ClInclude Include="FrameWork\Graphics\Wrapper.h" />
     <ClInclude Include="FrameWork\Object\Object.h" />
     <ClInclude Include="FrameWork\Object\ObjectManager.h" />
@@ -111,6 +113,7 @@
     <ClCompile Include="FrameWork\Graphics\DirectX11\DirectX11.cpp" />
     <ClCompile Include="FrameWork\Graphics\DirectX11\Dx11RenderTarget.cpp" />
     <ClCompile Include="FrameWork\Graphics\DirectX11\Dx11Utility\Dx11Font.cpp" />
+    <ClCompile Include="FrameWork\Graphics\DirectX11\Dx11Utility\Dx11Utility.cpp" />
     <ClCompile Include="FrameWork\Graphics\DirectX11\Dx11Wrapper.cpp" />
     <ClCompile Include="FrameWork\Graphics\DirectX11\WICTextureLoader.cpp" />
     <ClCompile Include="FrameWork\Graphics\Utility\CascadeManager.cpp" />

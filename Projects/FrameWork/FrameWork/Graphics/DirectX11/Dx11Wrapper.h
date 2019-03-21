@@ -9,6 +9,7 @@
 
 #include "../Wrapper.h"
 #include "DirectX11.h"
+#include "Dx11Utility/Dx11Utility.h"
 #include "Dx11Utility/Dx11Font.h"
 
 #include "../../Systems/Renderer/Model/Model.h"
@@ -30,15 +31,14 @@ public:
 	void    BeginDrawObjectRenderer(void) override;
 	void    EndDrawRenderer(void)   override;
 
-	void    SetTexture(int stage, int texNum = -1, int modelNum = -1) override;
+	void    SetTexture(int stage, ITextureResource* resource) override;
 	void    Draw(const CanvasRenderer::Image* obj, const Shader* shader)	override;
 	void    Draw(const SpriteRenderer* obj, const Shader* shader)	override;
 	void    Draw(MeshRenderer*   obj, const Shader* shader)			override;
 	void	Draw(const Particle*	   obj, const Shader* shader)	override;
 	void    Draw(const ColliderRenderer* obj) override;
 
-	HRESULT LoadTexture(string fileName, int texNum, int modelNum = -1) override;
-	void    ReleaseTexture(int texNum, int modelNum = -1) override;
+	ITextureResource* LoadTexture(string fileName, int texNum, int modelNum = -1) override;
 	VECTOR2 GetTextureSize(int texNum)					  override { return texture_[0][texNum].size; }
 
 	HRESULT LoadModel(string fileName, int modelNum)			override;

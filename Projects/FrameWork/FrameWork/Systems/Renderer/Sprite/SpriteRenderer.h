@@ -26,7 +26,8 @@ public:
 	//void	SetIndex(uint n, uint vnum)   { indexBuffer = n; indexNum = vnum;   }
 
 	/* @brief	テクスチャの設定		*/
-	inline void SetTexture(int texNum)			{ texNum_ = texNum; }
+	void		SetTexture(int texNum);
+	inline void SetTexture(ITextureResource* texture) { texture_ = texture; }
 	/* @brief	分割数の設定			*/
 	inline void SetSplit(const VECTOR2& split)	{ split_ = split;	}
 	/* @brief	ピボットの設定			*/
@@ -39,7 +40,7 @@ public:
 	inline void SetXBillboard(bool xbillboard)	{ BitSetFlag(xbillboard, flagBillboard_, FLAG_X_BILLBOARD); }
 
 	/* @brief	テクスチャの取得		*/
-	inline int				GetTexture(void)	const { return texNum_;		}
+	inline ITextureResource* GetTexture(void)	const { return texture_;	}
 	/* @brief	アニメーションパターンの取得		*/
 	inline float			GetPattern(void)	const { return pattern_;	}
 	/* @brief	分割数の取得			*/
@@ -73,7 +74,7 @@ private:
 	static constexpr uint8 FLAG_X_BILLBOARD = 0x02;
 
 	//! テクスチャ
-	int			texNum_;
+	ITextureResource* texture_;
 
 	//! アニメーションパターン
 	float		pattern_;

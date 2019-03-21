@@ -12,6 +12,8 @@
 
 #include "../../../../../Sources/Object/LoadAddTexture.h"
 
+#include "../../../Graphics/Utility/Utility.h"
+
 class Loading;
 class Texture : public Interface
 {
@@ -22,6 +24,7 @@ public:
 	int		SetUpLoading(Loading* loading, int sceneNum);
 	HRESULT Load(int sceneNum);
 	void	Release(bool uninit = false);
+	ITextureResource* GetTextureResource(int texNum) { if (list_.size() > static_cast<size_t>(texNum)) { return list_[texNum]; } return nullptr; }
 	VECTOR2 GetTextureSize(int texNum) const;
 
 	void GuiUpdate(void);
@@ -37,6 +40,8 @@ private:
 	Loading* loading_;
 
 	LoadAddTexture* loadAdd_;
+
+	std::vector<ITextureResource*> list_;
 };
 
 #endif // _TEXTURE_H_

@@ -332,6 +332,12 @@
     <ClInclude Include="FrameWork\Systems\Camera\MoveCamera.h">
       <Filter>FrameWork\Systems\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="FrameWork\Graphics\Utility\Utility.h">
+      <Filter>FrameWork\Graphics\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameWork\Graphics\DirectX11\Dx11Utility\Dx11Utility.h">
+      <Filter>FrameWork\Graphics\DirectX11\Dx11Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FrameWork\Define\Matrix.cpp">
@@ -537,6 +543,9 @@
     </ClCompile>
     <ClCompile Include="FrameWork\Systems\Camera\MoveCamera.cpp">
       <Filter>FrameWork\Systems\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameWork\Graphics\DirectX11\Dx11Utility\Dx11Utility.cpp">
+      <Filter>FrameWork\Graphics\DirectX11\Dx11Utility</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

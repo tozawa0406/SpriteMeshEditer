@@ -50,7 +50,7 @@ HRESULT GuiManager::Init(void)
 		DirectX11* directX = static_cast<DirectX11*>(window->GetGraphics());
 		if (!directX) { return E_FAIL; }
 
-		if (!ImGui_ImplDX11_Init(directX->GetDx11Device(), directX->GetDeviceContext())) { return E_FAIL; }
+		if (!ImGui_ImplDX11_Init(directX->GetD3D11Device(), directX->GetDeviceContext())) { return E_FAIL; }
 	}
 
 	ImGui::StyleColorsDark();

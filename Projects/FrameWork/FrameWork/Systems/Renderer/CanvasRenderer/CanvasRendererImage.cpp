@@ -11,7 +11,7 @@ CanvasRenderer::Image::Image(void) : CanvasRendererBase(CanvasType::Image)
 	, split_(VECTOR2(1))
 	, primitiveType_(Wrapper::PRIMITIVE::TYPE::TRIANGLE_STRIP)
 	, primitiveNum_(2)
-	, buffer_(0)
+	, vertexBuffer_(nullptr)
 {
 }
 
@@ -48,19 +48,7 @@ void CanvasRenderer::Image::SetTexture(int texNum)
 
 void CanvasRenderer::Image::Uninit(void)
 {
-	if (manager_)
-	{
-		if (const auto& systems = manager_->GetSystems())
-		{
-			if (const auto& graphics = systems->GetGraphics())
-			{
-				if (const auto& wrapper = graphics->GetWrapper())
-				{
-					wrapper->ReleaseBuffer(buffer_, Wrapper::FVF::VERTEX_2D);
-				}
-			}
-		}
-	}
+	ReleasePtr(vertexBuffer_);
 
 	OnUninit();
 }
@@ -85,9 +73,9 @@ void CanvasRenderer::Image::CreateVertexBuffer(void)
 		{
 			if (const auto& graphics = systems->GetGraphics())
 			{
-				if (const auto& wrapper = graphics->GetWrapper())
+				if (const auto& dev = graphics->GetDevice())
 				{
-					buffer_ = wrapper->CreateVertexBuffer(v, sizeof(VERTEX2D), 4);
+					dev->CreateBuffer(&vertexBuffer_, v, sizeof(VERTEX2D), 4);
 				}
 			}
 		}

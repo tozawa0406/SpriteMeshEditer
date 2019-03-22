@@ -102,8 +102,6 @@ public:
 	/* @brief	後処理				*/
 	virtual void	Uninit(void) {}
 
-	/* @brief	頂点バッファの作成処理			*/
-	virtual uint    CreateVertexBuffer(const void* v, uint size, uint vnum) = 0;
 	/* @brief	インデックスバッファの作成処理	*/
 	virtual uint    CreateIndexBuffer(const WORD* v, uint vnum)		 = 0;
 	/* @brief	バッファの解放					*/

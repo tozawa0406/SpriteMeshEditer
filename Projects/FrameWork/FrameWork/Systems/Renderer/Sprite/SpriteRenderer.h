@@ -55,7 +55,7 @@ public:
 	inline bool				IsXBillboard(void)	const { return BitCheck(flagBillboard_, FLAG_X_BILLBOARD);	}
 
 	/* @brief	頂点バッファの取得		*/
-	uint	GetVertexBuffer(void)	const { return vertexBuffer_;	}
+	IVertexBuffer* GetVertexBuffer(void)	const { return vertexBuffer_;	}
 	/* @brief	インデックスバッファの取得		*/
 	uint	GetIndexBuffer(void)	const { return indexBuffer_;	}
 	/* @brief	頂点数の取得			*/
@@ -89,7 +89,7 @@ private:
 	uint8		flagBillboard_;
 
 	//! 頂点バッファ
-	uint	vertexBuffer_;
+	IVertexBuffer*	vertexBuffer_;
 	//! インデックスバッファ
 	uint	indexBuffer_;
 	//! 頂点数

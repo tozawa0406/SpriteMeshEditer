@@ -11,7 +11,7 @@ SpriteRenderer::SpriteRenderer(void) : ObjectRenderer(ObjectRenderer::RendererTy
 	, flagBillboard_(0)
 	, pivot_(VECTOR2(0.5f))
 	, layer_(0)
-	, vertexBuffer_(0)
+	, vertexBuffer_(nullptr)
 	, indexBuffer_(0)
 	, vertexNum_(4)
 	, indexNum_(6)
@@ -21,10 +21,7 @@ SpriteRenderer::SpriteRenderer(void) : ObjectRenderer(ObjectRenderer::RendererTy
 
 SpriteRenderer::~SpriteRenderer(void)
 {
-	if (wrapper_)
-	{
-		wrapper_->ReleaseBuffer(vertexBuffer_, Wrapper::FVF::VERTEX_3D);
-	}
+	ReleasePtr(vertexBuffer_);
 }
 
 void SpriteRenderer::Init(int texNum, const Transform* transform)
@@ -65,8 +62,6 @@ void SpriteRenderer::Init(int texNum, const Transform* transform)
 		v[i].boneIndex	= VECTOR4(0, 0, 0, 0);
 		v[i].weight		= VECTOR4(0, 0, 0, 0);
 	}
-	vertexBuffer_ = wrapper->CreateVertexBuffer(v, sizeof(v[0]), Wrapper::PRIMITIVE::V::FILL_RECT);
-	if (vertexBuffer_ == Wrapper::R_ERROR) { return; }
 
 	WORD index[6];
 	index[0] = 0;
@@ -75,6 +70,16 @@ void SpriteRenderer::Init(int texNum, const Transform* transform)
 	index[3] = 2;
 	index[4] = 3;
 	index[5] = 1;
+
+	if (const auto& graphics = systems->GetGraphics())
+	{
+		if (const auto& dev = graphics->GetDevice())
+		{
+			HRESULT hr = dev->CreateBuffer(&vertexBuffer_, v, sizeof(v[0]), Wrapper::PRIMITIVE::V::FILL_RECT);
+			if (FAILED(hr)) { return; }
+		}
+	}
+
 	indexBuffer_ = wrapper->CreateIndexBuffer(index, 6);
 
 	shader_ = Shader::ENUM::DEFAULT;

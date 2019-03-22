@@ -18,7 +18,7 @@ class DirectX11 : public Graphics
 {
 	friend Windows;
 public:
-	ID3D11Device*        GetDx11Device(void)	{ return (device_)?static_cast<Dx11Device*>(device_)->GetDevice() : nullptr; }		// デバイスの受け渡し
+	ID3D11Device*        GetD3D11Device(void)	{ return (device_)?static_cast<D3D11Device*>(device_)->GetDevice() : nullptr; }		// デバイスの受け渡し
 	ID3D11DeviceContext* GetDeviceContext(void) { return pDeviceContext_; }		// コンテキストの受け渡し
 	IDXGISwapChain*		 GetSwapChain(void)		{ return pSwapChain_;     }
 

@@ -12,7 +12,7 @@ Particle::Particle(ParticleManager* manager, PARTICLE_DATA data) :
 	, destroy_(false)
 	, frame_(0)
 	, data_(data)															
-	, vertexBuffer_(0)
+	, vertexBuffer_(nullptr)
 	, manager_(manager)
 	, systems_(manager->GetSystems())
 {
@@ -21,16 +21,16 @@ Particle::Particle(ParticleManager* manager, PARTICLE_DATA data) :
 
 	a_ = data.vertex.color.a / data.limit;
 
-	const auto& dev = systems_->GetGraphics()->GetWrapper();
+	const auto& dev = systems_->GetGraphics()->GetDevice();
 
-	vertexBuffer_ = dev->CreateVertexBuffer(&data.vertex, sizeof(data.vertex), 1);
+	dev->CreateBuffer(&vertexBuffer_, &data.vertex, sizeof(data.vertex), 1);
 
 	manager->Add(this);
 }
 
 Particle::~Particle(void)
 {
-	systems_->GetGraphics()->GetWrapper()->ReleaseBuffer(vertexBuffer_, Wrapper::FVF::VERTEX_POINT);
+	ReleasePtr(vertexBuffer_);
 }
 
 void Particle::Update(void)

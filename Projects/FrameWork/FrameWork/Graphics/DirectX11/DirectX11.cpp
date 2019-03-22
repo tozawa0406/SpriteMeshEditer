@@ -161,7 +161,7 @@ bool DirectX11::SetDevice(void)
 	viewport_.TopLeftY = 0;
 	pDeviceContext_->RSSetViewports(1, &viewport_);
 
-	Dx11Device* tempDevice = new Dx11Device;
+	D3D11Device* tempDevice = new D3D11Device;
 	if (!tempDevice) { return false; }
 
 	tempDevice->SetDevice(dev);
@@ -182,12 +182,7 @@ void DirectX11::Uninit(void)
 	ReleasePtr(pRenderTargetView_);
 	ReleasePtr(pSwapChain_);
 	ReleasePtr(pDeviceContext_);
-	if (device_)
-	{
-		ID3D11Device* temp = static_cast<Dx11Device*>(device_)->GetDevice();
-		ReleasePtr(temp);
-		DeletePtr(device_);
-	}
+	ReleasePtr(device_);
 }
 
 // •`‰æŠJŽn

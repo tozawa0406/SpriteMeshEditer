@@ -74,7 +74,7 @@ Dx11Wrapper::Dx11Wrapper(DirectX11* directX) : directX11_(directX), depthState_(
 
 HRESULT Dx11Wrapper::Init(void)
 {
-	const auto& pDevice = directX11_->GetDx11Device();
+	const auto& pDevice = directX11_->GetD3D11Device();
 	string directoryHlsl = "";
 	{
 		directoryHlsl = Define::ResourceDirectoryName + "Data/UI.hlsl";
@@ -185,7 +185,8 @@ HRESULT Dx11Wrapper::Init(void)
 		v[i].color		= COLOR(1, 1, 1, 1);
 		v[i].texcoord	= VECTOR2(0, 0);
 	}
-	CreateVertexBuffer(v, sizeof(VERTEX2D), 4);
+
+	directX11_->GetDevice()->CreateBuffer(&vertexQuad_, v, sizeof(VERTEX2D), 4);
 
 	font_ = new Dx11Font;
 	if (font_)
@@ -198,31 +199,8 @@ HRESULT Dx11Wrapper::Init(void)
 
 void Dx11Wrapper::Uninit(void)
 {
+	ReleasePtr(vertexQuad_);
 	UninitDeletePtr(font_);
-
-	for(int i = 0;i < (int)vertexBuffer_.size();)
-	{
-		ReleasePtr(vertexBuffer_[i].buffer);
-		if (vertexBuffer_[i].buffer == nullptr)
-		{
-			auto& vb = vertexBuffer_;
-			auto& thi = vertexBuffer_[i];
-
-			for (auto itr = vb.begin(); itr != vb.end();)
-			{
-				if (&(*itr) == &thi)
-				{
-					itr = vb.erase(itr);		//配列削除
-					break;
-				}
-				else
-				{
-					itr++;
-				}
-			}
-			vb.shrink_to_fit();
-		}
-	}
 
 	for (int i = 0; i < (int)ALFA_BREND::MAX; ++i)
 	{
@@ -259,60 +237,6 @@ void Dx11Wrapper::Uninit(void)
 	}
 }
 
-uint Dx11Wrapper::InsideBuffer(void)
-{
-	int s = (int)vertexBuffer_.size();
-	for (int i = 0; i < s; ++i)
-	{
-		if (!vertexBuffer_[i].buffer)
-		{
-			return i;
-		}
-	}
-
-	return R_ERROR;
-}
-
-uint Dx11Wrapper::CreateVertexBuffer(const void* v, uint size, uint vnum)
-{
-	VertexBuffer* temp = nullptr;
-	uint inside = InsideBuffer();
-	if (inside != R_ERROR) { temp = &vertexBuffer_[inside]; }
-	else { temp = new VertexBuffer; }
-
-	D3D11_BUFFER_DESC bd;
-	bd.Usage			= D3D11_USAGE_DEFAULT;
-	bd.ByteWidth		= size * vnum;
-	bd.BindFlags		= D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags	= 0;
-	bd.MiscFlags		= 0;
-
-	D3D11_SUBRESOURCE_DATA data;
-	data.pSysMem = v;
-	data.SysMemPitch = 0;
-	data.SysMemSlicePitch = 0;
-
-	ID3D11Device* pDevice = directX11_->GetDx11Device();
-	HRESULT hr = pDevice->CreateBuffer(&bd, &data, &temp->buffer);
-	if (FAILED(hr))
-	{
-		ReleasePtr(temp->buffer);
-		return R_ERROR;
-	}
-	temp->stride = size;
-	temp->offset = 0;
-
-	if (inside != R_ERROR)
-	{
-		vertexBuffer_[inside] = *temp;
-		return inside;
-	}
-	vertexBuffer_.emplace_back(*temp);
-	delete temp;
-	return (uint)vertexBuffer_.size() - 1;
-
-}
-
 uint Dx11Wrapper::CreateIndexBuffer(const WORD* v, uint vnum)
 {
 	int inside = -1;
@@ -340,7 +264,7 @@ uint Dx11Wrapper::CreateIndexBuffer(const WORD* v, uint vnum)
 	data.SysMemPitch		= 0;
 	data.SysMemSlicePitch	= 0;
 
-	ID3D11Device* pDevice = directX11_->GetDx11Device();
+	ID3D11Device* pDevice = directX11_->GetD3D11Device();
 	HRESULT hr = pDevice->CreateBuffer(&bd, &data, &temp);
 	if (FAILED(hr))
 	{
@@ -365,7 +289,6 @@ void Dx11Wrapper::ReleaseBuffer(uint number, Wrapper::FVF fvf)
 	}
 	else
 	{
-		ReleasePtr(vertexBuffer_[number].buffer);
 	}
 }
 
@@ -375,7 +298,7 @@ void Dx11Wrapper::SetTexture(int stage, ITextureResource* resource)
 	if (!pContext) { return; }
 
 	ID3D11ShaderResourceView* temp = nullptr;
-	if (resource)
+	if (resource && stage >= 0)
 	{
 		TextureResource* tex = static_cast<TextureResource*>(resource);
 		temp = tex->GetResource();
@@ -426,8 +349,13 @@ void Dx11Wrapper::Draw(const CanvasRenderer::Image *obj, const Shader* shader)
 	pContext->PSSetShader(pixel, NULL, 0);
 
 	// 頂点バッファをセット
-	const auto& vb = vertexBuffer_[obj->GetBuffer()];
-	pContext->IASetVertexBuffers(0, 1, &vb.buffer, &vb.stride, &vb.offset);
+	VertexBuffer* vb = static_cast<VertexBuffer*>(obj->GetBuffer());
+	if (!vb) { return; }
+
+	ID3D11Buffer* 	v		= vb->GetBuffer();
+	uint			size	= vb->GetSize();
+	uint			offset	= 0;
+	pContext->IASetVertexBuffers(0, 1, &v, &size, &offset);
 
 	// プリミティブトポロジーを設定
 	pContext->IASetPrimitiveTopology(SelectPrimitiveType(obj->GetPrimitiveType()));
@@ -526,9 +454,15 @@ void Dx11Wrapper::Draw(const SpriteRenderer* obj, const Shader* shader)
 	pContext->PSSetShader(pixel, NULL, 0);
 	pContext->GSSetShader(NULL, NULL, 0);
 
-	// バッファを設定
-	const auto& vb = vertexBuffer_[obj->GetVertexBuffer()];
-	pContext->IASetVertexBuffers(0, 1, &vb.buffer, &vb.stride, &vb.offset);
+	// バッファを設定	// 頂点バッファをセット
+	VertexBuffer* vb = static_cast<VertexBuffer*>(obj->GetVertexBuffer());
+	if (!vb) { return; }
+
+	ID3D11Buffer* 	v = vb->GetBuffer();
+	uint			size = vb->GetSize();
+	uint			offset = 0;
+	pContext->IASetVertexBuffers(0, 1, &v, &size, &offset);
+
 	pContext->IASetIndexBuffer(indexBuffer_[obj->GetIndexBuffer()], DXGI_FORMAT_R16_UINT, 0);
 
 	// プリミティブトポロジーを設定
@@ -653,8 +587,8 @@ void Dx11Wrapper::Draw(MeshRenderer* obj, const Shader* shader)
 		pContext->GSSetShader(NULL, NULL, 0);
 
 		// バッファを設定
-		const auto& vb = vertexBuffer_[mesh.vertexBuffer];
-		pContext->IASetVertexBuffers(0, 1, &vb.buffer, &vb.stride, &vb.offset);
+		//const auto& vb = vertexBuffer_[mesh.vertexBuffer];
+		//pContext->IASetVertexBuffers(0, 1, &vb.buffer, &vb.stride, &vb.offset);
 		pContext->IASetIndexBuffer(indexBuffer_[mesh.indexBuffer], DXGI_FORMAT_R16_UINT, 0);
 
 		// 描画
@@ -690,8 +624,11 @@ void Dx11Wrapper::Draw(const Particle* obj, const Shader* shader)
 	pContext->GSSetShader(geometryShader_[0], NULL, 0);
 
 	// バッファを設定
-	const auto& vb = vertexBuffer_[obj->GetVertexBuffer()];
-	pContext->IASetVertexBuffers(0, 1, &vb.buffer, &vb.stride, &vb.offset);
+	const auto& vb = static_cast<VertexBuffer*>(obj->GetVertexBuffer());
+	ID3D11Buffer*	v		= vb->GetBuffer();
+	uint			size	= vb->GetSize();
+	uint			offset	= 0;
+	pContext->IASetVertexBuffers(0, 1, &v, &size, &offset);
 	pContext->VSSetConstantBuffers(0, 1, &constant);	// cbufferを使うVSに設定
 	pContext->GSSetConstantBuffers(0, 1, &constant);
 
@@ -776,10 +713,16 @@ void Dx11Wrapper::Draw(const ColliderRenderer* obj)
 	dev->VSSetShader(vertex, NULL, 0);
 	dev->PSSetShader(pixel, NULL, 0);
 	dev->GSSetShader(NULL, NULL, 0);
+	
+	// 頂点バッファをセット
+	VertexBuffer* vb = static_cast<VertexBuffer*>(obj->GetVertexBuffer());
+	if (!vb) { return; }
 
-	// バッファを設定
-	const auto& vb = vertexBuffer_[obj->GetVertexBuffer()];
-	dev->IASetVertexBuffers(0, 1, &vb.buffer, &vb.stride, &vb.offset);
+	ID3D11Buffer* 	v = vb->GetBuffer();
+	uint			size = vb->GetSize();
+	uint			offset = 0;
+	dev->IASetVertexBuffers(0, 1, &v, &size, &offset);
+
 
 	// プリミティブトポロジーを設定
 	dev->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
@@ -891,6 +834,7 @@ D3D11_PRIMITIVE_TOPOLOGY Dx11Wrapper::SelectPrimitiveType(PRIMITIVE::TYPE type)
 
 HRESULT Dx11Wrapper::LoadModel(string fileName, int modelNum)
 {
+	modelNum;
 	LoadM Loader;
 	MODEL tempModel;
 
@@ -916,7 +860,7 @@ HRESULT Dx11Wrapper::LoadModel(string fileName, int modelNum)
 	for (auto& mesh : tempModel.mesh)
 	{
 		mesh.computeShader = R_ERROR;
-		mesh.vertexBuffer = CreateVertexBuffer(&mesh.vertex[0], sizeof(mesh.vertex[0]), (uint)mesh.vertex.size());
+//		mesh.vertexBuffer = CreateVertexBuffer(&mesh.vertex[0], sizeof(mesh.vertex[0]), (uint)mesh.vertex.size());
 		if (mesh.vertexBuffer == R_ERROR) { return E_FAIL; }
 
 		mesh.indexBuffer = CreateIndexBuffer(&mesh.index[0], (uint)mesh.index.size());
@@ -953,7 +897,7 @@ HRESULT Dx11Wrapper::LoadModel(string fileName, int modelNum)
 			{
 				if (j == 0)
 				{
-					const string& temp = Systems::Instance()->GetResource().GetWhiteTextureName();
+//					const string& temp = Systems::Instance()->GetResource().GetWhiteTextureName();
 //					LoadTexture(temp, texNum, modelNum);
 					mesh.material.texture[j] = texNum;
 					texNum++;
@@ -1082,7 +1026,7 @@ uint Dx11Wrapper::CreateVertexShader(string fileName, string method, string vers
 {
 	if (version != "vs_5_0") { return 0; }
 
-	const auto& dev = directX11_->GetDx11Device();
+	const auto& dev = directX11_->GetD3D11Device();
 	HRESULT hr;
 	ID3D11VertexShader* tempVertexShader;
 
@@ -1105,7 +1049,7 @@ uint Dx11Wrapper::CreatePixelShader(string fileName, string method, string versi
 {
 	if (version != "ps_5_0") { return 0; }
 
-	const auto& pDevice = directX11_->GetDx11Device();
+	const auto& pDevice = directX11_->GetD3D11Device();
 	HRESULT hr;
 	PixelShader tempPixelShader;
 
@@ -1139,7 +1083,7 @@ uint Dx11Wrapper::CreatePixelShader(string fileName, string method, string versi
 
 uint Dx11Wrapper::CreateGeometryShader(string fileName, string method, string version)
 {
-	const auto& pDevice = directX11_->GetDx11Device();
+	const auto& pDevice = directX11_->GetD3D11Device();
 	HRESULT hr;
 	ID3D11GeometryShader* tempGeometryShader;
 
@@ -1160,7 +1104,7 @@ uint Dx11Wrapper::CreateGeometryShader(string fileName, string method, string ve
 
 uint Dx11Wrapper::CreateComputeShader(string fileName, string method, string version, const void* v, uint size, uint num)
 {
-	const auto& dev = directX11_->GetDx11Device();
+	const auto& dev = directX11_->GetD3D11Device();
 	HRESULT hr;
 	ComputeShader tempComputeShader;
 
@@ -1235,7 +1179,7 @@ uint Dx11Wrapper::CreateComputeShader(string fileName, string method, string ver
 
 uint Dx11Wrapper::CreateConstantBuffer(uint size)
 {
-	const auto& pDevice = directX11_->GetDx11Device();
+	const auto& pDevice = directX11_->GetD3D11Device();
 
 	D3D11_BUFFER_DESC cb;
 	cb.BindFlags			= D3D11_BIND_CONSTANT_BUFFER;
@@ -1255,7 +1199,7 @@ uint Dx11Wrapper::CreateConstantBuffer(uint size)
 
 void Dx11Wrapper::CreateInputLayout(D3D11_INPUT_ELEMENT_DESC* elem, int size, string fileName)
 {
-	const auto& dev = directX11_->GetDx11Device();
+	const auto& dev = directX11_->GetD3D11Device();
 	HRESULT hr;
 	ID3DBlob* pCompiledShader = CompiledShader(fileName, "VS_Main", "vs_5_0");
 	if (!pCompiledShader) { return; }
@@ -1303,8 +1247,11 @@ void Dx11Wrapper::DrawQuad(VECTOR2 position, VECTOR2 size, COLOR color)
 	pContext->PSSetShader(pixel, NULL, 0);
 
 	// 頂点バッファをセット
-	const auto& vb = vertexBuffer_[0];
-	pContext->IASetVertexBuffers(0, 1, &vb.buffer, &vb.stride, &vb.offset);
+	const auto& vb = static_cast<VertexBuffer*>(vertexQuad_);
+	ID3D11Buffer*	v		= vb->GetBuffer();
+	uint			s		= vb->GetSize();
+	uint			offset	= 0;
+	pContext->IASetVertexBuffers(0, 1, &v, &s, &offset);
 
 	// プリミティブトポロジーを設定
 	pContext->IASetPrimitiveTopology(SelectPrimitiveType(Wrapper::PRIMITIVE::TYPE::TRIANGLE_STRIP));

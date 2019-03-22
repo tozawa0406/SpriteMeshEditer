@@ -92,7 +92,7 @@ HRESULT Dx11RenderTarget::CreateNormalRenderTarget(List num)
 	if (!window) { return E_FAIL; }
 
 	const auto& swapChain = directX11_->GetSwapChain();
-	const auto& device = directX11_->GetDx11Device();
+	const auto& device = directX11_->GetD3D11Device();
 
 	if (!swapChain) { return E_FAIL; }
 	if (!device) { return E_FAIL; }
@@ -122,7 +122,7 @@ HRESULT Dx11RenderTarget::CreateNormalRenderTarget(List num)
  * @return	¬Œ÷Ž¸”s					*/
 HRESULT Dx11RenderTarget::CreateShadowmapRenderTarget(void)
 {
-	const auto& device = directX11_->GetDx11Device();
+	const auto& device = directX11_->GetD3D11Device();
 
 	HRESULT hr = S_OK;
 
@@ -215,7 +215,7 @@ HRESULT Dx11RenderTarget::CreateRenderTarget(List num, ID3D11Texture2D* tex2D, D
 	if (!directX11_)	{ return E_FAIL; }
 	const auto& window = directX11_->GetWindow();
 	if (!window)		{ return E_FAIL; }
-	const auto& device = directX11_->GetDx11Device();
+	const auto& device = directX11_->GetD3D11Device();
 	if (!device)	{ return E_FAIL; }
 
 	int listNum = static_cast<int>(num);

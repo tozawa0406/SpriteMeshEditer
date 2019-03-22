@@ -108,8 +108,7 @@ void LoadAddTexture::Release(bool uninit)
 	{
 		if (texture) 
 		{
-			texture->Release(); 
-			DeletePtr(texture);
+			ReleasePtr(texture);
 		}
 	}
 }

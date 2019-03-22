@@ -46,7 +46,7 @@ namespace CanvasRenderer
 		inline const VECTOR2&	GetSplit(void)			const { return split_;			}
 
 		/* @brief	頂点バッファ取得			*/
-		inline uint			GetBuffer(void)				const { return buffer_;			}
+		inline IVertexBuffer*	GetBuffer(void)			const { return vertexBuffer_;	}
 		/* @brief	プリミティブの数取得		*/
 		inline byte			GetPrimitiveNum(void)		const { return primitiveNum_;	}
 		/* @brief	プリミティブの種類取得		*/
@@ -88,7 +88,7 @@ namespace CanvasRenderer
 		float				pattern_;			//! アニメーション数
 		VECTOR2				split_;				//! テクスチャ分割数
 
-		uint				buffer_;			//! 頂点バッファ
+		IVertexBuffer*		vertexBuffer_;		//! 頂点バッファ
 		byte				primitiveNum_;		//! プリミティブ数
 		Wrapper::PRIMITIVE::TYPE primitiveType_;	//! プリミティブの種類
 	};

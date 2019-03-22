@@ -23,7 +23,6 @@ class Dx11Wrapper : public Wrapper
 {
 	friend DirectX11;
 public:
-	uint	CreateVertexBuffer(const void* v, uint size, uint vnum)	override;
 	uint	CreateIndexBuffer(const WORD* v, uint vnum)				override;
 	void	ReleaseBuffer(uint number, Wrapper::FVF fvf)			override;
 
@@ -72,12 +71,6 @@ private:
 		ID3D11ShaderResourceView* data;
 	};
 
-	struct VertexBuffer
-	{
-		ID3D11Buffer* buffer;
-		uint stride;
-		uint offset;
-	};
 	// DirectX11のピクセルシェーダー
 	struct PixelShader
 	{
@@ -107,12 +100,11 @@ private:
 	HRESULT Init(void)   override;
 	void	Uninit(void) override;
 
-	uint InsideBuffer(void);
 	D3D11_PRIMITIVE_TOPOLOGY SelectPrimitiveType(PRIMITIVE::TYPE type);
 
 	DirectX11* directX11_;
 
-	std::vector<VertexBuffer>				vertexBuffer_;
+	IVertexBuffer*							vertexQuad_;
 	std::vector<ID3D11Buffer*>				indexBuffer_;
 	std::vector<std::vector<Dx11Texture>>	texture_;
 	std::vector<MODEL>						model_;

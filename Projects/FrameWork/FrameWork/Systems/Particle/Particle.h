@@ -8,6 +8,7 @@
 #define _PARTICLE_H_
 
 #include "../../Define/Define.h"
+#include "../../Graphics/Utility/Utility.h"
 #include "../GameSystems.h"
 
 struct PARTICLE_DATA
@@ -39,7 +40,7 @@ public:
 
 	const Transform& GetTransform(void)    const { return transform_; }
 	int				 GetTexNum(void)       const { return texNum_;    }
-	uint			 GetVertexBuffer(void) const { return vertexBuffer_; }
+	IVertexBuffer*	 GetVertexBuffer(void) const { return vertexBuffer_; }
 
 	COLOR			 GetColor(void)		   const { return data_.vertex.color; }
 
@@ -49,7 +50,7 @@ private:
 	bool			destroy_;
 	int				frame_;
 	PARTICLE_DATA	data_;
-	uint			vertexBuffer_;
+	IVertexBuffer*	vertexBuffer_;
 	float			a_;
 
 	ParticleManager* manager_;

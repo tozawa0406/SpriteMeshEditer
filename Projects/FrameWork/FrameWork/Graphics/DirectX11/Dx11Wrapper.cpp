@@ -74,7 +74,7 @@ Dx11Wrapper::Dx11Wrapper(DirectX11* directX) : directX11_(directX), depthState_(
 
 HRESULT Dx11Wrapper::Init(void)
 {
-	const auto& pDevice = directX11_->GetDevice();
+	const auto& pDevice = directX11_->GetDx11Device();
 	string directoryHlsl = "";
 	{
 		directoryHlsl = Define::ResourceDirectoryName + "Data/UI.hlsl";
@@ -292,7 +292,7 @@ uint Dx11Wrapper::CreateVertexBuffer(const void* v, uint size, uint vnum)
 	data.SysMemPitch = 0;
 	data.SysMemSlicePitch = 0;
 
-	ID3D11Device* pDevice = directX11_->GetDevice();
+	ID3D11Device* pDevice = directX11_->GetDx11Device();
 	HRESULT hr = pDevice->CreateBuffer(&bd, &data, &temp->buffer);
 	if (FAILED(hr))
 	{
@@ -340,7 +340,7 @@ uint Dx11Wrapper::CreateIndexBuffer(const WORD* v, uint vnum)
 	data.SysMemPitch		= 0;
 	data.SysMemSlicePitch	= 0;
 
-	ID3D11Device* pDevice = directX11_->GetDevice();
+	ID3D11Device* pDevice = directX11_->GetDx11Device();
 	HRESULT hr = pDevice->CreateBuffer(&bd, &data, &temp);
 	if (FAILED(hr))
 	{
@@ -889,58 +889,6 @@ D3D11_PRIMITIVE_TOPOLOGY Dx11Wrapper::SelectPrimitiveType(PRIMITIVE::TYPE type)
 	return D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
 }
 
-ITextureResource* Dx11Wrapper::LoadTexture(string fileName, int texNum, int modelNum)
-{
-	if (modelNum < 0)
-	{
-		UNREFERENCED_PARAMETER(texNum);
-		if (texture_.size() == 0) { texture_.resize(1); }
-		Dx11Texture temp;
-
-		TextureResource* texture = new TextureResource;
-		if (texture)
-		{
-			texture->Setup(fileName);
-			HRESULT hr = texture->Create(directX11_->GetDevice());
-			string na = fileName;
-			string no = "が開けませんでした";
-			na += no;
-			if (directX11_->GetWindow()->ErrorMessage(na.c_str(), "エラー", hr)) { return nullptr; }
-			return texture;
-		}
-		return nullptr;
-	}
-	else
-	{
-		if (texture_.size() < (uint)modelNum + 2)
-		{
-			std::vector<Dx11Texture> t;
-			texture_.emplace_back(t);
-		}
-		Dx11Texture temp;
-
-		// ファイルを開いて格納
-		std::wstring name(fileName.begin(), fileName.end());
-		ID3D11Resource* descOriginal;
-		HRESULT hr = DirectX::CreateWICTextureFromFile(directX11_->GetDevice(), name.c_str(), &descOriginal, &temp.data);
-		string na = fileName;
-		string no = "が開けませんでした";
-		na += no;
-		if (directX11_->GetWindow()->ErrorMessage(na.c_str(), "エラー", hr)) { return nullptr; }
-		// テクスチャサイズの取得
-		D3D11_TEXTURE2D_DESC desc;
-		static_cast<ID3D11Texture2D*>(descOriginal)->GetDesc(&desc);
-		ReleasePtr(descOriginal);
-
-		temp.size.x = (float)desc.Width;
-		temp.size.y = (float)desc.Height;
-
-		texture_[modelNum + 1].emplace_back(temp);
-	}
-
-	return nullptr;
-}
-
 HRESULT Dx11Wrapper::LoadModel(string fileName, int modelNum)
 {
 	LoadM Loader;
@@ -995,18 +943,18 @@ HRESULT Dx11Wrapper::LoadModel(string fileName, int modelNum)
 				mesh.material.textureName[j] = tempName.c_str();
 				directory += texName;
 
-				if (LoadTexture(directory, texNum, modelNum) != nullptr)
-				{
-					mesh.material.texture[j] = texNum;
-					texNum++;
-				}
+				//if (LoadTexture(directory, texNum, modelNum) != nullptr)
+				//{
+				//	mesh.material.texture[j] = texNum;
+				//	texNum++;
+				//}
 			}
 			else
 			{
 				if (j == 0)
 				{
 					const string& temp = Systems::Instance()->GetResource().GetWhiteTextureName();
-					LoadTexture(temp, texNum, modelNum);
+//					LoadTexture(temp, texNum, modelNum);
 					mesh.material.texture[j] = texNum;
 					texNum++;
 				}
@@ -1134,7 +1082,7 @@ uint Dx11Wrapper::CreateVertexShader(string fileName, string method, string vers
 {
 	if (version != "vs_5_0") { return 0; }
 
-	const auto& dev = directX11_->GetDevice();
+	const auto& dev = directX11_->GetDx11Device();
 	HRESULT hr;
 	ID3D11VertexShader* tempVertexShader;
 
@@ -1157,7 +1105,7 @@ uint Dx11Wrapper::CreatePixelShader(string fileName, string method, string versi
 {
 	if (version != "ps_5_0") { return 0; }
 
-	const auto& pDevice = directX11_->GetDevice();
+	const auto& pDevice = directX11_->GetDx11Device();
 	HRESULT hr;
 	PixelShader tempPixelShader;
 
@@ -1191,7 +1139,7 @@ uint Dx11Wrapper::CreatePixelShader(string fileName, string method, string versi
 
 uint Dx11Wrapper::CreateGeometryShader(string fileName, string method, string version)
 {
-	const auto& pDevice = directX11_->GetDevice();
+	const auto& pDevice = directX11_->GetDx11Device();
 	HRESULT hr;
 	ID3D11GeometryShader* tempGeometryShader;
 
@@ -1212,7 +1160,7 @@ uint Dx11Wrapper::CreateGeometryShader(string fileName, string method, string ve
 
 uint Dx11Wrapper::CreateComputeShader(string fileName, string method, string version, const void* v, uint size, uint num)
 {
-	const auto& dev = directX11_->GetDevice();
+	const auto& dev = directX11_->GetDx11Device();
 	HRESULT hr;
 	ComputeShader tempComputeShader;
 
@@ -1287,7 +1235,7 @@ uint Dx11Wrapper::CreateComputeShader(string fileName, string method, string ver
 
 uint Dx11Wrapper::CreateConstantBuffer(uint size)
 {
-	const auto& pDevice = directX11_->GetDevice();
+	const auto& pDevice = directX11_->GetDx11Device();
 
 	D3D11_BUFFER_DESC cb;
 	cb.BindFlags			= D3D11_BIND_CONSTANT_BUFFER;
@@ -1307,7 +1255,7 @@ uint Dx11Wrapper::CreateConstantBuffer(uint size)
 
 void Dx11Wrapper::CreateInputLayout(D3D11_INPUT_ELEMENT_DESC* elem, int size, string fileName)
 {
-	const auto& dev = directX11_->GetDevice();
+	const auto& dev = directX11_->GetDx11Device();
 	HRESULT hr;
 	ID3DBlob* pCompiledShader = CompiledShader(fileName, "VS_Main", "vs_5_0");
 	if (!pCompiledShader) { return; }

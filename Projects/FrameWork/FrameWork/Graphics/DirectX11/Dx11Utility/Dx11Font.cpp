@@ -35,7 +35,7 @@ HRESULT Dx11Font::CreateFontData(const char* font, int fontSize)
 	HRESULT hr = CreateBitMapFontData(fontData, font, fontSize);
 
 	const auto& directX11 = static_cast<DirectX11*>(graphics_);
-	const auto& device  = directX11->GetDevice();
+	const auto& device  = directX11->GetDx11Device();
 	const auto& context = directX11->GetDeviceContext();
 
 	// CPUで書き込みができるテクスチャを作成

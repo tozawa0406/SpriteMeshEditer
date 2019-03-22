@@ -4,19 +4,23 @@
 #include "../../Utility/Utility.h"
 #include "../Dx11Include.h"
 
-class IDx11Base
+class Dx11Device : public IDevice
 {
 public:
-	IDx11Base(void) : device_(nullptr) {}
-	virtual ~IDx11Base(void) {}
+	Dx11Device(void) : device_(nullptr) {}
+	virtual ~Dx11Device(void) {}
 
-	virtual HRESULT Create(ID3D11Device* device) = 0;
+	void Release(void) {}
+	ID3D11Device* GetDevice(void) { return device_; }
+	void SetDevice(ID3D11Device* device) { device_ = device; }
 
-protected:
+	virtual HRESULT Load(ITextureResource** resource, const string& name) override;
+
+private:
 	ID3D11Device* device_;
 };
 
-class TextureResource : public ITextureResource, IDx11Base
+class TextureResource : public ITextureResource
 {
 public:
 	TextureResource(void) : resource_(nullptr) {}
@@ -24,7 +28,7 @@ public:
 
 	inline ID3D11ShaderResourceView* GetResource(void) { return resource_; }
 
-	virtual HRESULT Create(ID3D11Device* device) override;
+	virtual HRESULT Load(IDevice* device, const string& name) override;
 	virtual void	Release(void)	override;
 
 private:

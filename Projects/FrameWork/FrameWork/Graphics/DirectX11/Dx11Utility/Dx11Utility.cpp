@@ -1,20 +1,31 @@
 #include "Dx11Utility.h"
 
-HRESULT TextureResource::Create(ID3D11Device* device)
+HRESULT Dx11Device::Load(ITextureResource** resource, const string& name)
 {
-	// デバイスのnullチェック
-	if (!device) { return E_FAIL; }
-	device_ = device;
-	
-	// 名前の設定不備
-	if (name_ == "") { return E_FAIL; }
+	(*resource) = new TextureResource;
+	if (resource)
+	{
+		return (*resource)->Load(this, name);
+	}
+	return E_FAIL;
+}
 
+HRESULT TextureResource::Load(IDevice* device, const string& name)
+{
+	// 名前の設定不備
+	if (name == "") { return E_FAIL; }
+
+	IResourece::Load(device, name);
+
+	// デバイスのチェック
+	Dx11Device* dev = static_cast<Dx11Device*>(device);
+	if (!dev) { return E_FAIL; }	
 
 	// ファイルを開いて格納
-	std::wstring name(name_.begin(), name_.end());
+	std::wstring wname(name_.begin(), name_.end());
 
 	ID3D11Resource* descOriginal;
-	HRESULT hr = DirectX::CreateWICTextureFromFile(device_, name.c_str(), &descOriginal, &resource_);
+	HRESULT hr = DirectX::CreateWICTextureFromFile(dev->GetDevice(), wname.c_str(), &descOriginal, &resource_);
 	if (FAILED(hr)) { return hr; }
 
 	// テクスチャサイズの取得

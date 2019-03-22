@@ -19,18 +19,24 @@ Texture::Texture(Systems* systems) : Interface(systems)
 HRESULT Texture::Init(void)
 {
 	if (!systems_) { return E_FAIL; }
+	const auto& window = systems_->GetWindow();
+	if (!window) { return E_FAIL; }
 
 	int size = 0, max = 0;
 	const string* fileName = systems_->GetResource().LoadTexture(SceneList::MAX, size, max);
 
 	if (const auto& graphics = systems_->GetGraphics())
 	{
-		if (const auto& wrapper = graphics->GetWrapper())
+		if (const auto& dev = graphics->GetDevice())
 		{
 			for (int i = 0; i < max; ++i)
 			{
-				ITextureResource* temp = wrapper->LoadTexture(fileName[i], i);
-				if (!temp) { return E_FAIL; }
+				ITextureResource* temp = nullptr;
+				string na = fileName[i];
+				string no = "が開けませんでした";
+				na += no;
+
+				if (window->ErrorMessage(na.c_str(), "エラー", dev->Load(&temp, fileName[i]))) { return E_FAIL; }
 
 				list_.emplace_back(temp);
 			}
@@ -80,18 +86,25 @@ HRESULT Texture::Load(int sceneNum)
 	sceneNum_ = sceneNum;
 
 	if (!systems_) { return E_FAIL; }
+	const auto& window = systems_->GetWindow();
+	if (!window) { return E_FAIL; }
+
 	int size = 0, max = 0;
 	const auto& fileName = systems_->GetResource().LoadTexture(static_cast<SceneList>(sceneNum), size, max);
 
 	if (const auto& graphics = systems_->GetGraphics())
 	{
-		if (const auto& wrapper = graphics->GetWrapper())
+		if (const auto& dev = graphics->GetDevice())
 		{
 			for (int i = 0; i < max; ++i)
 			{
 				if (i < static_cast<int>(Resources::Texture::Base::MAX)) { continue; }
-				ITextureResource* temp = wrapper->LoadTexture(fileName[i - static_cast<int>(Resources::Texture::Base::MAX)], i);
-				if (!temp) { return E_FAIL; }
+				ITextureResource* temp = nullptr;
+				string na = fileName[i];
+				string no = "が開けませんでした";
+				na += no;
+
+				if (window->ErrorMessage(na.c_str(), "エラー", dev->Load(&temp, fileName[i - static_cast<int>(Resources::Texture::Base::MAX)]))) { return E_FAIL; }
 
 				list_.emplace_back(temp);
 				loading_->AddLoading();

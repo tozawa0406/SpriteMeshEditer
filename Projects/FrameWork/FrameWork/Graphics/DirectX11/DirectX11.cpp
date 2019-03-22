@@ -11,7 +11,6 @@
 // コンストラクタ
 DirectX11::DirectX11(void) :
 	pSwapChain_(nullptr)
-	, pDevice_(nullptr)
 	, pDeviceContext_(nullptr)
 	, pRenderTargetView_(nullptr)
 {
@@ -53,9 +52,10 @@ bool DirectX11::SetDevice(void)
 {
 	HRESULT hr;
 
+	ID3D11Device* dev = nullptr;
 	D3D_FEATURE_LEVEL featureLevel = D3D_FEATURE_LEVEL_11_0;
 	//デバイスの生成
-	hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &featureLevel, 1, D3D11_SDK_VERSION, &pDevice_, NULL, &pDeviceContext_);
+	hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &featureLevel, 1, D3D11_SDK_VERSION, &dev, NULL, &pDeviceContext_);
 	if (FAILED(hr)) { return false; }
 
 	//使用可能なMSAAを取得
@@ -78,7 +78,7 @@ bool DirectX11::SetDevice(void)
 
 	//インターフェース取得
 	IDXGIDevice1* pDXGI = nullptr;
-	hr = pDevice_->QueryInterface(__uuidof(IDXGIDevice1), (void**)&pDXGI);
+	hr = dev->QueryInterface(__uuidof(IDXGIDevice1), (void**)&pDXGI);
 	if (FAILED(hr)) { return false; }
 
 	//アダプター取得
@@ -111,7 +111,7 @@ bool DirectX11::SetDevice(void)
 	sd.Flags								= DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 	sd.Windowed								= !Windows::FULL_SCREEN;
 
-	hr = pDXGIFactory->CreateSwapChain(pDevice_, &sd, &pSwapChain_);
+	hr = pDXGIFactory->CreateSwapChain(dev, &sd, &pSwapChain_);
 	if (FAILED(hr)) { return false; }
 
 	ReleasePtr(pDXGIFactory);
@@ -121,7 +121,7 @@ bool DirectX11::SetDevice(void)
 	//レンダーターゲットビューの作成
 	ID3D11Texture2D* pBackBuffer;
 	pSwapChain_->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
-	pDevice_->CreateRenderTargetView(pBackBuffer, NULL, &pRenderTargetView_);
+	dev->CreateRenderTargetView(pBackBuffer, NULL, &pRenderTargetView_);
 	pBackBuffer->Release();
 
 	ID3D11Texture2D* depthTexture = nullptr;
@@ -137,7 +137,7 @@ bool DirectX11::SetDevice(void)
 	txDesc.BindFlags			= D3D11_BIND_DEPTH_STENCIL;
 	txDesc.CPUAccessFlags		= 0;
 	txDesc.MiscFlags			= 0;
-	hr = pDevice_->CreateTexture2D(&txDesc, NULL, &depthTexture);
+	hr = dev->CreateTexture2D(&txDesc, NULL, &depthTexture);
 	if (FAILED(hr)) { return false; }
 
 	//ステンシルターゲット作成
@@ -145,7 +145,7 @@ bool DirectX11::SetDevice(void)
 	depthStencilViewDesc.Format			= txDesc.Format;
 	depthStencilViewDesc.ViewDimension	= D3D11_DSV_DIMENSION_TEXTURE2DMS;
 	depthStencilViewDesc.Flags			= 0;
-	if (FAILED(pDevice_->CreateDepthStencilView(depthTexture, &depthStencilViewDesc, &pDepthStencilView_))) 
+	if (FAILED(dev->CreateDepthStencilView(depthTexture, &depthStencilViewDesc, &pDepthStencilView_)))
 	{
 		return false;
 	}
@@ -160,6 +160,12 @@ bool DirectX11::SetDevice(void)
 	viewport_.TopLeftX = 0;
 	viewport_.TopLeftY = 0;
 	pDeviceContext_->RSSetViewports(1, &viewport_);
+
+	Dx11Device* tempDevice = new Dx11Device;
+	if (!tempDevice) { return false; }
+
+	tempDevice->SetDevice(dev);
+	device_ = tempDevice;
 
 	return true;
 }
@@ -176,7 +182,12 @@ void DirectX11::Uninit(void)
 	ReleasePtr(pRenderTargetView_);
 	ReleasePtr(pSwapChain_);
 	ReleasePtr(pDeviceContext_);
-	ReleasePtr(pDevice_);
+	if (device_)
+	{
+		ID3D11Device* temp = static_cast<Dx11Device*>(device_)->GetDevice();
+		ReleasePtr(temp);
+		DeletePtr(device_);
+	}
 }
 
 // 描画開始

@@ -133,11 +133,6 @@ public:
 	/* @brief	矩形描画処理					*/
 	virtual void DrawQuad(VECTOR2 position, VECTOR2 size, COLOR color = COLOR(1, 1, 1, 1)) = 0;
 
-	/* @brief	テクスチャの読み込み			*/
-	virtual ITextureResource* LoadTexture(string fileName, int texNum, int modelNum = -1) = 0;
-	/* @brief	テクスチャのサイズ取得			*/
-	virtual VECTOR2 GetTextureSize(int texNum) = 0;
-
 	/* @brief	モデルの読み込み				*/
 	virtual HRESULT LoadModel(string fileName, int modelNum) = 0;
 	/* @brief	モデルアニメーションの読み込み	*/

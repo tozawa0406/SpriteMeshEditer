@@ -10,6 +10,7 @@
 #include "../Define/Define.h"
 #include "Wrapper.h"
 #include "RenderTarget.h"
+#include "Utility/Utility.h"
 
 class Graphics
 {
@@ -32,6 +33,8 @@ public:
 	//! @def	縦解像度
 	static constexpr int HEIGHT = 1080;
 
+	/* @brief	デバイス取得				*/
+	inline IDevice*			GetDevice(void)			{ return device_;		}
 	/* @brief	Windowsクラスの取得			*/
 	inline Windows*			GetWindow(void)			{ return window_;		}
 	/* @brief	Wrapperクラスの取得			*/
@@ -47,7 +50,7 @@ public:
 
 protected:
 	/* @brief	コンストラクタ		*/
-	Graphics(void) : window_(nullptr) {}
+	Graphics(void) : window_(nullptr), device_(nullptr), wrapper_(nullptr), renderTarget_(nullptr) {}
 
 	/* @brief	Windowsクラスの設定処理		*/
 	void SetWindows(Windows* window) { window_ = window; }
@@ -58,6 +61,9 @@ protected:
 	virtual HRESULT DrawBegin(void) = 0;
 	/* @brief	描画終了処理	*/
 	virtual void	DrawEnd(void)	= 0;
+
+	//! デバイス
+	IDevice* device_;
 
 	//! Windowsクラスのポインタ
 	Windows*		window_;

@@ -38,9 +38,6 @@ public:
 	void	Draw(const Particle*	   obj, const Shader* shader)	override;
 	void    Draw(const ColliderRenderer* obj) override;
 
-	ITextureResource* LoadTexture(string fileName, int texNum, int modelNum = -1) override;
-	VECTOR2 GetTextureSize(int texNum)					  override { return texture_[0][texNum].size; }
-
 	HRESULT LoadModel(string fileName, int modelNum)			override;
 	HRESULT LoadModelAnimation(string fileName, int parent)		override;
 	void    ReleaseModel(int modelNum)							override;

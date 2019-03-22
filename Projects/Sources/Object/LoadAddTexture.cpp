@@ -66,18 +66,24 @@ HRESULT LoadAddTexture::Load(int sceneNum)
 	sceneNum_ = sceneNum;
 
 	if (!systems_) { return E_FAIL; }
+	const auto& window = systems_->GetWindow();
+	if (!window) { return E_FAIL; }
 
 	if (const auto& graphics = systems_->GetGraphics())
 	{
-		if (const auto& wrapper = graphics->GetWrapper())
+		if (const auto& dev = graphics->GetDevice())
 		{
 			int max = static_cast<int>(list_.size());
 			for (int i = 0; i < max; ++i)
 			{
-				ITextureResource* temp = wrapper->LoadTexture(list_[i].name, i);
-				if (!temp) { return E_FAIL; }
-				list_[i].texNum = i;
+				ITextureResource* temp = nullptr;
+				string na = list_[i].name;
+				string no = "‚ªŠJ‚¯‚Ü‚¹‚ñ‚Å‚µ‚½";
+				na += no;
 
+				if (window->ErrorMessage(na.c_str(), "ƒGƒ‰[", dev->Load(&temp, list_[i].name))) { return E_FAIL; }
+
+				list_[i].texNum = i;
 				textureList_.emplace_back(temp);
 				loading_->AddLoading();
 			}

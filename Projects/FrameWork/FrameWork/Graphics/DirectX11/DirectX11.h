@@ -9,6 +9,7 @@
 
 #include "Dx11Include.h"
 #include "../Graphics.h"
+#include "Dx11Utility/Dx11Utility.h"
 
 //-----------------------------------------------------------------------------
 //	クラス定義
@@ -17,7 +18,7 @@ class DirectX11 : public Graphics
 {
 	friend Windows;
 public:
-	ID3D11Device*        GetDevice(void)        { return pDevice_;        }		// デバイスの受け渡し
+	ID3D11Device*        GetDx11Device(void)	{ return (device_)?static_cast<Dx11Device*>(device_)->GetDevice() : nullptr; }		// デバイスの受け渡し
 	ID3D11DeviceContext* GetDeviceContext(void) { return pDeviceContext_; }		// コンテキストの受け渡し
 	IDXGISwapChain*		 GetSwapChain(void)		{ return pSwapChain_;     }
 
@@ -38,7 +39,6 @@ private:
 	ID3D11DepthStencilView* GetDepthStencilView(void) { return pDepthStencilView_; }
 
 	IDXGISwapChain*         pSwapChain_;
-	ID3D11Device*           pDevice_;				// DirectXの機能
 	ID3D11DeviceContext*    pDeviceContext_;		// GPUの方
 	ID3D11RenderTargetView* pRenderTargetView_;
 	ID3D11DepthStencilView* pDepthStencilView_;

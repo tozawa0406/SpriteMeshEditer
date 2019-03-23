@@ -29,7 +29,7 @@ HRESULT Model::Init(void)
 		{
 			for (int i = 0; i < max; ++i)
 			{
-				HRESULT hr = wrapper->LoadModel(fileName[i], i);
+				HRESULT hr = wrapper->Load(fileName[i], i);
 				if (FAILED(hr)) { return E_FAIL; }
 			}
 		}
@@ -75,7 +75,7 @@ HRESULT Model::Load(int sceneNum)
 			for (int i = 0; i < max; ++i)
 			{
 				if (i < static_cast<int>(Resources::Model::Base::MAX)) { continue; }
-				HRESULT hr = wrapper->LoadModel(fileName[i - static_cast<int>(Resources::Model::Base::MAX)], i);
+				HRESULT hr = wrapper->Load(fileName[i - static_cast<int>(Resources::Model::Base::MAX)], i);
 				if (FAILED(hr)) { return E_FAIL; }
 				loading_->AddLoading();
 			}

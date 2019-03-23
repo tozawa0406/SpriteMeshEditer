@@ -780,11 +780,15 @@ D3D11_PRIMITIVE_TOPOLOGY Dx11Wrapper::SelectPrimitiveType(PRIMITIVE::TYPE type)
 	return D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
 }
 
-HRESULT Dx11Wrapper::LoadModel(string fileName, int modelNum)
+HRESULT Dx11Wrapper::Load(string fileName, int modelNum)
 {
+	if (!directX11_) { return E_FAIL; }
+	D3D11Device* dev = static_cast<D3D11Device*>(directX11_->GetDevice());
+	if (!dev) { return E_FAIL; }
+
 	modelNum;
-	LoadM Loader;
-	MODEL tempModel;
+	LoadModel Loader;
+	MeshResource tempModel;
 
 	string extension;
 	for (int i = (int)fileName.size() - 1; i > 0 && fileName[i] != '.'; --i)
@@ -804,68 +808,65 @@ HRESULT Dx11Wrapper::LoadModel(string fileName, int modelNum)
 		b.inverseMtx = V(temp);
 	}
 
-	int texNum = 0;
+	HRESULT hr;
 	for (auto& mesh : tempModel.mesh)
 	{
 		mesh.computeShader = R_ERROR;
-//		mesh.vertexBuffer = CreateVertexBuffer(&mesh.vertex[0], sizeof(mesh.vertex[0]), (uint)mesh.vertex.size());
-		if (mesh.vertexBuffer == R_ERROR) { return E_FAIL; }
+		hr = dev->CreateBuffer(&mesh.vertexBuffer, &mesh.vertex[0], sizeof(mesh.vertex[0]), static_cast<uint>(mesh.vertex.size()));
+		if (FAILED(hr)) { return hr; }
 
-//		mesh.indexBuffer = CreateIndexBuffer(&mesh.index[0], (uint)mesh.index.size());
-		if (mesh.indexBuffer == R_ERROR) { return E_FAIL; }
+		hr = dev->CreateBuffer(&mesh.indexBuffer, &mesh.index[0], static_cast<uint>(mesh.index.size()));
+		if (FAILED(hr)) { return hr; }
 
 		int texMax = static_cast<int>(MaterialType::MAX);
-		for (int j = 0;j < texMax;++j)
+		for (int i = 0; i < texMax; ++i)
 		{
-			mesh.material.texture[j] = 0;
-			string tempName = mesh.material.textureName[j];
-			if (tempName != "")
+			if (mesh.material.texture[i])
 			{
-				string directory = fileName;
-				// テクスチャのディレクトリはモデルと同じ
-				for (uint i = (uint)directory.size() - 1; directory[i] != '/' && i > 0; i--) { directory.pop_back(); }
+				string tempName = mesh.material.texture[i]->GetName();
+				ReleasePtr(mesh.material.texture[i]);
 
-				string texName;
-				int size = (int)tempName.size() - 1;
-				for (int i = size; i >= 0; --i)
+				if (tempName != "")
 				{
-					if (tempName[i] == 92 || tempName[i] == '/') { break; }
-					texName.insert(texName.begin(), tempName[i]);
-				}
-				mesh.material.textureName[j] = tempName.c_str();
-				directory += texName;
+					string directory = fileName;
+					// テクスチャのディレクトリはモデルと同じ
+					for (uint j = (uint)directory.size() - 1; directory[j] != '/' && j > 0; j--) { directory.pop_back(); }
 
-				//if (LoadTexture(directory, texNum, modelNum) != nullptr)
-				//{
-				//	mesh.material.texture[j] = texNum;
-				//	texNum++;
-				//}
-			}
-			else
-			{
-				if (j == 0)
-				{
-//					const string& temp = Systems::Instance()->GetResource().GetWhiteTextureName();
-//					LoadTexture(temp, texNum, modelNum);
-					mesh.material.texture[j] = texNum;
-					texNum++;
+					string texName;
+					int size = (int)tempName.size() - 1;
+					for (int j = size; j >= 0; --j)
+					{
+						if (tempName[j] == 92 || tempName[j] == '/') { break; }
+						texName.insert(texName.begin(), tempName[j]);
+					}
+					directory += texName;
+
+					hr = dev->Load(&mesh.material.texture[i], directory);
+					if (FAILED(hr)) { return hr; }
 				}
+				else
+				{
+					if (i == 0)
+					{
+						const string& temp = Systems::Instance()->GetResource().GetWhiteTextureName();
+						hr = dev->Load(&mesh.material.texture[i], temp);
+						if (FAILED(hr)) { return hr; }
+					}
+				}
+
 			}
 		}
 	}
 
-	if (texNum > 0)
-	{
-		model_.emplace_back(tempModel);
-	}
+//	model_.emplace_back(tempModel);
 
 	return S_OK; 
 }
 
 HRESULT Dx11Wrapper::LoadModelAnimation(string fileName, int parent)
 {
-	LoadM	Loader;
-	MODEL	tempModel;
+	LoadModel Loader;
+	MeshResource tempModel;
 
 	if (parent < 0) { return E_FAIL; }
 
@@ -904,12 +905,10 @@ void Dx11Wrapper::ReleaseModel(int modelNum)
 
 	for (auto& mesh : model_[modelNum].mesh)
 	{
-		mesh.material.texture[0] = 0;
-		mesh.material.texture[1] = 0;
-		mesh.material.textureName[0] = "";
-		mesh.material.textureName[1] = "";
-//		ReleaseBuffer(mesh.vertexBuffer, Wrapper::FVF::VERTEX_3D);
-//		ReleaseBuffer(mesh.indexBuffer, Wrapper::FVF::INDEX);
+		mesh.material.texture[0] = nullptr;
+		mesh.material.texture[1] = nullptr;
+		ReleasePtr(mesh.vertexBuffer);
+		ReleasePtr(mesh.indexBuffer);
 	}
 
 	auto& thi = model_[modelNum];

@@ -127,7 +127,7 @@ public:
 	virtual void DrawQuad(VECTOR2 position, VECTOR2 size, COLOR color = COLOR(1, 1, 1, 1)) = 0;
 
 	/* @brief	モデルの読み込み				*/
-	virtual HRESULT LoadModel(string fileName, int modelNum) = 0;
+	virtual HRESULT Load(string fileName, int modelNum) = 0;
 	/* @brief	モデルアニメーションの読み込み	*/
 	virtual HRESULT LoadModelAnimation(string fileName, int parent) = 0;
 	/* @brief	モデルの解放					*/

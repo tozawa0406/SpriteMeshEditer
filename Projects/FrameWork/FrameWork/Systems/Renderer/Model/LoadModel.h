@@ -10,16 +10,15 @@
 #include "../../../Define/Define.h"
 #include "Model.h"
 
-class LoadM
+class LoadModel
 {
 public:
-	MODEL   Load(string fileName);
-	HRESULT LoadAnimation(string fileName, MODEL& model);
+	MeshResource Load(string fileName);
+	HRESULT		 LoadAnimation(string fileName, MeshResource& model);
 
 private:
-	void GetMesh(FILE* fp, MODEL& model);
-	void GetBone(FILE* fp, MODEL& model);
-
+	void GetMesh(FILE* fp, MeshResource& model);
+	void GetBone(FILE* fp, MeshResource& model);
 };
 
 #endif // _LOAD_MODEL_H_

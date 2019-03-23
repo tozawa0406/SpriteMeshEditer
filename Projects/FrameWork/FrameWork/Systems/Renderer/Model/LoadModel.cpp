@@ -9,9 +9,9 @@
 #include "../../../Graphics/Graphics.h"
 #include "../../../Graphics/Wrapper.h"
 
-MODEL LoadM::Load(string fileName)
+MeshResource LoadModel::Load(string fileName)
 {
-	MODEL model;
+	MeshResource model;
 	FILE* fp;
 	fopen_s(&fp, fileName.c_str(), "rb");
 
@@ -36,13 +36,13 @@ MODEL LoadM::Load(string fileName)
 	return model;
 }
 
-HRESULT LoadM::LoadAnimation(string fileName, MODEL& model)
+HRESULT LoadModel::LoadAnimation(string fileName, MeshResource& model)
 {
 	FILE* fp;
 	fopen_s(&fp, fileName.c_str(), "rb");
 	if (!fp) { return E_FAIL; }
 
-	MODEL animModel;
+	MeshResource animModel;
 	bool end = true;
 	while (end)
 	{
@@ -86,7 +86,7 @@ HRESULT LoadM::LoadAnimation(string fileName, MODEL& model)
 	return S_OK;
 }
 
-void LoadM::GetMesh(FILE* fp, MODEL& model)
+void LoadModel::GetMesh(FILE* fp, MeshResource& model)
 {
 	MESH tempMesh;
 	uint size = 0;
@@ -127,13 +127,18 @@ void LoadM::GetMesh(FILE* fp, MODEL& model)
 		fread(&size, sizeof(size), 1, fp);
 		ZeroMemory(buf, sizeof(char) * 1028);
 		fread(buf, size, 1, fp);
-		tempMesh.material.textureName[i] = buf;
+		TempTextureResource* resource = new TempTextureResource;
+		if (resource)
+		{
+			resource->SetName(buf);
+			tempMesh.material.texture[i] = resource;
+		}
 	}
 
 	model.mesh.emplace_back(tempMesh);
 }
 
-void LoadM::GetBone(FILE* fp, MODEL& model)
+void LoadModel::GetBone(FILE* fp, MeshResource& model)
 {
 	BONE tempBone;
 	uint size = 0;

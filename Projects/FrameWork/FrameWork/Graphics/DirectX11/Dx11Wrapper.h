@@ -34,7 +34,7 @@ public:
 	void	Draw(const Particle*	   obj, const Shader* shader)	override;
 	void    Draw(const ColliderRenderer* obj) override;
 
-	HRESULT LoadModel(string fileName, int modelNum)			override;
+	HRESULT Load(string fileName, int modelNum)			override;
 	HRESULT LoadModelAnimation(string fileName, int parent)		override;
 	void    ReleaseModel(int modelNum)							override;
 
@@ -48,7 +48,7 @@ public:
 	uint    CreateGeometryShader(string fileName, string method, string version);
 	uint	CreateComputeShader(string fileName, string method, string version, const void* v, uint size, uint num);
 
-	MODEL&	GetModel(int i) { return model_[i]; }
+	MeshResource&	GetModel(int i) { return model_[i]; }
 
 	// ÉâÉCÉgÇÃê›íË
 	void SetLight(LightInfo& light) override { UNREFERENCED_PARAMETER(light); }
@@ -103,7 +103,7 @@ private:
 
 	IVertexBuffer*							vertexQuad_;
 	std::vector<std::vector<Dx11Texture>>	texture_;
-	std::vector<MODEL>						model_;
+	std::vector<MeshResource>				model_;
 
 	ID3D11BlendState*          blendState_[(int)ALFA_BREND::MAX];
 	ID3D11DepthStencilState*   depthState_;

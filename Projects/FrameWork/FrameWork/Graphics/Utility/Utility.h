@@ -97,23 +97,18 @@ protected:
 	VECTOR2 size_;
 };
 
-/* @brief	メッシュリソース		*/
-class IMeshResource : public IResourece
+class TempTextureResource : public ITextureResource
 {
 public:
-	/* @brief	コンストラクタ	*/
-	IMeshResource(void) {}
-	/* @brief	デストラクタ	*/
-	virtual ~IMeshResource(void) {}
+	TempTextureResource(void) {}
+	virtual ~TempTextureResource(void) {}
 
-	/* @brief	テクスチャ取得処理		*/
-	const std::vector<ITextureResource*>& GetTexture(void) { return texture_; }
+	virtual void Release(void) override { IBaseUnknown::Release(); }
+	const void SetName(const string& name) { name_ = name; }
 
-protected:
-	//! テクスチャ
-	std::vector<ITextureResource*> texture_;
-	IVertexBuffer*	vertexBuffer_;
-	IIndexBuffer*	indexBuffer_;
+private:
+	// 空関数を持たせて実態を持てるように
+	virtual HRESULT Load(IDevice*, const string&) override { return S_OK; }
 };
 
 /* @brief	デバイス

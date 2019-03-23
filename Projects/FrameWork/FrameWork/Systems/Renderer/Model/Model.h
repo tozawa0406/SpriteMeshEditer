@@ -9,8 +9,9 @@
 
 #include "../../../Define/Define.h"
 #include "../../BaseManager.h"
+#include "../../../Graphics/Utility/Utility.h"
 
-enum class MaterialType
+enum class MaterialType : uint8
 {
 	Diffuse = 0,
 	Normal,
@@ -25,8 +26,7 @@ struct MATERIAL
 	COLOR		specular;
 	COLOR		emission;
 	float		power;
-	uint		texture[static_cast<int>(MaterialType::MAX)];
-	string		textureName[static_cast<int>(MaterialType::MAX)];
+	ITextureResource* texture[static_cast<int>(MaterialType::MAX)];
 };
 
 struct BONE
@@ -44,17 +44,16 @@ struct MESH
 	MATRIX						transMtx;
 	std::vector<VERTEX>			vertex;
 	std::vector<WORD>			index;
-	uint						vertexBuffer;
-	uint						indexBuffer;
+	IVertexBuffer*				vertexBuffer;
+	IIndexBuffer*				indexBuffer;
 	uint						computeShader;
 	MATERIAL					material;
 };
 
-struct MODEL
+struct MeshResource
 {
 	MATRIX				transMtx;
 	std::vector<MESH>	mesh;
-
 	std::vector<BONE>	bone;
 };
 

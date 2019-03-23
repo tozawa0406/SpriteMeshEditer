@@ -22,6 +22,10 @@ public:
 
 	/* @brief	テクスチャロード処理	*/
 	virtual HRESULT Load(ITextureResource**, const string&) override;
+	/* @brief	モデルロード処理		*/
+	virtual HRESULT Load(MESH_RESOURCE& meshResource, const string& name) override;
+	/* @brief	モデルアニメーションのロード処理	*/
+	virtual HRESULT Load(MESH_RESOURCE& meshResource, const string& name, bool anim) override;
 
 	/* @brief	頂点バッファ生成処理	*/
 	virtual HRESULT CreateBuffer(IVertexBuffer**, const void*, uint, uint) override;

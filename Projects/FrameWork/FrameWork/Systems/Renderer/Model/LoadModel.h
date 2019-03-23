@@ -13,12 +13,12 @@
 class LoadModel
 {
 public:
-	MeshResource Load(string fileName);
-	HRESULT		 LoadAnimation(string fileName, MeshResource& model);
+	MESH_RESOURCE	Load(string fileName);
+	HRESULT			LoadAnimation(string fileName, MESH_RESOURCE& model);
 
 private:
-	void GetMesh(FILE* fp, MeshResource& model);
-	void GetBone(FILE* fp, MeshResource& model);
+	void GetMesh(FILE* fp, MESH_RESOURCE& model);
+	void GetBone(FILE* fp, MESH_RESOURCE& model);
 };
 
 #endif // _LOAD_MODEL_H_

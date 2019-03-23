@@ -15,8 +15,14 @@
 #include "../../Camera/CameraManager.h"
 
 MeshRenderer::MeshRenderer(void) : ObjectRenderer(ObjectRenderer::RendererType::MODEL)
-								 , modelNum_((int)Resources::Model::Base::UNOWN), pattern_(0), patternOld_(0), animation_(0), animationOld_(-1)
-								 , rate_(0), addRate_(0), isSkinning_(false)
+	, mesh_(nullptr)
+	, pattern_(0)
+	, patternOld_(0)
+	, animation_(0)
+	, animationOld_(-1)
+	, rate_(0)
+	, addRate_(0)
+	, isSkinning_(false)
 {
 }
 
@@ -32,14 +38,16 @@ void MeshRenderer::Init(int modelNum, const Transform* transform)
 	assert(modelNum != static_cast<int>(Resources::Model::Base::UNOWN));
 	ObjectRenderer::Init(systems->GetObjectRenderer(), transform);
 
-	modelNum_	= modelNum;
+	if (const auto& model = systems->GetModel())
+	{
+		mesh_ = model->GetMesh(modelNum);
+	}
 	shader_		= Shader::ENUM::DEFAULT;
 
-	const auto& model = static_cast<Dx11Wrapper*>(wrapper_)->GetModel(modelNum);
 	animationMax_.clear();
-	if(model.bone.size() > 0)
+	if(mesh_ && mesh_->bone.size() > 0)
 	{
-		for (const auto& anim : model.bone[0].animMtx)
+		for (const auto& anim : mesh_->bone[0].animMtx)
 		{
 			animationMax_.emplace_back((int)anim.size());
 		}
@@ -48,7 +56,20 @@ void MeshRenderer::Init(int modelNum, const Transform* transform)
 
 void MeshRenderer::ChangeModel(int modelNum)
 {
-	modelNum_ = modelNum;
+	const auto& systems = Systems::Instance();
+	if (!systems) { return; }
+	if (const auto& model = systems->GetModel())
+	{
+		mesh_ = model->GetMesh(modelNum);
+	}
+	animationMax_.clear();
+	if (mesh_ && mesh_->bone.size() > 0)
+	{
+		for (const auto& anim : mesh_->bone[0].animMtx)
+		{
+			animationMax_.emplace_back((int)anim.size());
+		}
+	}
 }
 
 void MeshRenderer::ChangeAnimation(int animNum, int frame, bool end)
@@ -109,16 +130,15 @@ void MeshRenderer::Skinning(void)
 
 	const auto& systems = Systems::Instance();
 	if (!systems) { return; }
+	if (!mesh_) { return; }
 
 	Dx11Wrapper* dx11 = static_cast<Dx11Wrapper*>(wrapper_);
 	if (!dx11) { return; }
 
-	auto& model = dx11->GetModel(modelNum_);
-
 	MATRIX rootMtx;
 	bool rootFrameTransformMatrix = true;
-	if (model.transMtx == 0.0f) { rootFrameTransformMatrix = false; }
-	else { rootMtx = model.transMtx; }
+	if (mesh_->transMtx == 0.0f) { rootFrameTransformMatrix = false; }
+	else { rootMtx = mesh_->transMtx; }
 
 	DefaultShader::CONSTANT cbuf;
 	MATRIX initMtx = MATRIX().Identity();
@@ -137,48 +157,48 @@ void MeshRenderer::Skinning(void)
 	DefaultShader::CONSTANT_BONE cbuf1;
 	ZeroMemory(&cbuf1, sizeof(DefaultShader::CONSTANT_BONE));
 
-	int s = (int)model.bone.size();
+	int s = (int)mesh_->bone.size();
 	for (int j = 0; j < s; ++j)
 	{
-		memcpy_s(&cbuf1.boneInv[j], sizeof(MATRIX), &model.bone[j].inverseMtx, sizeof(MATRIX));
+		memcpy_s(&cbuf1.boneInv[j], sizeof(MATRIX), &mesh_->bone[j].inverseMtx, sizeof(MATRIX));
 
 		int anim = (int)pattern_;
-		if (model.bone[j].animMtx.size() <= (uint)animation_ || model.bone[j].animMtx[animation_].size() == 0)
+		if (mesh_->bone[j].animMtx.size() <= (uint)animation_ || mesh_->bone[j].animMtx[animation_].size() == 0)
 		{
-			memcpy_s(&cbuf1.boneAnim[j], sizeof(MATRIX), &model.bone[j].offsetMtx, sizeof(MATRIX));
-			memcpy_s(&model.bone[j].nowBone, sizeof(MATRIX), &model.bone[j].offsetMtx, sizeof(MATRIX));
+			memcpy_s(&cbuf1.boneAnim[j], sizeof(MATRIX), &mesh_->bone[j].offsetMtx, sizeof(MATRIX));
+			memcpy_s(&mesh_->bone[j].nowBone, sizeof(MATRIX), &mesh_->bone[j].offsetMtx, sizeof(MATRIX));
 		}
 		else
 		{
 			float rate = rate_;
-			anim = (anim % model.bone[j].animMtx[animation_].size());
+			anim = (anim % mesh_->bone[j].animMtx[animation_].size());
 			if (animationOld_ < 0)
 			{
 				float patternRate = pattern_ - (int)pattern_;
 				MATRIX mtx1, mtx2;
-				memcpy_s(&mtx1, sizeof(MATRIX), &model.bone[j].animMtx[animation_][anim], sizeof(MATRIX));
+				memcpy_s(&mtx1, sizeof(MATRIX), &mesh_->bone[j].animMtx[animation_][anim], sizeof(MATRIX));
 
 				int next = anim + 1;
 				next = (next >= animationMax_[animation_]) ? 0 : next;
-				memcpy_s(&mtx2, sizeof(MATRIX), &model.bone[j].animMtx[animation_][next], sizeof(MATRIX));
+				memcpy_s(&mtx2, sizeof(MATRIX), &mesh_->bone[j].animMtx[animation_][next], sizeof(MATRIX));
 
 				MATRIX m = (mtx2 * patternRate) + (mtx1 * (1 - patternRate));
 				memcpy_s(&cbuf1.boneAnim[j], sizeof(MATRIX), &m, sizeof(MATRIX));
-				memcpy_s(&model.bone[j].nowBone, sizeof(MATRIX), &m, sizeof(MATRIX));
+				memcpy_s(&mesh_->bone[j].nowBone, sizeof(MATRIX), &m, sizeof(MATRIX));
 			}
 			else
 			{
 				MATRIX mtx1, mtx2;
-				if (model.bone[j].animMtx.size() >(uint)animationOld_ || model.bone[j].animMtx[animationOld_].size() > 0)
+				if (mesh_->bone[j].animMtx.size() >(uint)animationOld_ || mesh_->bone[j].animMtx[animationOld_].size() > 0)
 				{
-					memcpy_s(&mtx1, sizeof(MATRIX), &model.bone[j].animMtx[animation_][anim], sizeof(MATRIX));
+					memcpy_s(&mtx1, sizeof(MATRIX), &mesh_->bone[j].animMtx[animation_][anim], sizeof(MATRIX));
 					anim = (int)patternOld_;
-					anim = (anim % model.bone[j].animMtx[animationOld_].size());
-					memcpy_s(&mtx2, sizeof(MATRIX), &model.bone[j].animMtx[animationOld_][anim], sizeof(MATRIX));
+					anim = (anim % mesh_->bone[j].animMtx[animationOld_].size());
+					memcpy_s(&mtx2, sizeof(MATRIX), &mesh_->bone[j].animMtx[animationOld_][anim], sizeof(MATRIX));
 
 					MATRIX m = (mtx1 * rate) + (mtx2 * (1 - rate));
 					memcpy_s(&cbuf1.boneAnim[j], sizeof(MATRIX), &m, sizeof(MATRIX));
-					memcpy_s(&model.bone[j].nowBone, sizeof(MATRIX), &m, sizeof(MATRIX));
+					memcpy_s(&mesh_->bone[j].nowBone, sizeof(MATRIX), &m, sizeof(MATRIX));
 				}
 			}
 		}

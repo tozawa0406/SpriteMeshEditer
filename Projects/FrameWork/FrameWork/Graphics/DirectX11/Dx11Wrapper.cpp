@@ -474,9 +474,7 @@ void Dx11Wrapper::Draw(MeshRenderer* obj, const Shader* shader)
 	pContext->PSSetSamplers(0, 1, &sampler);
 	pContext->PSSetSamplers(2, 1, &sampler);
 
-	int modelNum = (int)obj->GetModelNum();
-
-	auto& temp = model_[modelNum];
+	auto& temp = *obj->GetMesh();
 
 	MATRIX rootMtx;
 	bool rootFrameTransformMatrix = true;
@@ -510,7 +508,6 @@ void Dx11Wrapper::Draw(MeshRenderer* obj, const Shader* shader)
 		{
 			MATRIX tempMtx;
 			memcpy_s(&tempMtx, sizeof(MATRIX), &mtx, sizeof(MATRIX));
-			tempMtx._44 = (float)obj->GetModelNum();
 			COLOR c = obj->GetMaterial().diffuse;
 			c.a = obj->GetRate();
 			c.b = (float)i;
@@ -778,155 +775,6 @@ D3D11_PRIMITIVE_TOPOLOGY Dx11Wrapper::SelectPrimitiveType(PRIMITIVE::TYPE type)
 		return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
 	}
 	return D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
-}
-
-HRESULT Dx11Wrapper::Load(string fileName, int modelNum)
-{
-	if (!directX11_) { return E_FAIL; }
-	D3D11Device* dev = static_cast<D3D11Device*>(directX11_->GetDevice());
-	if (!dev) { return E_FAIL; }
-
-	modelNum;
-	LoadModel Loader;
-	MeshResource tempModel;
-
-	string extension;
-	for (int i = (int)fileName.size() - 1; i > 0 && fileName[i] != '.'; --i)
-	{		
-		extension.insert(extension.begin(), fileName[i]);
-	}
-
-	if (extension == "bmx")
-	{
-		tempModel = Loader.Load(fileName);
-	}
-
-	for (auto& b : tempModel.bone)
-	{
-		XMVECTOR t;
-		XMMATRIX temp = XMMatrixInverse(&t, XM(b.offsetMtx));
-		b.inverseMtx = V(temp);
-	}
-
-	HRESULT hr;
-	for (auto& mesh : tempModel.mesh)
-	{
-		mesh.computeShader = R_ERROR;
-		hr = dev->CreateBuffer(&mesh.vertexBuffer, &mesh.vertex[0], sizeof(mesh.vertex[0]), static_cast<uint>(mesh.vertex.size()));
-		if (FAILED(hr)) { return hr; }
-
-		hr = dev->CreateBuffer(&mesh.indexBuffer, &mesh.index[0], static_cast<uint>(mesh.index.size()));
-		if (FAILED(hr)) { return hr; }
-
-		int texMax = static_cast<int>(MaterialType::MAX);
-		for (int i = 0; i < texMax; ++i)
-		{
-			if (mesh.material.texture[i])
-			{
-				string tempName = mesh.material.texture[i]->GetName();
-				ReleasePtr(mesh.material.texture[i]);
-
-				if (tempName != "")
-				{
-					string directory = fileName;
-					// テクスチャのディレクトリはモデルと同じ
-					for (uint j = (uint)directory.size() - 1; directory[j] != '/' && j > 0; j--) { directory.pop_back(); }
-
-					string texName;
-					int size = (int)tempName.size() - 1;
-					for (int j = size; j >= 0; --j)
-					{
-						if (tempName[j] == 92 || tempName[j] == '/') { break; }
-						texName.insert(texName.begin(), tempName[j]);
-					}
-					directory += texName;
-
-					hr = dev->Load(&mesh.material.texture[i], directory);
-					if (FAILED(hr)) { return hr; }
-				}
-				else
-				{
-					if (i == 0)
-					{
-						const string& temp = Systems::Instance()->GetResource().GetWhiteTextureName();
-						hr = dev->Load(&mesh.material.texture[i], temp);
-						if (FAILED(hr)) { return hr; }
-					}
-				}
-
-			}
-		}
-	}
-
-//	model_.emplace_back(tempModel);
-
-	return S_OK; 
-}
-
-HRESULT Dx11Wrapper::LoadModelAnimation(string fileName, int parent)
-{
-	LoadModel Loader;
-	MeshResource tempModel;
-
-	if (parent < 0) { return E_FAIL; }
-
-	string extension;
-	for (int i = (int)fileName.size() - 1; i > 0 && fileName[i] != '.'; --i)
-	{
-		extension.insert(extension.begin(), fileName[i]);
-	}
-
-	if (extension == "bamx")
-	{
-		HRESULT hr = Loader.LoadAnimation(fileName, model_[parent]);
-
-		string error = fileName + "が開けませんでした";
-
-		if (directX11_->GetWindow()->ErrorMessage(error.c_str(), "エラー", hr)) { return E_FAIL; }
-
-		for (auto& cs : model_[parent].mesh)
-		{
-			if (cs.computeShader == R_ERROR)
-			{
-//				cs.computeShader = CreateComputeShader(Define::ResourceDirectoryName + "Data/Skinning.cso", "CS_Main", "cs_5_0", &cs.vertex[0], sizeof(VERTEX), cs.vertex.size());
-//				if (cs.computeShader == R_ERROR) { return E_FAIL; }
-			}
-		}
-		return S_OK;
-	}
-
-	return E_FAIL;
-}
-
-void Dx11Wrapper::ReleaseModel(int modelNum)
-{
-	int size = static_cast<int>(model_.size());
-	if (size <= modelNum) { return; }
-
-	for (auto& mesh : model_[modelNum].mesh)
-	{
-		mesh.material.texture[0] = nullptr;
-		mesh.material.texture[1] = nullptr;
-		ReleasePtr(mesh.vertexBuffer);
-		ReleasePtr(mesh.indexBuffer);
-	}
-
-	auto& thi = model_[modelNum];
-
-	for (auto itr = model_.begin(); itr != model_.end();)
-	{
-		if (&(*itr) == &thi)
-		{
-			itr = model_.erase(itr);		//配列削除
-			break;
-		}
-		else
-		{
-			itr++;
-		}
-	}
-	model_.shrink_to_fit();
-
 }
 
 ID3DBlob* Dx11Wrapper::CompiledShader(string fileName, string method, string version)

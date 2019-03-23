@@ -139,7 +139,9 @@ void Texture::Release(bool uninit)
 
 	for (int i = max - 1; i >= baseMax; --i)
 	{
-		ReleasePtr(list_[i]);
+		auto list = list_[i];
+		RemoveVector(list_, list);
+		ReleasePtr(list);
 	}
 }
 

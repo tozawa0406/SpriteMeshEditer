@@ -111,6 +111,7 @@ private:
 	virtual HRESULT Load(IDevice*, const string&) override { return S_OK; }
 };
 
+struct MESH_RESOURCE;
 /* @brief	デバイス
  * @detail	リソースの生成を行う	*/
 class IDevice : public IBaseUnknown
@@ -123,6 +124,10 @@ public:
 
 	/* @brief	テクスチャロード処理	*/
 	virtual HRESULT Load(ITextureResource** textureResource, const string& name) = 0;
+	/* @brief	モデルロード処理		*/
+	virtual HRESULT Load(MESH_RESOURCE& meshResource, const string& name) = 0;
+	/* @brief	モデルアニメーションのロード処理	*/
+	virtual HRESULT Load(MESH_RESOURCE& meshResource, const string& name, bool anim) = 0;
 
 	/* @brief	頂点バッファ生成処理	*/
 	virtual HRESULT CreateBuffer(IVertexBuffer** vertexBuffer, const void* vertex, uint size, uint vertexNum) = 0;

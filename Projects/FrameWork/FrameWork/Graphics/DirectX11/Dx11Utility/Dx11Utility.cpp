@@ -1,4 +1,7 @@
 #include "Dx11Utility.h"
+#include "../Dx11Wrapper.h"
+#include "../../../Systems/GameSystems.h"
+#include "../../../Systems/Renderer/Model/LoadModel.h"
 
 void D3D11Device::Release(void) { ReleasePtr(device_); IBaseUnknown::Release(); }
 
@@ -11,6 +14,112 @@ HRESULT D3D11Device::Load(ITextureResource** resource, const string& name)
 		return temp->Load(this, name);
 	}
 	return E_FAIL;
+}
+
+HRESULT D3D11Device::Load(MESH_RESOURCE& meshResource, const string& name)
+{
+	LoadModel Loader;
+	MESH_RESOURCE tempModel;
+
+	string extension;
+	for (int i = (int)name.size() - 1; i > 0 && name[i] != '.'; --i)
+	{
+		extension.insert(extension.begin(), name[i]);
+	}
+
+	if (extension == "bmx")
+	{
+		tempModel = Loader.Load(name);
+	}
+
+	for (auto& b : tempModel.bone)
+	{
+		XMVECTOR t;
+		XMMATRIX temp = XMMatrixInverse(&t, XM(b.offsetMtx));
+		b.inverseMtx = V(temp);
+	}
+
+	HRESULT hr;
+	for (auto& mesh : tempModel.mesh)
+	{
+		mesh.computeShader = 0;
+		hr = CreateBuffer(&mesh.vertexBuffer, &mesh.vertex[0], sizeof(mesh.vertex[0]), static_cast<uint>(mesh.vertex.size()));
+		if (FAILED(hr)) { return hr; }
+
+		hr = CreateBuffer(&mesh.indexBuffer, &mesh.index[0], static_cast<uint>(mesh.index.size()));
+		if (FAILED(hr)) { return hr; }
+
+		int texMax = static_cast<int>(MaterialType::MAX);
+		for (int i = 0; i < texMax; ++i)
+		{
+			if (mesh.material.texture[i])
+			{
+				string tempName = mesh.material.texture[i]->GetName();
+				ReleasePtr(mesh.material.texture[i]);
+
+				if (tempName != "")
+				{
+					string directory = name;
+					// テクスチャのディレクトリはモデルと同じ
+					for (uint j = (uint)directory.size() - 1; directory[j] != '/' && j > 0; j--) { directory.pop_back(); }
+
+					string texName;
+					int size = (int)tempName.size() - 1;
+					for (int j = size; j >= 0; --j)
+					{
+						if (tempName[j] == 92 || tempName[j] == '/') { break; }
+						texName.insert(texName.begin(), tempName[j]);
+					}
+					directory += texName;
+
+					hr = Load(&mesh.material.texture[i], directory);
+					if (FAILED(hr)) { return hr; }
+				}
+				else
+				{
+					if (i == 0)
+					{
+						const string& temp = Systems::Instance()->GetResource().GetWhiteTextureName();
+						hr = Load(&mesh.material.texture[i], temp);
+						if (FAILED(hr)) { return hr; }
+					}
+				}
+			}
+		}
+	}
+	meshResource = tempModel;
+	return S_OK;
+}
+
+HRESULT D3D11Device::Load(MESH_RESOURCE& meshResource, const string& name, bool anim)
+{
+	UNREFERENCED_PARAMETER(anim);
+	LoadModel Loader;
+	MESH_RESOURCE tempModel;
+
+	string extension;
+	for (int i = (int)name.size() - 1; i > 0 && name[i] != '.'; --i)
+	{
+		extension.insert(extension.begin(), name[i]);
+	}
+
+	if (extension == "bamx")
+	{
+		Loader.LoadAnimation(name, meshResource);
+
+		for (auto& cs : meshResource.mesh)
+		{
+			if (cs.computeShader == 0)
+			{
+				//				cs.computeShader = CreateComputeShader(Define::ResourceDirectoryName + "Data/Skinning.cso", "CS_Main", "cs_5_0", &cs.vertex[0], sizeof(VERTEX), cs.vertex.size());
+				//				if (cs.computeShader == R_ERROR) { return E_FAIL; }
+			}
+		}
+		return S_OK;
+	}
+
+	return E_FAIL;
+
 }
 
 HRESULT D3D11Device::CreateBuffer(IVertexBuffer** vertexBuffer, const void* vertex, uint size, uint vertexNum)

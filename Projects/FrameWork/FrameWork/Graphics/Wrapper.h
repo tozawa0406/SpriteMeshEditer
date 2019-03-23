@@ -126,13 +126,6 @@ public:
 	/* @brief	矩形描画処理					*/
 	virtual void DrawQuad(VECTOR2 position, VECTOR2 size, COLOR color = COLOR(1, 1, 1, 1)) = 0;
 
-	/* @brief	モデルの読み込み				*/
-	virtual HRESULT Load(string fileName, int modelNum) = 0;
-	/* @brief	モデルアニメーションの読み込み	*/
-	virtual HRESULT LoadModelAnimation(string fileName, int parent) = 0;
-	/* @brief	モデルの解放					*/
-	virtual void    ReleaseModel(int modelNum) = 0;
-
 	/* @brief	頂点シェーダーの作成			*/
 	virtual uint	CreateVertexShader(string fileName, string method, string version) = 0;
 	/* @brief	ピクセルシェーダーの作成		*/

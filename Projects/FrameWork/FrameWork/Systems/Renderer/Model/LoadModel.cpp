@@ -9,9 +9,9 @@
 #include "../../../Graphics/Graphics.h"
 #include "../../../Graphics/Wrapper.h"
 
-MeshResource LoadModel::Load(string fileName)
+MESH_RESOURCE LoadModel::Load(string fileName)
 {
-	MeshResource model;
+	MESH_RESOURCE model;
 	FILE* fp;
 	fopen_s(&fp, fileName.c_str(), "rb");
 
@@ -36,13 +36,13 @@ MeshResource LoadModel::Load(string fileName)
 	return model;
 }
 
-HRESULT LoadModel::LoadAnimation(string fileName, MeshResource& model)
+HRESULT LoadModel::LoadAnimation(string fileName, MESH_RESOURCE& model)
 {
 	FILE* fp;
 	fopen_s(&fp, fileName.c_str(), "rb");
 	if (!fp) { return E_FAIL; }
 
-	MeshResource animModel;
+	MESH_RESOURCE animModel;
 	bool end = true;
 	while (end)
 	{
@@ -86,7 +86,7 @@ HRESULT LoadModel::LoadAnimation(string fileName, MeshResource& model)
 	return S_OK;
 }
 
-void LoadModel::GetMesh(FILE* fp, MeshResource& model)
+void LoadModel::GetMesh(FILE* fp, MESH_RESOURCE& model)
 {
 	MESH tempMesh;
 	uint size = 0;
@@ -138,7 +138,7 @@ void LoadModel::GetMesh(FILE* fp, MeshResource& model)
 	model.mesh.emplace_back(tempMesh);
 }
 
-void LoadModel::GetBone(FILE* fp, MeshResource& model)
+void LoadModel::GetBone(FILE* fp, MESH_RESOURCE& model)
 {
 	BONE tempBone;
 	uint size = 0;

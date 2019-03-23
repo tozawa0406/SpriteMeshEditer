@@ -13,7 +13,7 @@
 struct MeshRenderer : public ObjectRenderer
 {
 	void Init(int modelNum, const Transform* trans);
-	int  GetModelNum(void) const { return modelNum_; }
+	const MESH_RESOURCE* GetMesh(void) { return mesh_; }
 
 	MeshRenderer(void);
 	~MeshRenderer(void);
@@ -33,7 +33,7 @@ struct MeshRenderer : public ObjectRenderer
 	inline float GetRate(void)			const { return rate_; }
 
 private:
-	int   modelNum_;
+	MESH_RESOURCE* mesh_;
 	float pattern_;
 	float patternOld_;
 	int   animation_;

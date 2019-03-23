@@ -50,7 +50,7 @@ struct MESH
 	MATERIAL					material;
 };
 
-struct MeshResource
+struct MESH_RESOURCE
 {
 	MATRIX				transMtx;
 	std::vector<MESH>	mesh;
@@ -67,6 +67,8 @@ public:
 	HRESULT Load(int sceneNum);
 	void	Release(bool uninit = false);
 
+	MESH_RESOURCE* GetMesh(int modelNum) { if (modelNum < (int)mesh_.size()) { return &mesh_[modelNum]; } return nullptr; }
+
 private:
 	Model(Systems* systems);
 	HRESULT Init(void)   override;
@@ -74,6 +76,7 @@ private:
 
 	int sceneNum_;
 	Loading* loading_;
+	std::vector<MESH_RESOURCE> mesh_;
 };
 
 #endif // _X_MODEL_H_

@@ -12,7 +12,7 @@ SpriteRenderer::SpriteRenderer(void) : ObjectRenderer(ObjectRenderer::RendererTy
 	, pivot_(VECTOR2(0.5f))
 	, layer_(0)
 	, vertexBuffer_(nullptr)
-	, indexBuffer_(0)
+	, indexBuffer_(nullptr)
 	, vertexNum_(4)
 	, indexNum_(6)
 	, texcoord_(VECTOR4(0, 0, 1, 1))
@@ -21,6 +21,7 @@ SpriteRenderer::SpriteRenderer(void) : ObjectRenderer(ObjectRenderer::RendererTy
 
 SpriteRenderer::~SpriteRenderer(void)
 {
+	ReleasePtr(indexBuffer_);
 	ReleasePtr(vertexBuffer_);
 }
 
@@ -48,8 +49,6 @@ void SpriteRenderer::Init(int texNum, const Transform* transform)
 	texcoord_.z = inv.x;
 	texcoord_.w = inv.y;
 
-	const auto& wrapper = systems->GetGraphics()->GetWrapper();
-
 	VERTEX v[4];
 	for (int i = 0; i < 4; ++i)
 	{
@@ -63,13 +62,7 @@ void SpriteRenderer::Init(int texNum, const Transform* transform)
 		v[i].weight		= VECTOR4(0, 0, 0, 0);
 	}
 
-	WORD index[6];
-	index[0] = 0;
-	index[1] = 1;
-	index[2] = 2;
-	index[3] = 2;
-	index[4] = 3;
-	index[5] = 1;
+	WORD index[6] = { 0, 1, 2, 2, 3, 1 };
 
 	if (const auto& graphics = systems->GetGraphics())
 	{
@@ -77,10 +70,11 @@ void SpriteRenderer::Init(int texNum, const Transform* transform)
 		{
 			HRESULT hr = dev->CreateBuffer(&vertexBuffer_, v, sizeof(v[0]), Wrapper::PRIMITIVE::V::FILL_RECT);
 			if (FAILED(hr)) { return; }
+
+			hr = dev->CreateBuffer(&indexBuffer_, index, 6);
+			if (FAILED(hr)) { return; }
 		}
 	}
-
-	indexBuffer_ = wrapper->CreateIndexBuffer(index, 6);
 
 	shader_ = Shader::ENUM::DEFAULT;
 }

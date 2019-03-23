@@ -127,10 +127,12 @@ public:
 	virtual ~IDevice(void) {}
 
 	/* @brief	テクスチャロード処理	*/
-	virtual HRESULT Load(ITextureResource**, const string&) = 0;
+	virtual HRESULT Load(ITextureResource** textureResource, const string& name) = 0;
 
 	/* @brief	頂点バッファ生成処理	*/
-	virtual HRESULT CreateBuffer(IVertexBuffer**, const void*, uint, uint) = 0;
+	virtual HRESULT CreateBuffer(IVertexBuffer** vertexBuffer, const void* vertex, uint size, uint vertexNum) = 0;
+	/* @brief	インデックスバッファの生成処理	*/
+	virtual HRESULT CreateBuffer(IIndexBuffer** indexBuffer, const WORD* index, uint indexNum) = 0;
 };
 
 #endif // !_UTILITY_

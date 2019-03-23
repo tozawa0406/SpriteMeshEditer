@@ -57,7 +57,7 @@ public:
 	/* @brief	頂点バッファの取得		*/
 	IVertexBuffer* GetVertexBuffer(void)	const { return vertexBuffer_;	}
 	/* @brief	インデックスバッファの取得		*/
-	uint	GetIndexBuffer(void)	const { return indexBuffer_;	}
+	IIndexBuffer*  GetIndexBuffer(void)		const { return indexBuffer_;	}
 	/* @brief	頂点数の取得			*/
 	uint	GetVertexNum(void)		const { return vertexNum_;		}
 	/* @brief	インデックス数の取得	*/
@@ -91,7 +91,7 @@ private:
 	//! 頂点バッファ
 	IVertexBuffer*	vertexBuffer_;
 	//! インデックスバッファ
-	uint	indexBuffer_;
+	IIndexBuffer*	indexBuffer_;
 	//! 頂点数
 	uint	vertexNum_;
 	//! インデックス数

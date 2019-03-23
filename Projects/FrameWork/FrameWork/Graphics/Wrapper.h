@@ -102,11 +102,6 @@ public:
 	/* @brief	後処理				*/
 	virtual void	Uninit(void) {}
 
-	/* @brief	インデックスバッファの作成処理	*/
-	virtual uint    CreateIndexBuffer(const WORD* v, uint vnum)		 = 0;
-	/* @brief	バッファの解放					*/
-	virtual void    ReleaseBuffer(uint number, FVF fvf)    = 0;
-
 	/* @brief	2D描画の開始処理				*/
 	virtual void    BeginDrawCanvasRenderer(void)	= 0;
 	/* @brief	3D描画の開始処理				*/

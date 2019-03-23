@@ -237,61 +237,6 @@ void Dx11Wrapper::Uninit(void)
 	}
 }
 
-uint Dx11Wrapper::CreateIndexBuffer(const WORD* v, uint vnum)
-{
-	int inside = -1;
-	ID3D11Buffer* temp = nullptr;
-	int s = (int)indexBuffer_.size();
-	for (int i = 0; i < s; ++i)
-	{
-		if (indexBuffer_[i] == nullptr)
-		{
-			temp = indexBuffer_[i];
-			inside = i;
-			break;
-		}
-	}
-
-	D3D11_BUFFER_DESC bd;
-	bd.Usage			= D3D11_USAGE_DEFAULT;
-	bd.ByteWidth		= sizeof(WORD) * vnum;
-	bd.BindFlags		= D3D11_BIND_INDEX_BUFFER;
-	bd.CPUAccessFlags	= 0;
-	bd.MiscFlags		= 0;
-
-	D3D11_SUBRESOURCE_DATA data;
-	data.pSysMem			= v;
-	data.SysMemPitch		= 0;
-	data.SysMemSlicePitch	= 0;
-
-	ID3D11Device* pDevice = directX11_->GetD3D11Device();
-	HRESULT hr = pDevice->CreateBuffer(&bd, &data, &temp);
-	if (FAILED(hr))
-	{
-		ReleasePtr(temp);
-		return R_ERROR;
-	}
-	if (inside >= 0)
-	{
-		indexBuffer_[inside] = temp;
-		return inside;
-	}
-
-	indexBuffer_.emplace_back(temp);
-	return (uint)indexBuffer_.size() - 1;
-}
-
-void Dx11Wrapper::ReleaseBuffer(uint number, Wrapper::FVF fvf)
-{
-	if (fvf == Wrapper::FVF::INDEX)
-	{
-		ReleasePtr(indexBuffer_[number]);
-	}
-	else
-	{
-	}
-}
-
 void Dx11Wrapper::SetTexture(int stage, ITextureResource* resource)
 {
 	const auto& pContext = directX11_->GetDeviceContext();
@@ -463,7 +408,10 @@ void Dx11Wrapper::Draw(const SpriteRenderer* obj, const Shader* shader)
 	uint			offset = 0;
 	pContext->IASetVertexBuffers(0, 1, &v, &size, &offset);
 
-	pContext->IASetIndexBuffer(indexBuffer_[obj->GetIndexBuffer()], DXGI_FORMAT_R16_UINT, 0);
+	IndexBuffer* ib = static_cast<IndexBuffer*>(obj->GetIndexBuffer());
+	if (!ib) { return; }
+
+	pContext->IASetIndexBuffer(ib->GetBuffer(), DXGI_FORMAT_R16_UINT, 0);
 
 	// プリミティブトポロジーを設定
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -589,7 +537,7 @@ void Dx11Wrapper::Draw(MeshRenderer* obj, const Shader* shader)
 		// バッファを設定
 		//const auto& vb = vertexBuffer_[mesh.vertexBuffer];
 		//pContext->IASetVertexBuffers(0, 1, &vb.buffer, &vb.stride, &vb.offset);
-		pContext->IASetIndexBuffer(indexBuffer_[mesh.indexBuffer], DXGI_FORMAT_R16_UINT, 0);
+		//pContext->IASetIndexBuffer(indexBuffer_[mesh.indexBuffer], DXGI_FORMAT_R16_UINT, 0);
 
 		// 描画
 		pContext->DrawIndexed((uint)mesh.index.size(), 0, 0);
@@ -863,7 +811,7 @@ HRESULT Dx11Wrapper::LoadModel(string fileName, int modelNum)
 //		mesh.vertexBuffer = CreateVertexBuffer(&mesh.vertex[0], sizeof(mesh.vertex[0]), (uint)mesh.vertex.size());
 		if (mesh.vertexBuffer == R_ERROR) { return E_FAIL; }
 
-		mesh.indexBuffer = CreateIndexBuffer(&mesh.index[0], (uint)mesh.index.size());
+//		mesh.indexBuffer = CreateIndexBuffer(&mesh.index[0], (uint)mesh.index.size());
 		if (mesh.indexBuffer == R_ERROR) { return E_FAIL; }
 
 		int texMax = static_cast<int>(MaterialType::MAX);
@@ -960,8 +908,8 @@ void Dx11Wrapper::ReleaseModel(int modelNum)
 		mesh.material.texture[1] = 0;
 		mesh.material.textureName[0] = "";
 		mesh.material.textureName[1] = "";
-		ReleaseBuffer(mesh.vertexBuffer, Wrapper::FVF::VERTEX_3D);
-		ReleaseBuffer(mesh.indexBuffer, Wrapper::FVF::INDEX);
+//		ReleaseBuffer(mesh.vertexBuffer, Wrapper::FVF::VERTEX_3D);
+//		ReleaseBuffer(mesh.indexBuffer, Wrapper::FVF::INDEX);
 	}
 
 	auto& thi = model_[modelNum];

@@ -23,9 +23,6 @@ class Dx11Wrapper : public Wrapper
 {
 	friend DirectX11;
 public:
-	uint	CreateIndexBuffer(const WORD* v, uint vnum)				override;
-	void	ReleaseBuffer(uint number, Wrapper::FVF fvf)			override;
-
 	void    BeginDrawCanvasRenderer(void) override;	
 	void    BeginDrawObjectRenderer(void) override;
 	void    EndDrawRenderer(void)   override;
@@ -105,7 +102,6 @@ private:
 	DirectX11* directX11_;
 
 	IVertexBuffer*							vertexQuad_;
-	std::vector<ID3D11Buffer*>				indexBuffer_;
 	std::vector<std::vector<Dx11Texture>>	texture_;
 	std::vector<MODEL>						model_;
 

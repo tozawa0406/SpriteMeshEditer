@@ -21,10 +21,12 @@ public:
 	void			SetDevice(ID3D11Device* device) { assert(device); device_ = device; }
 
 	/* @brief	テクスチャロード処理	*/
-	virtual HRESULT Load(ITextureResource** resource, const string& name) override;
+	virtual HRESULT Load(ITextureResource**, const string&) override;
 
 	/* @brief	頂点バッファ生成処理	*/
-	virtual HRESULT CreateBuffer(IVertexBuffer** vertexBuffer, const void* vertex, uint size, uint vertexNum) override;
+	virtual HRESULT CreateBuffer(IVertexBuffer**, const void*, uint, uint) override;
+	/* @brief	インデックスバッファの生成処理	*/
+	virtual HRESULT CreateBuffer(IIndexBuffer** indexBuffer, const WORD* index, uint indexNum) override;
 
 private:
 	//! デバイス本体
@@ -47,7 +49,7 @@ private:
 	/* @brief	コンストラクタ			*/
 	VertexBuffer(void) : buffer_(nullptr) {}
 	/* @brief	バッファ生成処理		*/
-	virtual HRESULT Create(IDevice* device, const void* vertex, uint size, uint vertexNum) override;
+	virtual HRESULT Create(IDevice*, const void*, uint, uint) override;
 
 	//! バッファ本体
 	ID3D11Buffer* buffer_;
@@ -65,13 +67,13 @@ public:
 	/* @brief	バッファ取得処理	*/
 	inline  ID3D11Buffer*	GetBuffer(void) { return buffer_; }
 	/* @brief	解放処理			*/
-	virtual void			Release(void) override {};
+	virtual void			Release(void) override;
 
 private:
 	/* @brief	コンストラクタ		*/
 	IndexBuffer(void) {}
 	/* @brief	バッファ生成処理	*/
-	virtual HRESULT Create(IDevice*, const WORD*, uint) override {};
+	virtual HRESULT Create(IDevice*, const WORD*, uint) override;
 
 	//! バッファ本体
 	ID3D11Buffer* buffer_;
@@ -95,7 +97,7 @@ private:
 	/* @brief	コンストラクタ			*/
 	TextureResource(void) : resource_(nullptr) {}
 	/* @brief	ロード処理				*/
-	virtual HRESULT Load(IDevice* device, const string& name) override;
+	virtual HRESULT Load(IDevice*, const string&) override;
 
 	//! テクスチャ本体
 	ID3D11ShaderResourceView* resource_;

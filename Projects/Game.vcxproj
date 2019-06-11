@@ -22,7 +22,7 @@
     <ClCompile Include="Sources\Camera\LookCamera.cpp" />
     <ClCompile Include="Sources\main.cpp" />
     <ClCompile Include="Sources\Object\Client\AnimationEditer.cpp" />
-    <ClCompile Include="Sources\Object\Client\Command\AddDeleteAnimationCommand.cpp" />
+    <ClCompile Include="Sources\Object\Client\Command\AddDeleteAnimDataCommand.cpp" />
     <ClCompile Include="Sources\Object\Client\Command\RangeCommand.cpp" />
     <ClCompile Include="Sources\Object\Client\Editer.cpp" />
     <ClCompile Include="Sources\Object\Client\ModelEditer.cpp" />
@@ -51,7 +51,7 @@
   <ItemGroup>
     <ClInclude Include="Sources\Camera\LookCamera.h" />
     <ClInclude Include="Sources\Object\Client\AnimationEditer.h" />
-    <ClInclude Include="Sources\Object\Client\Command\AddDeleteAnimationCommand.h" />
+    <ClInclude Include="Sources\Object\Client\Command\AddDeleteAnimDataCommand.h" />
     <ClInclude Include="Sources\Object\Client\Command\RangeCommand.h" />
     <ClInclude Include="Sources\Object\Client\Editer.h" />
     <ClInclude Include="Sources\Object\Client\ModelEditer.h" />
@@ -97,33 +97,33 @@
     <ProjectGuid>{0903C5E1-428A-40EC-917D-4EAC7CFB3525}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>My20171217</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>Game</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>

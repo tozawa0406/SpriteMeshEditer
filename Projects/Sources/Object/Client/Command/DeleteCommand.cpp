@@ -61,10 +61,6 @@ void DeleteCommand::Invoke(void)
 			if (withChild_)
 			{
 				ChildCtrl(child, false);
-				if (SpriteRenderer* renderer = const_cast<SpriteRenderer*>(child->GetSpriteRenderer()))
-				{
-					renderer->SetEnable(false);
-				}
 			}
 		}
 	}
@@ -90,10 +86,6 @@ void DeleteCommand::Undo(void)
 			if (withChild_)
 			{
 				ChildCtrl(child, true);
-				if (SpriteRenderer* renderer = const_cast<SpriteRenderer*>(child->GetSpriteRenderer()))
-				{
-					renderer->SetEnable(true);
-				}
 			}
 		}
 	}
@@ -123,10 +115,6 @@ void DeleteCommand::Redo(void)
 			if (withChild_)
 			{
 				ChildCtrl(child, false);
-				if (SpriteRenderer* renderer = const_cast<SpriteRenderer*>(child->GetSpriteRenderer()))
-				{
-					renderer->SetEnable(false);
-				}
 			}
 		}
 	}
@@ -149,6 +137,11 @@ void DeleteCommand::ChildCtrl(Receiver* child, bool add)
 	else
 	{
 		client_->RemoveSprite(child);
+	}
+
+	if (SpriteRenderer* renderer = const_cast<SpriteRenderer*>(child->GetSpriteRenderer()))
+	{
+		renderer->SetEnable(add);
 	}
 
 	for (auto& grandson : child->GetChild())

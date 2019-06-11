@@ -34,7 +34,7 @@ struct Float3
 		this->z = d.z;
 	}
 
-	Float3(void) {}
+	Float3(void) : x(0), y(0), z(0) {}
 	Float3(float x, float y, float z) : x(x), y(y), z(z) {}
 	~Float3(void) {}
 

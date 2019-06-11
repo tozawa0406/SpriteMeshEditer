@@ -40,7 +40,7 @@ private:
 		int						loop;
 	};
 
-	Sound(Systems* systems) : Interface(systems), pXAudio2_(nullptr), pMasteringVoice_(nullptr) {}
+	Sound(Systems* systems) : Interface(systems), pXAudio2_(nullptr), pMasteringVoice_(nullptr), sceneNum_(0), loading_(nullptr) {}
 	HRESULT Init(void);
 
 	HRESULT LoadSound(SOUNDPARAM param, int i);

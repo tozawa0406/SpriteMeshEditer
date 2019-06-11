@@ -22,6 +22,7 @@ Receiver::Receiver(void) :
 	, textureName_("")
 	, flag_(0)
 	, animCnt_(0)
+	, loadAdd_(nullptr)
 {
 }
 
@@ -257,7 +258,7 @@ bool Receiver::LoadData(SPRITE_MESH_RESOURCE& resource)
 		*beforeData_.transform = transform_;
 	}
 
-	if (spriteRenderer_ && spriteRenderer_)
+	if (beforeData_.spriteRenderer && spriteRenderer_)
 	{
 		beforeData_.spriteRenderer->SetPivot(spriteRenderer_->GetPivot());
 		beforeData_.spriteRenderer->SetLayer(spriteRenderer_->GetLayer());
@@ -466,12 +467,12 @@ void Receiver::Animation(int frame)
 {
 	if (anim_.size() < 1) { return; }
 
-	int size = static_cast<int>(anim_.size()) - 1;
-	for (int i = 0; i < size; ++i)
+	size_t size = (anim_.size()) - 1;
+	for (size_t i = 0; i < size; ++i)
 	{
 		if (anim_[i].frame <= frame && frame <= anim_[i + 1].frame)
 		{
-			animCnt_ = i;
+			animCnt_ = static_cast<int>(i);
 		}
 	}
 
@@ -508,17 +509,18 @@ void Receiver::AddAnim(int frame)
 	int size = static_cast<int>(anim_.size()) - 1;
 	for (int i = 0; i < size; ++i)
 	{
-		if (anim_[i].frame > anim_[i + 1].frame) 
+		size_t num = static_cast<size_t>(i);
+		if (anim_[num].frame > anim_[num + 1].frame)
 		{
 			SPRITE_MESH_ANIM_DATA work;
-			work = anim_[i];
-			anim_[i] = anim_[i + 1];
-			anim_[i + 1] = work;
+			work = anim_[num];
+			anim_[num] = anim_[num + 1];
+			anim_[num + 1] = work;
 			i = -1;
 		}
-		else if (anim_[i + 1].frame - anim_[i].frame == 0)
+		else if (anim_[num + 1].frame - anim_[num].frame == 0)
 		{
-			RemoveAnim(anim_[i].frame);
+			RemoveAnim(anim_[num].frame);
 			size = static_cast<int>(anim_.size()) - 1;
 			i = -1;
 		}
@@ -530,32 +532,33 @@ void Receiver::AddAnim(int frame)
 	}
 }
 
-void Receiver::AddAnim(int frame, const STORAGE_ANIMATION& anim)
+void Receiver::AddAnim(int frame, const SPRITE_MESH_ANIMATION& anim, int animNum)
 {
 	SPRITE_MESH_ANIM_DATA temp;
-	temp.position		= anim.anim.position;
-	temp.rotation		= anim.anim.rotation;
-	temp.scale			= anim.anim.scale;
+	temp.position		= anim.anim[animNum].position;
+	temp.rotation		= anim.anim[animNum].rotation;
+	temp.scale			= anim.anim[animNum].scale;
 	temp.frame			= frame;
-	temp.spriteMeshName = anim.anim.spriteMeshName;
-	temp.textureName	= anim.anim.textureName;
+	temp.spriteMeshName = anim.anim[animNum].spriteMeshName;
+	temp.textureName	= anim.anim[animNum].textureName;
 
 	anim_.emplace_back(temp);
 
 	int size = static_cast<int>(anim_.size()) - 1;
 	for (int i = 0; i < size; ++i)
 	{
-		if (anim_[i].frame > anim_[i + 1].frame)
+		size_t num = static_cast<size_t>(i);
+		if (anim_[num].frame > anim_[num + 1].frame)
 		{
 			SPRITE_MESH_ANIM_DATA work;
-			work = anim_[i];
-			anim_[i] = anim_[i + 1];
-			anim_[i + 1] = work;
+			work = anim_[num];
+			anim_[num] = anim_[num + 1];
+			anim_[num + 1] = work;
 			i = -1;
 		}
-		else if (anim_[i + 1].frame - anim_[i].frame == 0)
+		else if (anim_[num + 1].frame - anim_[num].frame == 0)
 		{
-			RemoveAnim(anim_[i].frame);
+			RemoveAnim(anim_[num].frame);
 			size = static_cast<int>(anim_.size()) - 1;
 			i = -1;
 		}
@@ -567,9 +570,22 @@ void Receiver::AddAnim(int frame, const STORAGE_ANIMATION& anim)
 	{
 		for (int i = 0; i < childSize; ++i)
 		{
-			child_[i]->AddAnim(frame, anim.child[i]);
+			child_[i]->AddAnim(frame, anim.child[i], animNum);
 		}
 	}
+}
+
+void Receiver::CreateAnimation(SPRITE_MESH_ANIMATION& animation)
+{
+	for (auto anim : animation_)
+	{
+		if (anim.animationName == animation.animationName)
+		{
+			anim = animation;
+			return;
+		}
+	}
+	animation_.emplace_back(animation);
 }
 
 void Receiver::RemoveAnim(int frame)

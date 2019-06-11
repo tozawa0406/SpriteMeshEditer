@@ -112,7 +112,7 @@ void LoadModel::GetMesh(FILE* fp, MESH_RESOURCE& model)
 	{
 		uint temp;
 		fread(&temp, sizeof(uint), 1, fp);
-		tempMesh.index.emplace_back(temp);
+		tempMesh.index.emplace_back(static_cast<WORD>(temp));
 	}
 
 	fread(&tempMesh.material.ambient , sizeof(COLOR), 1, fp);

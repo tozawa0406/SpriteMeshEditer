@@ -50,7 +50,7 @@ public:
 protected:
 	Shader(ShaderManager* manager, string fileName) : manager_(manager), fileName_(fileName), vMethod_("VS_Main"), vVersion_("vs_2_0")
 													, pMethod_("PS_Main"), pVersion_("ps_2_0"), techName_("Tech"), dev_(nullptr)
-													, constantBuffer_(0) {}
+													, constantBuffer_(0), vertexShader_(0), pixelShader_(0) {}
 
 	uint				vertexShader_;
 	uint				pixelShader_;

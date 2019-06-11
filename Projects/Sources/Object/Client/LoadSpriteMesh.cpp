@@ -29,7 +29,7 @@ SPRITE_MESH_RESOURCE LoadSpriteMesh::Load(string fileName, string& version)
 }
 
 void LoadSpriteMesh::GetSpriteMeshVer1_0(IOFile& file, SPRITE_MESH_RESOURCE& spriteMesh)
-{
+{	
 	size_t size = 0;
 	file.ReadParam(&size, sizeof(size_t));
 	spriteMesh.name.resize(size);

@@ -236,10 +236,10 @@ bool Collision3DManager::HitSegmentBoard(Segment s1, Float3 n2, std::vector<Poin
 		// 点から平面までの距離
 		// 始点
 		Vector3 v1 = s1.p - p2[0];
-		float d1 = fabs(n2.GetNorm().dot(v1));
+		float d1 = static_cast<float>(fabs(n2.GetNorm().dot(v1)));
 		// 終点
 		Vector3 v2 = s1.GetEndPoint() - p2[0];
-		float d2 = fabs(n2.GetNorm().dot(v2));
+		float d2 = static_cast<float>(fabs(n2.GetNorm().dot(v2)));
 
 		// 内分比
 		float a = d1 / (d1 + d2);
@@ -294,7 +294,7 @@ bool Collision3DManager::HitTubes(Segment s1, float r1, Segment s2, float r2)
 	Vector3 vec = s2.p - s1.p;
 	Vector3 normal = s1.v.cross(s2.v);
 
-	float d = fabs(normal.GetNorm().dot(vec));
+	float d = static_cast<float>(fabs(normal.GetNorm().dot(vec)));
 	if (d <= r1 + r2)
 	{
 		return true;
@@ -384,7 +384,7 @@ bool Collision3DManager::HitOBBSphere(const Collider3D::OBB& obb1, const Collide
 		float s = VecDot(s2.GetTransform().position - obb1.GetTransform().position, obb1.GetDirect(i)) / l;
 
 		// sの値から、はみ出した部分があればそのベクトルを加算
-		s = fabs(s);
+		s = static_cast<float>(fabs(s));
 		if (s > 1) { vec += obb1.GetDirect(i) * ((1 - s)*l); }
 	}
 
@@ -439,16 +439,16 @@ float Collision3DManager::LenSqAABBToPoint(AABB &box, Point &p)
 
 float Collision3DManager::LenAABBToPoint(AABB &box, Point &p)
 {
-	return sqrt(LenSqAABBToPoint(box, p));
+	return static_cast<float>(sqrt(LenSqAABBToPoint(box, p)));
 }
 
 // 分離軸に投影された軸成分から投影線分長を算出
 float Collision3DManager::LenSegOnSeparateAxis(VECTOR3& Sep, VECTOR3& e1, VECTOR3& e2, VECTOR3* e3)
 {
 	// 3つの内積の絶対値の和で投影線分長を計算
-	float r1 = fabs(VecDot(Sep, e1));
-	float r2 = fabs(VecDot(Sep, e2));
-	float r3 = e3 ? (fabs(VecDot(Sep, *e3))) : 0;
+	float r1 = static_cast<float>(fabs(VecDot(Sep, e1)));
+	float r2 = static_cast<float>(fabs(VecDot(Sep, e2)));
+	float r3 = e3 ? (static_cast<float>(fabs(VecDot(Sep, *e3)))) : 0;
 	return r1 + r2 + r3;
 }
 
@@ -457,7 +457,7 @@ bool Collision3DManager::SeparationA(VECTOR3& Ae, VECTOR3& NAe, VECTOR3& Be1, VE
 {
 	float rA = VecLength(Ae);
 	float rB = LenSegOnSeparateAxis(NAe, Be1, Be2, &Be3);
-	float L = fabs(VecDot(interval, NAe));
+	float L = static_cast<float>(fabs(VecDot(interval, NAe)));
 	if (L > rA + rB)
 	{
 		return false; // 衝突していない
@@ -470,7 +470,7 @@ bool Collision3DManager::SeparationB(VECTOR3& Be, VECTOR3& NBe, VECTOR3& Ae1, VE
 {
 	float rA = LenSegOnSeparateAxis(NBe, Ae1, Ae2, &Ae3);
 	float rB = VecLength(Be);
-	float L = fabs(VecDot(interval, NBe));
+	float L = static_cast<float>(fabs(VecDot(interval, NBe)));
 	if (L > rA + rB)
 	{
 		return false;	// 衝突していない
@@ -484,7 +484,7 @@ bool Collision3DManager::SeparationC(VECTOR3& NAe, VECTOR3& NBe, VECTOR3& Ae1, V
 	VECTOR3 cross = VecCross(NAe, NBe);
 	float rA = LenSegOnSeparateAxis(cross, Ae1, Ae2);
 	float rB = LenSegOnSeparateAxis(cross, Be1, Be2);
-	float L = fabs(VecDot(interval, cross));
+	float L = static_cast<float>(fabs(VecDot(interval, cross)));
 	if (L > rA + rB)
 	{
 		return false;

@@ -4,6 +4,7 @@
 #include <FrameWork/Define/Define.h>
 #include <FrameWork/Systems/BaseManager.h>
 
+// 1つのメッシュデータ
 struct SPRITE_MESH_RESOURCE
 {
 	string		name;
@@ -13,8 +14,11 @@ struct SPRITE_MESH_RESOURCE
 	string		textureName;
 
 	std::vector<SPRITE_MESH_RESOURCE> children;
+
+	SPRITE_MESH_RESOURCE(void) : name(""), transform(VECTOR3(0), VECTOR3(0), VECTOR3(1)), pivot(VECTOR2(0)), layer(0), textureName("") {}
 };
 
+// 1つのメッシュの1つのキーフレーム
 struct SPRITE_MESH_ANIM_DATA
 {
 	string	spriteMeshName;
@@ -34,6 +38,15 @@ struct SPRITE_MESH_ANIM_DATA
 		rotation = data.rotation;
 		scale = data.scale;
 	}
+};
+
+struct SPRITE_MESH_ANIMATION
+{
+	string	animationName;
+	uint	min;
+	uint	max;
+	std::vector<SPRITE_MESH_ANIM_DATA> anim;
+	std::vector<SPRITE_MESH_ANIMATION> child;
 };
 
 class Loading;

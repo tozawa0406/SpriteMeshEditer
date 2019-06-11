@@ -10,12 +10,6 @@
 #include "Command/ICommand.h"
 #include "SpriteMesh.h"
 
-struct STORAGE_ANIMATION
-{
-	SPRITE_MESH_ANIM_DATA anim;
-	std::vector<STORAGE_ANIMATION> child;
-};
-
 class ModelEditer;
 class Receiver
 {
@@ -91,9 +85,15 @@ public:
 	void Animation(int frame);
 
 	void AddAnim(int frame);
-	void AddAnim(int frame, const STORAGE_ANIMATION& anim);
+	void AddAnim(int frame, const SPRITE_MESH_ANIMATION& anim, int animNum);
 	void RemoveAnim(int frame);
+
+	void ResetAnimData(void) { anim_.clear(); for (auto& c : child_) { if (c) { c->ResetAnimData(); } } }
+
+	void CreateAnimation(SPRITE_MESH_ANIMATION& animation);
 	const std::vector<SPRITE_MESH_ANIM_DATA>& GetAnimData(void) { return anim_; }
+
+	const std::vector<SPRITE_MESH_ANIMATION>& GetAnimation(void) { return animation_; }
 
 private:
 	/* @brief	今度呼び出し処理			*/
@@ -144,6 +144,9 @@ private:
 
 	//! アニメーション
 	std::vector<SPRITE_MESH_ANIM_DATA> anim_;
+
+	std::vector<SPRITE_MESH_ANIMATION> animation_;
+
 	int animCnt_;
 };
 

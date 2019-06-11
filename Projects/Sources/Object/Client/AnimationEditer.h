@@ -37,6 +37,8 @@ public:
 
 	virtual void GuiUpdate(void) override;
 
+	void CreateAnimation(void);
+
 	const ANIMATION_EDITER_DATA& GetAnimationEditerData(void) { return beforeData_; }
 	void SetAnimationEditerData(const ANIMATION_EDITER_DATA& data) { beforeData_ = data; }
 
@@ -48,12 +50,16 @@ public:
 	inline int	GetRange(bool min)				{ return (min) ? minFrame_ : maxFrame_;				}
 
 	inline int GetCurrentFrame(void) { return currentFrame_; }
+	void SetCurrentFrame(int frame);
 
 	void HierarchyView(void);
 
 private:
 	void ChangeRange(int& range, bool min);
 
+	void GetChildrenAnim(SPRITE_MESH_ANIMATION& tempAnimation, Receiver& receiver);
+
+	char			animationName_[256];
 	int				currentFrame_;
 	int				minFrame_;
 	int				maxFrame_;

@@ -3,14 +3,16 @@
 #include "Editer.h"
 
 #include "Command/RangeCommand.h"
-#include "Command/AddDeleteAnimationCommand.h"
+#include "Command/AddDeleteAnimDataCommand.h"
 
 AnimationEditer::AnimationEditer(void) : Object(ObjectTag::STATIC), GUI(Systems::Instance(), this, "animation")
+	, animationName_("")
 	, currentFrame_(0)
 	, minFrame_(0)
 	, maxFrame_(120)
 	, regeneration_(false)
 	, receiver_(nullptr)
+	, ctrl_(nullptr)
 {
 }
 
@@ -41,11 +43,15 @@ void AnimationEditer::Update(void)
 
 void AnimationEditer::GuiUpdate(void)
 {
+	if (!ctrl_) { return; }
+
 	VECTOR2 size = VECTOR2(630, 150);
 	ImGui::SetNextWindowPos(ImVec2(Half(Windows::WIDTH) - Half(size.x), Half(Windows::HEIGHT) - Half(size.y)), ImGuiSetCond_Once);
 	ImGui::SetNextWindowSize(ImVec2(size.x, size.y), ImGuiSetCond_Once);
 	if (ImGui::Begin("Animation"))
 	{
+		ImGui::InputText("Name", animationName_, 256);
+
 		ChangeRange(minFrame_, true);
 		ImGui::SameLine();
 		string temp = (regeneration_) ? "||" : ">";
@@ -63,8 +69,7 @@ void AnimationEditer::GuiUpdate(void)
 			{
 				if (receiver_) 
 				{
-					receiver_->AddAnim(currentFrame_); 
-					AddDeleteAnimationCommand* command = new AddDeleteAnimationCommand;
+					AddDeleteAnimDataCommand* command = new AddDeleteAnimDataCommand;
 					if (command)
 					{
 						command->SetAnimationEditer(this);
@@ -109,7 +114,7 @@ void AnimationEditer::GuiUpdate(void)
 				pose += static_cast<char>(cnt);
 				if (ImGui::Button(pose.c_str()) && receiver_)
 				{
-					AddDeleteAnimationCommand* command = new AddDeleteAnimationCommand;
+					AddDeleteAnimDataCommand* command = new AddDeleteAnimDataCommand;
 					if (command)
 					{
 						command->SetAnimationEditer(this);
@@ -126,6 +131,11 @@ void AnimationEditer::GuiUpdate(void)
 				}
 
 				ImGui::TextAlign("    ");
+			}
+
+			if (ImGui::Button("CreateAnimation"))
+			{
+				CreateAnimation();
 			}
 		}
 	}
@@ -179,5 +189,79 @@ void AnimationEditer::ChangeRange(int& range, bool min)
 
 void AnimationEditer::HierarchyView(void)
 {
+	if (!receiver_) { return; }
 
+	auto animList = receiver_->GetAnimation();
+
+	for(auto anim : animList)
+	{
+		bool select = false;
+		ImGui::MenuItem(anim.animationName.c_str(), nullptr, &select);
+
+		if (select)
+		{
+			receiver_->ResetAnimData();
+			currentFrame_ = 0;
+
+			strcpy_s(animationName_, anim.animationName.c_str());
+			minFrame_ = anim.min;
+			maxFrame_ = anim.max;
+
+			for(uint i = 0;i < anim.anim.size();++i)
+			{
+				receiver_->AddAnim(anim.anim[i].frame, anim, i);
+			}
+
+			break;
+		}
+	}
+}
+
+void AnimationEditer::SetCurrentFrame(int frame)
+{
+	currentFrame_ = frame; 
+	if (receiver_)
+	{
+		receiver_->Animation(frame);
+	}
+}
+
+void AnimationEditer::CreateAnimation(void)
+{
+	if (!receiver_) { return; }
+
+	std::vector<SPRITE_MESH_ANIM_DATA> tempAnimData = receiver_->GetAnimData();
+
+	SPRITE_MESH_ANIMATION tempAnimation;
+
+	GetChildrenAnim(tempAnimation, *receiver_);
+
+	receiver_->CreateAnimation(tempAnimation);
+	strcpy_s(animationName_, "");
+	receiver_->ResetAnimData();
+	currentFrame_ = 0;
+	minFrame_ = 0;
+	maxFrame_ = 120;
+}
+
+void AnimationEditer::GetChildrenAnim(SPRITE_MESH_ANIMATION& tempAnimation, Receiver& receiver)
+{
+	tempAnimation.animationName = animationName_;
+	tempAnimation.min = minFrame_;
+	tempAnimation.max = maxFrame_;
+
+	std::vector<SPRITE_MESH_ANIM_DATA> tempAnimData = receiver.GetAnimData();
+
+	for (uint i = 0; i < tempAnimData.size(); ++i)
+	{
+		tempAnimation.anim.emplace_back(tempAnimData[i]);
+	}
+
+	auto children = receiver.GetChild();
+	for (auto& child : children)
+	{
+		SPRITE_MESH_ANIMATION childAnimation;
+		GetChildrenAnim(childAnimation, *child);
+		tempAnimation.child.emplace_back(childAnimation);
+	}
 }

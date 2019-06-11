@@ -20,7 +20,7 @@ class ICommand
 {
 public:
 	/* @brief	コンストラクタ		*/
-	ICommand(void) {}
+	ICommand(void) : receiver_(nullptr) {}
 	/* @brief	デストラクタ		*/
 	virtual ~ICommand(void) {}
 

@@ -63,7 +63,7 @@ private:
 
 	void ChangeRange(int& range, bool min);
 
-	void GetChildrenAnim(SPRITE_MESH_ANIMATION& tempAnimation, Receiver& receiver);
+	void GetChildrenAnim(SPRITE_MESH_ANIM_DATA& tempAnimation, Receiver& receiver);
 
 	char			animationName_[256];
 	int				currentFrame_;

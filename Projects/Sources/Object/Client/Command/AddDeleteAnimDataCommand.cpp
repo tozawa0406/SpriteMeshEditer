@@ -22,16 +22,16 @@ void AddDeleteAnimDataCommand::Invoke(void)
 	if (add_) { receiver_->AddAnim(frame_); }
 
 	// アニメーション情報の取得
-	GetAnim(receiver_, anim_);
+	GetAnim(receiver_, anim_.data);
 
 	// (削除時)指定したフレームのアニメーションを削除
 	if (!add_) { receiver_->RemoveAnim(frame_); }
 }
 
-void AddDeleteAnimDataCommand::GetAnim(Receiver* receiver, SPRITE_MESH_ANIMATION& animData)
+void AddDeleteAnimDataCommand::GetAnim(Receiver* receiver, SPRITE_MESH_ANIM_DATA& animData)
 {
 	// 全アニメーション情報の取得
-	auto receiverAnimData = receiver->GetAnimData();
+	auto receiverAnimData = receiver->GetAnimTransform();
 
 	int size = static_cast<int>(receiverAnimData.size());
 	for (int i = 0; i < size; ++i)
@@ -47,7 +47,7 @@ void AddDeleteAnimDataCommand::GetAnim(Receiver* receiver, SPRITE_MESH_ANIMATION
 	auto children = receiver->GetChild();
 	for (auto& child : children)
 	{
-		SPRITE_MESH_ANIMATION newAnim;
+		SPRITE_MESH_ANIM_DATA newAnim;
 		GetAnim(child, newAnim);
 		animData.child.emplace_back(newAnim);
 	}
@@ -64,9 +64,9 @@ void AddDeleteAnimDataCommand::Undo(void)
 		receiver_->RemoveAnim(frame_);
 
 		// 前回情報がえれば、それを追加
-		if (prevAnim_.anim.size() > 0)
+		if (prevAnim_.data.anim.size() > 0)
 		{
-			receiver_->AddAnim(frame_, prevAnim_, 0);
+			receiver_->AddAnim(frame_, prevAnim_.data, 0);
 			animationEditor_->SetCurrentFrame(frame_);
 		}
 		// なければ0フレーム目へ
@@ -79,7 +79,7 @@ void AddDeleteAnimDataCommand::Undo(void)
 	else 
 	{
 		// アニメーションを戻す(追加)
-		receiver_->AddAnim(frame_, anim_, 0);
+		receiver_->AddAnim(frame_, anim_.data, 0);
 		// 表示をそのアニメーションのフレームに
 		animationEditor_->SetCurrentFrame(frame_);
 	}
@@ -93,7 +93,7 @@ void AddDeleteAnimDataCommand::Redo(void)
 	if (add_)	
 	{
 		// 再度追加し、表示をそのアニメーションに
-		receiver_->AddAnim(frame_, anim_, 0);
+		receiver_->AddAnim(frame_, anim_.data, 0);
 		animationEditor_->SetCurrentFrame(frame_);
 	}
 	// 削除時
@@ -109,5 +109,5 @@ void AddDeleteAnimDataCommand::GetPrevAnim(void)
 {
 	if (!receiver_) { return; }
 
-	GetAnim(receiver_, prevAnim_);
+	GetAnim(receiver_, prevAnim_.data);
 }

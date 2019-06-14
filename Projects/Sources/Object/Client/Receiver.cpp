@@ -465,28 +465,28 @@ void Receiver::SetChild(Receiver* child, bool add)
 
 void Receiver::Animation(int frame)
 {
-	if (anim_.size() < 1) { return; }
+	if (animTransform_.size() < 1) { return; }
 
-	size_t size = (anim_.size()) - 1;
+	size_t size = (animTransform_.size()) - 1;
 	for (size_t i = 0; i < size; ++i)
 	{
-		if (anim_[i].frame <= frame && frame <= anim_[i + 1].frame)
+		if (animTransform_[i].frame <= frame && frame <= animTransform_[i + 1].frame)
 		{
 			animCnt_ = static_cast<int>(i);
 		}
 	}
 
 	int next = animCnt_ + 1;
-	if (next >= static_cast<int>(anim_.size())) { next = 0; }
+	if (next >= static_cast<int>(animTransform_.size())) { next = 0; }
 
-	int diff = anim_[next].frame - anim_[animCnt_].frame;
+	int diff = animTransform_[next].frame - animTransform_[animCnt_].frame;
 	if (diff <= 0) { return; }
-	float rate = (frame - anim_[animCnt_].frame) / static_cast<float>(diff);
+	float rate = (frame - animTransform_[animCnt_].frame) / static_cast<float>(diff);
 	rate = min(1, rate);
 
-	transform_.position = anim_[animCnt_].position * (1 - rate) + anim_[next].position * rate;
-	transform_.rotation = anim_[animCnt_].rotation * (1 - rate) + anim_[next].rotation * rate;
-	transform_.scale	= anim_[animCnt_].scale	   * (1 - rate) + anim_[next].scale    * rate;
+	transform_.position = animTransform_[animCnt_].position * (1 - rate) + animTransform_[next].position * rate;
+	transform_.rotation = animTransform_[animCnt_].rotation * (1 - rate) + animTransform_[next].rotation * rate;
+	transform_.scale	= animTransform_[animCnt_].scale	* (1 - rate) + animTransform_[next].scale    * rate;
 
 	for (auto& child : child_)
 	{
@@ -496,7 +496,7 @@ void Receiver::Animation(int frame)
 
 void Receiver::AddAnim(int frame)
 {
-	SPRITE_MESH_ANIM_DATA temp;
+	SPRITE_MESH_TRANSFORM temp;
 	temp.position		= transform_.position;
 	temp.rotation		= transform_.rotation;
 	temp.scale			= transform_.scale;
@@ -504,24 +504,24 @@ void Receiver::AddAnim(int frame)
 	temp.spriteMeshName = name_;
 	temp.textureName	= textureName_;
 
-	anim_.emplace_back(temp);
+	animTransform_.emplace_back(temp);
 
-	int size = static_cast<int>(anim_.size()) - 1;
+	int size = static_cast<int>(animTransform_.size()) - 1;
 	for (int i = 0; i < size; ++i)
 	{
 		size_t num = static_cast<size_t>(i);
-		if (anim_[num].frame > anim_[num + 1].frame)
+		if (animTransform_[num].frame > animTransform_[num + 1].frame)
 		{
-			SPRITE_MESH_ANIM_DATA work;
-			work = anim_[num];
-			anim_[num] = anim_[num + 1];
-			anim_[num + 1] = work;
+			SPRITE_MESH_TRANSFORM work;
+			work = animTransform_[num];
+			animTransform_[num] = animTransform_[num + 1];
+			animTransform_[num + 1] = work;
 			i = -1;
 		}
-		else if (anim_[num + 1].frame - anim_[num].frame == 0)
+		else if (animTransform_[num + 1].frame - animTransform_[num].frame == 0)
 		{
-			RemoveAnim(anim_[num].frame);
-			size = static_cast<int>(anim_.size()) - 1;
+			RemoveAnim(animTransform_[num].frame);
+			size = static_cast<int>(animTransform_.size()) - 1;
 			i = -1;
 		}
 	}
@@ -532,9 +532,9 @@ void Receiver::AddAnim(int frame)
 	}
 }
 
-void Receiver::AddAnim(int frame, const SPRITE_MESH_ANIMATION& anim, int animNum)
+void Receiver::AddAnim(int frame, const SPRITE_MESH_ANIM_DATA& anim, int animNum)
 {
-	SPRITE_MESH_ANIM_DATA temp;
+	SPRITE_MESH_TRANSFORM temp;
 	temp.position		= anim.anim[animNum].position;
 	temp.rotation		= anim.anim[animNum].rotation;
 	temp.scale			= anim.anim[animNum].scale;
@@ -542,24 +542,24 @@ void Receiver::AddAnim(int frame, const SPRITE_MESH_ANIMATION& anim, int animNum
 	temp.spriteMeshName = anim.anim[animNum].spriteMeshName;
 	temp.textureName	= anim.anim[animNum].textureName;
 
-	anim_.emplace_back(temp);
+	animTransform_.emplace_back(temp);
 
-	int size = static_cast<int>(anim_.size()) - 1;
+	int size = static_cast<int>(animTransform_.size()) - 1;
 	for (int i = 0; i < size; ++i)
 	{
 		size_t num = static_cast<size_t>(i);
-		if (anim_[num].frame > anim_[num + 1].frame)
+		if (animTransform_[num].frame > animTransform_[num + 1].frame)
 		{
-			SPRITE_MESH_ANIM_DATA work;
-			work = anim_[num];
-			anim_[num] = anim_[num + 1];
-			anim_[num + 1] = work;
+			SPRITE_MESH_TRANSFORM work;
+			work = animTransform_[num];
+			animTransform_[num] = animTransform_[num + 1];
+			animTransform_[num + 1] = work;
 			i = -1;
 		}
-		else if (anim_[num + 1].frame - anim_[num].frame == 0)
+		else if (animTransform_[num + 1].frame - animTransform_[num].frame == 0)
 		{
-			RemoveAnim(anim_[num].frame);
-			size = static_cast<int>(anim_.size()) - 1;
+			RemoveAnim(animTransform_[num].frame);
+			size = static_cast<int>(animTransform_.size()) - 1;
 			i = -1;
 		}
 	}
@@ -590,12 +590,12 @@ void Receiver::CreateAnimation(SPRITE_MESH_ANIMATION& animation)
 
 void Receiver::RemoveAnim(int frame)
 {
-	int size = static_cast<int>(anim_.size());
+	int size = static_cast<int>(animTransform_.size());
 	for (int i = 0;i < size;++i)
 	{
-		if (anim_[i].frame == frame)
+		if (animTransform_[i].frame == frame)
 		{
-			anim_.erase(anim_.begin() + i);
+			animTransform_.erase(animTransform_.begin() + i);
 			break;
 		}
 	}

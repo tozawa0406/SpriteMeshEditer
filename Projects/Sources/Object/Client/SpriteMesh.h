@@ -19,7 +19,7 @@ struct SPRITE_MESH_RESOURCE
 };
 
 // 1つのメッシュの1つのキーフレーム
-struct SPRITE_MESH_ANIM_DATA
+struct SPRITE_MESH_TRANSFORM
 {
 	string	spriteMeshName;
 	int		frame;
@@ -28,8 +28,8 @@ struct SPRITE_MESH_ANIM_DATA
 	VECTOR3 rotation;
 	VECTOR3 scale;
 
-	SPRITE_MESH_ANIM_DATA(void) : spriteMeshName(""), frame(0), textureName(""), position(0), rotation(0), scale(0) {}
-	void operator = (const SPRITE_MESH_ANIM_DATA& data)
+	SPRITE_MESH_TRANSFORM(void) : spriteMeshName(""), frame(0), textureName(""), position(0), rotation(0), scale(0) {}
+	void operator = (const SPRITE_MESH_TRANSFORM& data)
 	{
 		spriteMeshName = data.spriteMeshName;
 		frame = data.frame;
@@ -40,13 +40,19 @@ struct SPRITE_MESH_ANIM_DATA
 	}
 };
 
+
+struct SPRITE_MESH_ANIM_DATA
+{
+	std::vector<SPRITE_MESH_TRANSFORM> anim;
+	std::vector<SPRITE_MESH_ANIM_DATA> child;
+};
+
 struct SPRITE_MESH_ANIMATION
 {
 	string	animationName;
 	uint	min;
 	uint	max;
-	std::vector<SPRITE_MESH_ANIM_DATA> anim;
-	std::vector<SPRITE_MESH_ANIMATION> child;
+	SPRITE_MESH_ANIM_DATA data;
 };
 
 class Loading;

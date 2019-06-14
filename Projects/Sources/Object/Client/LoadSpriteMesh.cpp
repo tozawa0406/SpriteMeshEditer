@@ -106,11 +106,17 @@ SPRITE_MESH_ANIMATION LoadSpriteMesh::LoadAnimation(string fileName, string& ver
 		ver.resize(size);
 		file.ReadParam(&ver[0], sizeof(char) * size);
 
+		file.ReadParam(&size, sizeof(size_t));
+		temp.animationName.resize(size);
+		file.ReadParam(&temp.animationName[0], sizeof(char) * size);
+		file.ReadParam(&temp.min, sizeof(uint));
+		file.ReadParam(&temp.max, sizeof(uint));
+
 		version = ver;
 		// ÇªÇÍÇºÇÍÇÃì«çû
 		if (ver == "ver.1.0")
 		{
-			GetSpriteAnimationVer1_0(file, temp);
+			GetSpriteAnimationVer1_0(file, temp.data);
 		}
 
 		// èIóπ
@@ -121,20 +127,13 @@ SPRITE_MESH_ANIMATION LoadSpriteMesh::LoadAnimation(string fileName, string& ver
 
 }
 
-void LoadSpriteMesh::GetSpriteAnimationVer1_0(IOFile& file, SPRITE_MESH_ANIMATION& spriteAnimation)
+void LoadSpriteMesh::GetSpriteAnimationVer1_0(IOFile& file, SPRITE_MESH_ANIM_DATA& spriteAnimation)
 {
 	size_t size = 0;
 	file.ReadParam(&size, sizeof(size_t));
-	spriteAnimation.animationName.resize(size);
-	file.ReadParam(&spriteAnimation.animationName[0], sizeof(char) * size);
-	file.ReadParam(&spriteAnimation.min, sizeof(uint));
-	file.ReadParam(&spriteAnimation.max, sizeof(uint));
-
-	size = 0;
-	file.ReadParam(&size, sizeof(size_t));
 	for (int i = 0; i < size; ++i)
 	{
-		SPRITE_MESH_ANIM_DATA tempAnimData;
+		SPRITE_MESH_TRANSFORM tempAnimData;
 		size_t s = 0;
 		file.ReadParam(&s, sizeof(size_t));
 		tempAnimData.spriteMeshName.resize(s);
@@ -155,7 +154,7 @@ void LoadSpriteMesh::GetSpriteAnimationVer1_0(IOFile& file, SPRITE_MESH_ANIMATIO
 	file.ReadParam(&size, sizeof(size_t));
 	for (int i = 0; i < size; ++i)
 	{
-		SPRITE_MESH_ANIMATION child;
+		SPRITE_MESH_ANIM_DATA child;
 		GetSpriteAnimationVer1_0(file, child);
 		spriteAnimation.child.emplace_back(child);
 	}
@@ -171,20 +170,21 @@ void LoadSpriteMesh::Save(string fileName, const SPRITE_MESH_ANIMATION& animatio
 		file.WriteParam(&size, sizeof(size_t));
 		file.WriteParam(&SPRITE_MESH_VARSION[0], sizeof(char) * size);
 
-		SetSpriteAnimationVer1_0(file, animation);
+		size = animation.animationName.size();
+		file.WriteParam(&size, sizeof(size_t));
+		file.WriteParam(&animation.animationName[0], sizeof(char) * size);
+		file.WriteParam(&animation.min, sizeof(uint));
+		file.WriteParam(&animation.max, sizeof(uint));
+
+		SetSpriteAnimationVer1_0(file, animation.data);
 
 		file.CloseFile();
 	}
 }
 
-void LoadSpriteMesh::SetSpriteAnimationVer1_0(IOFile& file, const SPRITE_MESH_ANIMATION& spriteAnimation)
+void LoadSpriteMesh::SetSpriteAnimationVer1_0(IOFile& file, const SPRITE_MESH_ANIM_DATA& spriteAnimation)
 {
-	size_t size = spriteAnimation.animationName.size();
-	file.WriteParam(&size, sizeof(size_t));
-	file.WriteParam(&spriteAnimation.animationName[0], sizeof(char) * size);
-	file.WriteParam(&spriteAnimation.min, sizeof(uint));
-	file.WriteParam(&spriteAnimation.max, sizeof(uint));
-	size = spriteAnimation.anim.size();
+	size_t size = spriteAnimation.anim.size();
 	file.WriteParam(&size, sizeof(size_t));
 	for (int i = 0; i < size; ++i)
 	{

@@ -36,7 +36,7 @@ private:
 	 * @sa		Invoke()
 	 * @param	(receiver)	アニメーションを取得したいレシーバー
 	 * @param	(animData)	取得した情報を格納する		*/
-	void GetAnim(Receiver* receiver, SPRITE_MESH_ANIMATION& animData);
+	void GetAnim(Receiver* receiver, SPRITE_MESH_ANIM_DATA& animData);
 
 	//! アニメーション情報
 	SPRITE_MESH_ANIMATION	anim_;

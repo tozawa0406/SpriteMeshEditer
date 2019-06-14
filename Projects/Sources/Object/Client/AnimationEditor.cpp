@@ -60,6 +60,7 @@ void AnimationEditor::GuiUpdate(void)
 		if (ImGui::Button(temp.c_str(), ImVec2(48, 38))) { regeneration_ = !regeneration_; }
 		ImGui::SameLine();
 		ImGui::SliderInt("##frame", &currentFrame_, minFrame_, maxFrame_);
+		if (receiver_) { receiver_->Animation(currentFrame_); }
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 		ChangeRange(maxFrame_, false);
@@ -90,7 +91,7 @@ void AnimationEditor::GuiUpdate(void)
 			ImGui::SameLine();
 
 			int cnt = 0;
-			auto anim = receiver_->GetAnimData();
+			auto anim = receiver_->GetAnimTransform();
 			for (auto& a : anim)
 			{
 				cnt++;
@@ -201,16 +202,16 @@ void AnimationEditor::HierarchyView(void)
 
 		if (select)
 		{
-			receiver_->ResetAnimData();
+			receiver_->ResetAnimTransform();
 			currentFrame_ = 0;
 
 			strcpy_s(animationName_, anim.animationName.c_str());
 			minFrame_ = anim.min;
 			maxFrame_ = anim.max;
 
-			for(uint i = 0;i < anim.anim.size();++i)
+			for(uint i = 0;i < anim.data.anim.size();++i)
 			{
-				receiver_->AddAnim(anim.anim[i].frame, anim, i);
+				receiver_->AddAnim(anim.data.anim[i].frame, anim.data, i);
 			}
 
 			break;
@@ -231,27 +232,26 @@ void AnimationEditor::CreateAnimation(void)
 {
 	if (!receiver_) { return; }
 
-	std::vector<SPRITE_MESH_ANIM_DATA> tempAnimData = receiver_->GetAnimData();
+	std::vector<SPRITE_MESH_TRANSFORM> tempAnimData = receiver_->GetAnimTransform();
 
 	SPRITE_MESH_ANIMATION tempAnimation;
+	tempAnimation.animationName = animationName_;
+	tempAnimation.min = minFrame_;
+	tempAnimation.max = maxFrame_;
 
-	GetChildrenAnim(tempAnimation, *receiver_);
+	GetChildrenAnim(tempAnimation.data, *receiver_);
 
 	receiver_->CreateAnimation(tempAnimation);
 	strcpy_s(animationName_, "");
-	receiver_->ResetAnimData();
+	receiver_->ResetAnimTransform();
 	currentFrame_ = 0;
 	minFrame_ = 0;
 	maxFrame_ = 120;
 }
 
-void AnimationEditor::GetChildrenAnim(SPRITE_MESH_ANIMATION& tempAnimation, Receiver& receiver)
+void AnimationEditor::GetChildrenAnim(SPRITE_MESH_ANIM_DATA& tempAnimation, Receiver& receiver)
 {
-	tempAnimation.animationName = animationName_;
-	tempAnimation.min = minFrame_;
-	tempAnimation.max = maxFrame_;
-
-	std::vector<SPRITE_MESH_ANIM_DATA> tempAnimData = receiver.GetAnimData();
+	std::vector<SPRITE_MESH_TRANSFORM> tempAnimData = receiver.GetAnimTransform();
 
 	for (uint i = 0; i < tempAnimData.size(); ++i)
 	{
@@ -261,7 +261,7 @@ void AnimationEditor::GetChildrenAnim(SPRITE_MESH_ANIMATION& tempAnimation, Rece
 	auto children = receiver.GetChild();
 	for (auto& child : children)
 	{
-		SPRITE_MESH_ANIMATION childAnimation;
+		SPRITE_MESH_ANIM_DATA childAnimation;
 		GetChildrenAnim(childAnimation, *child);
 		tempAnimation.child.emplace_back(childAnimation);
 	}
@@ -270,6 +270,8 @@ void AnimationEditor::GetChildrenAnim(SPRITE_MESH_ANIMATION& tempAnimation, Rece
 void AnimationEditor::Load(void)
 {
 	LoadData();
+
+	if (receiver_) { receiver_->Animation(0); }
 }
 
 void AnimationEditor::SaveData(void)

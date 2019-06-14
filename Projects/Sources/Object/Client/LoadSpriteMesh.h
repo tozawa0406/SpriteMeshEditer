@@ -21,8 +21,8 @@ private:
 	void GetSpriteMeshVer1_0(IOFile& file, SPRITE_MESH_RESOURCE& spriteMesh);
 	void SetSpriteMeshVer1_0(IOFile& file, const SPRITE_MESH_RESOURCE& spriteMesh);
 
-	void GetSpriteAnimationVer1_0(IOFile& file, SPRITE_MESH_ANIMATION& spriteAnimation);
-	void SetSpriteAnimationVer1_0(IOFile& file, const SPRITE_MESH_ANIMATION& spriteAnimation);
+	void GetSpriteAnimationVer1_0(IOFile& file, SPRITE_MESH_ANIM_DATA& spriteAnimation);
+	void SetSpriteAnimationVer1_0(IOFile& file, const SPRITE_MESH_ANIM_DATA& spriteAnimation);
 };
 
 #endif // _LOAD_SPRITE_MESH_H_

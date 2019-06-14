@@ -3,7 +3,7 @@
 
 #include "ICommand.h"
 #include "../Receiver.h"
-#include "../ModelEditer.h"
+#include "../ModelEditor.h"
 
 class DeleteCommand : public ICommand
 {
@@ -23,7 +23,7 @@ public:
 	/* @brief	–ß‚é		*/
 	virtual void Redo(void)		override;
 
-	inline void SetModelEditer(ModelEditer* client)		{ client_ = client;			}
+	inline void SetModelEditor(ModelEditor* client)		{ client_ = client;			}
 	inline void SetWithChild(bool withChild)	{ withChild_ = withChild;	}
 
 private:
@@ -31,9 +31,9 @@ private:
 
 	void ChildCtrl(Receiver* child, bool add);
 
-	ModelEditer*		client_;
-	Receiver*	parent_;
-	bool		withChild_;
+	ModelEditor*	client_;
+	Receiver*		parent_;
+	bool			withChild_;
 	std::vector<Receiver*> children_;
 };
 

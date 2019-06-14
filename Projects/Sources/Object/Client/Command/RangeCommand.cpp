@@ -4,7 +4,7 @@ RangeCommand::RangeCommand(void) :
 	prevRange_(0)
 	, nextRange_(0)
 	, min_(false)
-	, animationEditer_(nullptr)
+	, animationEditor_(nullptr)
 {
 }
 
@@ -14,37 +14,37 @@ RangeCommand::~RangeCommand(void)
 
 void RangeCommand::Invoke(void)
 {
-	if (!animationEditer_) { return; }
-	auto beforeData = animationEditer_->GetAnimationEditerData();
+	if (!animationEditor_) { return; }
+	auto beforeData = animationEditor_->GetAnimationEditorData();
 
 	prevRange_ = (min_) ? beforeData.min : beforeData.max;
-	nextRange_ = animationEditer_->GetRange(min_);
+	nextRange_ = animationEditor_->GetRange(min_);
 
 	int& temp = (min_) ? beforeData.min : beforeData.max;
 	temp = nextRange_;
-	animationEditer_->SetAnimationEditerData(beforeData);
+	animationEditor_->SetAnimationEditorData(beforeData);
 }
 
 void RangeCommand::Undo(void)
 {
-	if (!animationEditer_) { return; }
-	auto beforeData = animationEditer_->GetAnimationEditerData();
+	if (!animationEditor_) { return; }
+	auto beforeData = animationEditor_->GetAnimationEditorData();
 
 	int& temp = (min_) ? beforeData.min : beforeData.max;
 	temp = prevRange_;
-	animationEditer_->SetRange(prevRange_, min_);
+	animationEditor_->SetRange(prevRange_, min_);
 
-	animationEditer_->SetAnimationEditerData(beforeData);
+	animationEditor_->SetAnimationEditorData(beforeData);
 }
 
 void RangeCommand::Redo(void)
 {
-	if (!animationEditer_) { return; }
-	auto beforeData = animationEditer_->GetAnimationEditerData();
+	if (!animationEditor_) { return; }
+	auto beforeData = animationEditor_->GetAnimationEditorData();
 
 	int& temp = (min_) ? beforeData.min : beforeData.max;
 	temp = nextRange_;
-	animationEditer_->SetRange(nextRange_, min_);
+	animationEditor_->SetRange(nextRange_, min_);
 
-	animationEditer_->SetAnimationEditerData(beforeData);
+	animationEditor_->SetAnimationEditorData(beforeData);
 }

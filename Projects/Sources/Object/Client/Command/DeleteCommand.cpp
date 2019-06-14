@@ -3,6 +3,7 @@
 DeleteCommand::DeleteCommand(void) :
 	client_(nullptr)
 	, parent_(nullptr)
+	, withChild_(false)
 {
 }
 

@@ -10,7 +10,7 @@
 #include "Command/ICommand.h"
 #include "SpriteMesh.h"
 
-class ModelEditer;
+class ModelEditor;
 class Receiver
 {
 	//! フラグ
@@ -27,7 +27,7 @@ public:
 
 	/* @brief	初期化処理
 	 * @param	(client)	クライアント	*/
-	void Init(ModelEditer* client);
+	void Init(ModelEditor* client);
 	/* @brief	後処理				*/
 	void Uninit(void);
 	/* @brief	更新処理			*/
@@ -127,7 +127,7 @@ private:
 	string			textureName_;
 
 	//! クライアント
-	ModelEditer*	client_;
+	ModelEditor*	client_;
 
 	//! コントローラ
 	Controller*		ctrl_;

@@ -1,5 +1,5 @@
-#include "ModelEditer.h"
-#include "Editer.h"
+#include "ModelEditor.h"
+#include "Editor.h"
 #include "Receiver.h"
 #include "../Pivot.h"
 #include "../Search.h"
@@ -8,51 +8,53 @@
 #include "LoadSpriteMesh.h"
 
 #include <FrameWork/Systems/GameSystems.h>
-#include "AnimationEditer.h"
+#include "AnimationEditor.h"
 
-ModelEditer::ModelEditer(void) : Object(ObjectTag::STATIC), GUI(Systems::Instance(), this, "model")
+ModelEditor::ModelEditor(void) : Object(ObjectTag::STATIC), GUI(Systems::Instance(), this, "model")
 	, currentReceiver_(nullptr)
 	, ctrl_(nullptr)
 	, pivot_(nullptr)
 	, name_("")
 	, selectedCnt_(0)
 	, workReceiver_(nullptr)
-	, editer_(nullptr)
+	, editor_(nullptr)
 	, animation_(nullptr)
 	, flag_(0)
 {
 }
 
-ModelEditer::~ModelEditer(void)
+ModelEditor::~ModelEditor(void)
 {
 }
 
-void ModelEditer::Init(void)
+void ModelEditor::Init(void)
 {
 	name_.resize(256);
 
-	animation_ = new AnimationEditer;
+	animation_ = new AnimationEditor;
 	if (animation_) { animation_->Init(); }
 }
 
-void ModelEditer::Load(void)
+void ModelEditor::Load(void)
 {
 	LoadData();
 	if (animation_ && receiverList_.size() > 0) 
 	{
-		animation_->SetEditer(editer_);
+		animation_->SetEditor(editor_);
 		animation_->SetReceiver(receiverList_[0]); 
 		animation_->SetCtrl(ctrl_);
+
+		animation_->Load();
 	}
 }
 
-void ModelEditer::Uninit(void)
+void ModelEditor::Uninit(void)
 {
 	UninitDeletePtr(animation_);
 	for (auto& c : receiverList_) { UninitDeletePtr(c); }
 }
 
-void ModelEditer::Update(void)
+void ModelEditor::Update(void)
 {
 	if (selectedCnt_ > 0)
 	{
@@ -68,7 +70,7 @@ void ModelEditer::Update(void)
 	if (animation_) { animation_->Update(); }
 }
 
-void ModelEditer::GuiUpdate(void)
+void ModelEditor::GuiUpdate(void)
 {
 	float padding = 50;
 	ImGui::SetNextWindowPos(ImVec2(Windows::WIDTH - padding - 450, padding), ImGuiSetCond_Once);
@@ -112,7 +114,7 @@ void ModelEditer::GuiUpdate(void)
 	ImGui::End();
 }
 
-void ModelEditer::InspectorView(void)
+void ModelEditor::InspectorView(void)
 {
 	// 現在のスプライトの情報
 	if (currentReceiver_)
@@ -127,11 +129,11 @@ void ModelEditer::InspectorView(void)
 	}
 }
 
-void ModelEditer::ConsoleView(void)
+void ModelEditor::ConsoleView(void)
 {
-	if (!editer_) { return; }
+	if (!editor_) { return; }
 
-	auto list = editer_->GetMessageList();
+	auto list = editor_->GetMessageList();
 	int size = static_cast<int>(list.size());
 	for (int i = size - 1; i >= 0; --i)
 	{
@@ -139,7 +141,7 @@ void ModelEditer::ConsoleView(void)
 	}
 }
 
-void ModelEditer::HierarchyView(void)
+void ModelEditor::HierarchyView(void)
 {
 	// ヒエラルキー描画情報をリセット
 	for (auto& r : receiverList_) { if (r) { r->SetHierarchy(false); } }
@@ -170,11 +172,11 @@ void ModelEditer::HierarchyView(void)
 
 	// Undo/Redoボタン
 	ImGui::Dummy(ImVec2(0, 5));
-	if (editer_)
+	if (editor_)
 	{
-		if (ImGui::Button("Undo")) { editer_->Undo(); }
+		if (ImGui::Button("Undo")) { editor_->Undo(); }
 		ImGui::SameLine();
-		if (ImGui::Button("Redo")) { editer_->Redo(); }
+		if (ImGui::Button("Redo")) { editor_->Redo(); }
 	}
 
 	if (BitCheck(flag_, FLAG_ANIMATION))
@@ -204,7 +206,7 @@ void ModelEditer::HierarchyView(void)
 	}
 }
 
-void ModelEditer::DrawHierarchy(Receiver* draw, string& blank)
+void ModelEditor::DrawHierarchy(Receiver* draw, string& blank)
 {
 	// ヒエラルキービューに描画
 	if (draw && !draw->IsHierarchy())
@@ -255,7 +257,7 @@ void ModelEditer::DrawHierarchy(Receiver* draw, string& blank)
 	}
 }
 
-void ModelEditer::CreateReceiver(SPRITE_MESH_RESOURCE* resouce)
+void ModelEditor::CreateReceiver(SPRITE_MESH_RESOURCE* resouce)
 {
 	// コマンド発行
 	CreateSpriteCommand* command = new CreateSpriteCommand;
@@ -290,13 +292,13 @@ void ModelEditer::CreateReceiver(SPRITE_MESH_RESOURCE* resouce)
 			{
 				// コマンドの実行
 				command->SetReceiver(receiver);
-				command->SetModelEditer(this);
+				command->SetModelEditor(this);
 				command->Invoke();
 
-				if (editer_)
+				if (editor_)
 				{
-					editer_->AddCommand(command);
-					editer_->AddMessage("\"Create Sprite\"");
+					editor_->AddCommand(command);
+					editor_->AddMessage("\"Create Sprite\"");
 				}
 			}
 
@@ -306,7 +308,7 @@ void ModelEditer::CreateReceiver(SPRITE_MESH_RESOURCE* resouce)
 	}
 }
 
-void ModelEditer::SaveData(void)
+void ModelEditor::SaveData(void)
 {
 	// ディレクトリ名の生成
 	string directory = "Export/" + name_;
@@ -327,9 +329,9 @@ void ModelEditer::SaveData(void)
 		{
 			if (root) 
 			{
-				if (editer_)
+				if (editor_)
 				{
-					editer_->AddMessage("[error]\"Failed to Save\" because there were more parents");
+					editor_->AddMessage("[error]\"Failed to Save\" because there were more parents");
 				}
 				return;
 			}
@@ -339,16 +341,18 @@ void ModelEditer::SaveData(void)
 
 	root->SaveData(temp);
 
-	LoadSpriteMesh loader;
-	loader.Save(directory, temp);
-
-	if (editer_)
+	if (editor_)
 	{
-		editer_->AddMessage("\"Save\" is complete");
+		LoadSpriteMesh loader;
+		loader.Save(directory, temp);
+
+		editor_->AddMessage("\"Create " + name + "." + SPRITE_MESH_EXTENSION + "\"");
+		if (animation_) { animation_->SaveData(); }
+		editor_->AddMessage("\"Save\" is complete");
 	}
 }
 
-void ModelEditer::LoadData(void)
+void ModelEditor::LoadData(void)
 {
 	// ディレクトリ名の生成
 	string directory = "Export/";
@@ -381,13 +385,13 @@ void ModelEditer::LoadData(void)
 
 	CreateReceiver(&temp);
 
-	if (editer_)
+	if (editor_)
 	{
-		editer_->AddMessage("\"Load\" is complete " + version);
+		editor_->AddMessage("\"Load\" is complete " + version);
 	}
 }
 
-void ModelEditer::RemoveSprite(Receiver* receiver)
+void ModelEditor::RemoveSprite(Receiver* receiver)
 {
 	int size = static_cast<int>(receiverList_.size());
 	for (int i = 0; i < size; ++i)
@@ -407,7 +411,7 @@ void ModelEditer::RemoveSprite(Receiver* receiver)
 	}
 }
 
-void ModelEditer::AddSprite(Receiver* receiver)
+void ModelEditor::AddSprite(Receiver* receiver)
 {
 	// 後ろに追加
 	receiverList_.emplace_back(receiver);

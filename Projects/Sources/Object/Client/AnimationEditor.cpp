@@ -1,11 +1,12 @@
-#include "AnimationEditer.h"
+#include "AnimationEditor.h"
 #include "Receiver.h"
-#include "Editer.h"
+#include "Editor.h"
+#include "LoadSpriteMesh.h"
 
 #include "Command/RangeCommand.h"
 #include "Command/AddDeleteAnimDataCommand.h"
 
-AnimationEditer::AnimationEditer(void) : Object(ObjectTag::STATIC), GUI(Systems::Instance(), this, "animation")
+AnimationEditor::AnimationEditor(void) : Object(ObjectTag::STATIC), GUI(Systems::Instance(), this, "animation")
 	, animationName_("")
 	, currentFrame_(0)
 	, minFrame_(0)
@@ -16,21 +17,21 @@ AnimationEditer::AnimationEditer(void) : Object(ObjectTag::STATIC), GUI(Systems:
 {
 }
 
-AnimationEditer::~AnimationEditer(void)
+AnimationEditor::~AnimationEditor(void)
 {
 }
 
-void AnimationEditer::Init(void)
+void AnimationEditor::Init(void)
 {
 	beforeData_.min = minFrame_;
 	beforeData_.max = maxFrame_;
 }
 
-void AnimationEditer::Uninit(void)
+void AnimationEditor::Uninit(void)
 {
 }
 
-void AnimationEditer::Update(void)
+void AnimationEditor::Update(void)
 {
 	if (regeneration_) 
 	{
@@ -41,7 +42,7 @@ void AnimationEditer::Update(void)
 	}
 }
 
-void AnimationEditer::GuiUpdate(void)
+void AnimationEditor::GuiUpdate(void)
 {
 	if (!ctrl_) { return; }
 
@@ -72,16 +73,16 @@ void AnimationEditer::GuiUpdate(void)
 					AddDeleteAnimDataCommand* command = new AddDeleteAnimDataCommand;
 					if (command)
 					{
-						command->SetAnimationEditer(this);
+						command->SetAnimationEditor(this);
 						command->SetReceiver(receiver_);
 						command->SetFrame(currentFrame_);
 						command->SetAdd(true);
 						command->Invoke();
 
-						if (editer_)
+						if (editor_)
 						{
-							editer_->AddCommand(command);
-							editer_->AddMessage("\"Add\"Animation");
+							editor_->AddCommand(command);
+							editor_->AddMessage("\"Add\"Animation");
 						}
 					}
 				}
@@ -117,15 +118,15 @@ void AnimationEditer::GuiUpdate(void)
 					AddDeleteAnimDataCommand* command = new AddDeleteAnimDataCommand;
 					if (command)
 					{
-						command->SetAnimationEditer(this);
+						command->SetAnimationEditor(this);
 						command->SetReceiver(receiver_);
 						command->SetFrame(a.frame);
 						command->Invoke();
 
-						if(editer_)
+						if(editor_)
 						{
-							editer_->AddCommand(command);
-							editer_->AddMessage("\"Delete\"Animation");
+							editor_->AddCommand(command);
+							editor_->AddMessage("\"Delete\"Animation");
 						}
 					}
 				}
@@ -142,7 +143,7 @@ void AnimationEditer::GuiUpdate(void)
 	ImGui::End();
 }
 
-void AnimationEditer::ChangeRange(int& range, bool min)
+void AnimationEditor::ChangeRange(int& range, bool min)
 {
 	ImGui::PushItemWidth(68);
 	float f = static_cast<float>(range);
@@ -164,17 +165,17 @@ void AnimationEditer::ChangeRange(int& range, bool min)
 			if (command)
 			{
 				command->SetReceiver(receiver_);
-				command->SetAnimationEditer(this);
+				command->SetAnimationEditor(this);
 				command->SetMin(min);
 				command->Invoke();
 
-				if (editer_)
+				if (editor_)
 				{
-					editer_->AddCommand(command);
+					editor_->AddCommand(command);
 					string message = "Set ";
 					message += (min) ? "\"min\" " : "\"max\" ";
 					message += "value";
-					editer_->AddMessage(message);
+					editor_->AddMessage(message);
 				}
 			}
 
@@ -187,7 +188,7 @@ void AnimationEditer::ChangeRange(int& range, bool min)
 	ImGui::PopItemWidth();
 }
 
-void AnimationEditer::HierarchyView(void)
+void AnimationEditor::HierarchyView(void)
 {
 	if (!receiver_) { return; }
 
@@ -217,7 +218,7 @@ void AnimationEditer::HierarchyView(void)
 	}
 }
 
-void AnimationEditer::SetCurrentFrame(int frame)
+void AnimationEditor::SetCurrentFrame(int frame)
 {
 	currentFrame_ = frame; 
 	if (receiver_)
@@ -226,7 +227,7 @@ void AnimationEditer::SetCurrentFrame(int frame)
 	}
 }
 
-void AnimationEditer::CreateAnimation(void)
+void AnimationEditor::CreateAnimation(void)
 {
 	if (!receiver_) { return; }
 
@@ -244,7 +245,7 @@ void AnimationEditer::CreateAnimation(void)
 	maxFrame_ = 120;
 }
 
-void AnimationEditer::GetChildrenAnim(SPRITE_MESH_ANIMATION& tempAnimation, Receiver& receiver)
+void AnimationEditor::GetChildrenAnim(SPRITE_MESH_ANIMATION& tempAnimation, Receiver& receiver)
 {
 	tempAnimation.animationName = animationName_;
 	tempAnimation.min = minFrame_;
@@ -263,5 +264,52 @@ void AnimationEditer::GetChildrenAnim(SPRITE_MESH_ANIMATION& tempAnimation, Rece
 		SPRITE_MESH_ANIMATION childAnimation;
 		GetChildrenAnim(childAnimation, *child);
 		tempAnimation.child.emplace_back(childAnimation);
+	}
+}
+
+void AnimationEditor::Load(void)
+{
+	LoadData();
+}
+
+void AnimationEditor::SaveData(void)
+{
+	if (!receiver_) { return; }
+
+	LoadSpriteMesh loader;
+	for (auto animation : receiver_->GetAnimation())
+	{
+		loader.Save("Export/" + animation.animationName + "." + SPRITE_MESH_ANIMATION_EXTENSION, animation);
+		editor_->AddMessage(animation.animationName + " is saved compleate");
+	}
+}
+
+void AnimationEditor::LoadData(void)
+{
+	// ディレクトリ名の生成
+	string directory = "Export/";
+
+	std::vector<string> list;
+	SearchFile search;
+	search.Search(directory, SPRITE_MESH_ANIMATION_EXTENSION, list);
+	if (list.size() <= 0) { return; }
+
+	for (auto animName : list)
+	{
+		LoadSpriteMesh loader;
+
+		string version = "";
+		SPRITE_MESH_ANIMATION temp = loader.LoadAnimation(animName, version);
+
+		if (!receiver_) 
+		{
+			editor_->AddMessage("Load animation faild, not mesh");
+			return; 
+		}
+		receiver_->CreateAnimation(temp);
+		if (editor_)
+		{
+			editor_->AddMessage("\"Load\" animation " + temp.animationName);
+		}
 	}
 }

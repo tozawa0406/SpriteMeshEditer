@@ -1,6 +1,6 @@
 #include "Receiver.h"
-#include "ModelEditer.h"
-#include "Editer.h"
+#include "ModelEditor.h"
+#include "Editor.h"
 
 #include "Command/PositionCommand.h"
 #include "Command/RotationCommand.h"
@@ -30,7 +30,7 @@ Receiver::~Receiver(void)
 {
 }
 
-void Receiver::Init(ModelEditer* client)
+void Receiver::Init(ModelEditor* client)
 {
 	client_ = client;
 
@@ -127,10 +127,10 @@ void Receiver::Update(void)
 
 							if (client_)
 							{
-								if (const auto& editer = client_->GetEditer())
+								if (const auto& Editor = client_->GetEditor())
 								{
-									editer->AddCommand(command);
-									editer->AddMessage("\"SetParent\"");
+									Editor->AddCommand(command);
+									Editor->AddMessage("\"SetParent\"");
 								}
 							}
 						}
@@ -153,10 +153,10 @@ void Receiver::Update(void)
 
 				if (client_)
 				{
-					if (const auto& editer = client_->GetEditer())
+					if (const auto& Editor = client_->GetEditor())
 					{
-						editer->AddCommand(command);
-						editer->AddMessage("\"RemoveParent\"");
+						Editor->AddCommand(command);
+						Editor->AddMessage("\"RemoveParent\"");
 					}
 				}
 			}
@@ -177,9 +177,9 @@ bool Receiver::InvokeCommand(void)
 
 		if (client_) 
 		{
-			if (const auto& editer = client_->GetEditer())
+			if (const auto& Editor = client_->GetEditor())
 			{
-				editer->AddCommand(command);
+				Editor->AddCommand(command);
 			}
 		}
 
@@ -271,8 +271,8 @@ void Receiver::SelectParam(void)
 {
 	if (!spriteRenderer_) { return; }
 	if (!client_) { return; }
-	Editer* editer = client_->GetEditer();
-	if (!editer) { return; }
+	Editor* Editor = client_->GetEditor();
+	if (!Editor) { return; }
 
 	ImGui::InputText("name", &name_[0], 256);
 
@@ -283,7 +283,7 @@ void Receiver::SelectParam(void)
 		spriteRenderer_->SetLayer(static_cast<uint8>(layer));
 		if (InvokeCommand<LayerCommand>())
 		{
-			editer->AddMessage("\"Layer reflected change\" in Sprite");
+			Editor->AddMessage("\"Layer reflected change\" in Sprite");
 		}
 	}
 
@@ -297,7 +297,7 @@ void Receiver::SelectParam(void)
 			spriteRenderer_->SetTexture(ret);
 			if (InvokeCommand<TextureNumCommand>())
 			{
-				editer->AddMessage("\"Texture reflected change\" in Sprite");
+				Editor->AddMessage("\"Texture reflected change\" in Sprite");
 			}
 		}
 	}
@@ -318,28 +318,28 @@ void Receiver::SelectParam(void)
 		{
 			if(InvokeCommand<PositionCommand>())
 			{
-				editer->AddMessage("\"Position reflected change\" in transform");
+				Editor->AddMessage("\"Position reflected change\" in transform");
 			}
 		}
 		if (beforeData_.transform->rotation != transform_.rotation)
 		{
 			if (InvokeCommand<RotationCommand>())
 			{
-				editer->AddMessage("\"Rotation reflected change\" in transform");
+				Editor->AddMessage("\"Rotation reflected change\" in transform");
 			}
 		}
 		if (beforeData_.transform->scale != transform_.scale)
 		{
 			if (InvokeCommand<ScaleCommand>())
 			{
-				editer->AddMessage("\"Scale reflected change\" in transform");
+				Editor->AddMessage("\"Scale reflected change\" in transform");
 			}
 		}
 		if (beforeData_.spriteRenderer->GetPivot() != spriteRenderer_->GetPivot())
 		{
 			if (InvokeCommand<PivotCommand>())
 			{
-				editer->AddMessage("\"Pivot reflected change\" in Sprite");
+				Editor->AddMessage("\"Pivot reflected change\" in Sprite");
 			}
 		}
 		if (*beforeData_.name != name_)
@@ -347,7 +347,7 @@ void Receiver::SelectParam(void)
 			if (InvokeCommand<NameCommand>())
 			{
 				*beforeData_.name = name_;
-				editer->AddMessage("\"Name reflected change\" in Sprite");
+				Editor->AddMessage("\"Name reflected change\" in Sprite");
 			}
 		}
 	}
@@ -409,17 +409,17 @@ void Receiver::InvokeDeleteCommand(bool withChild)
 	DeleteCommand* command = new DeleteCommand;
 	if (command)
 	{
-		command->SetModelEditer(client_);
+		command->SetModelEditor(client_);
 		command->SetWithChild(withChild);
 		command->SetReceiver(this);
 		command->Invoke();
 
 		if (client_)
 		{
-			if (const auto& editer = client_->GetEditer())
+			if (const auto& Editor = client_->GetEditor())
 			{
-				editer->AddCommand(command);
-				editer->AddMessage("\"Delete Sprite\"");
+				Editor->AddCommand(command);
+				Editor->AddMessage("\"Delete Sprite\"");
 			}
 		}
 	}

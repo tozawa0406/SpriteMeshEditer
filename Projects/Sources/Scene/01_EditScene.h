@@ -12,7 +12,7 @@
 #include <FrameWork/Object/ObjectManager.h>
 #include <FrameWork/Systems/Camera/CameraManager.h>
 
-class Editer;
+class Editor;
 class EditScene : public BaseScene, public GUI
 {
 public:
@@ -41,7 +41,7 @@ public:
 	virtual void GuiUpdate(void) override;
 	
 private:
-	Editer* editer_;
+	Editor* editor_;
 };
 
 #endif // _EDIT_SCENE_H_

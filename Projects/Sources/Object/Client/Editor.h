@@ -1,22 +1,22 @@
 /*
- * @file		Editer.h
+ * @file		Editor.h
  * @brief		エディタ
  * @author		戸澤翔太
  * @data		2019/03/07
  */
-#ifndef _EDITER_H_
-#define _EDITER_H_
+#ifndef _EDITOR_H_
+#define _EDITOR_H_
 
 #include "Command/ICommand.h"
 #include <FrameWork/Object/Object.h>
 #include <FrameWork/Systems/DebugSetting/GUI.h>
 
-class ModelEditer;
-class Editer : public Object, public GUI
+class ModelEditor;
+class Editor : public Object, public GUI
 {
 public:
-	Editer(void);
-	~Editer(void);
+	Editor(void);
+	~Editor(void);
 
 	virtual void Init(void)		override;
 	virtual void Uninit(void)	override;
@@ -36,7 +36,7 @@ public:
 	void Redo(void);
 
 private:
-	ModelEditer*	modelEditer_;
+	ModelEditor*	modelEditor_;
 	//! コントローラのポインタ
 	Controller*		ctrl_;
 
@@ -45,4 +45,4 @@ private:
 	std::vector<string>		message_;
 };
 
-#endif // _EDITER_H_
+#endif // _EDITOR_H_

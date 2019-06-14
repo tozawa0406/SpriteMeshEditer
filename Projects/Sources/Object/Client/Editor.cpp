@@ -1,40 +1,40 @@
-#include "Editer.h"
-#include "ModelEditer.h"
+#include "Editor.h"
+#include "ModelEditor.h"
 #include <FrameWork/Object/ObjectManager.h>
 #include "../Pivot.h"
 
-Editer::Editer(void) : Object(ObjectTag::STATIC), GUI(Systems::Instance(), this, "editer")
-	, modelEditer_(nullptr)
+Editor::Editor(void) : Object(ObjectTag::STATIC), GUI(Systems::Instance(), this, "Editor")
+	, modelEditor_(nullptr)
 {
 }
 
-Editer::~Editer(void)
+Editor::~Editor(void)
 {
 }
 
-void Editer::Init(void)
+void Editor::Init(void)
 {
 }
 
-void Editer::Setup(void)
+void Editor::Setup(void)
 {
-	modelEditer_ = manager_->Create<ModelEditer>();
-	if (modelEditer_)
+	modelEditor_ = manager_->Create<ModelEditor>();
+	if (modelEditor_)
 	{
-		modelEditer_->SetCtrl(ctrl_);
-		modelEditer_->SetPivot(manager_->Create<Pivot>());
-		modelEditer_->SetEditer(this);
-		modelEditer_->Load();
+		modelEditor_->SetCtrl(ctrl_);
+		modelEditor_->SetPivot(manager_->Create<Pivot>());
+		modelEditor_->SetEditor(this);
+		modelEditor_->Load();
 	}
 }
 
-void Editer::Uninit(void)
+void Editor::Uninit(void)
 {
 	for (auto& c : prevCommand_) { UninitDeletePtr(c); }
 	for (auto& c : nextCommand_) { UninitDeletePtr(c); }
 }
 
-void Editer::Update(void)
+void Editor::Update(void)
 {
 	// キーボード対応
 	if (ctrl_->Press(Input::GAMEPAD_L1, DIK_LCONTROL))
@@ -52,16 +52,16 @@ void Editer::Update(void)
 		}
 		else if (ctrl_->Trigger(Input::GAMEPAD_START, DIK_S))
 		{
-			if (modelEditer_) { modelEditer_->SaveData(); }
+			if (modelEditor_) { modelEditor_->SaveData(); }
 		}
 	}
 }
 
-void Editer::GuiUpdate(void)
+void Editor::GuiUpdate(void)
 {
 }
 
-void Editer::AddCommand(ICommand* command)
+void Editor::AddCommand(ICommand* command)
 {
 	// 戻る処理の追加
 	prevCommand_.insert(prevCommand_.begin(), command);
@@ -71,7 +71,7 @@ void Editer::AddCommand(ICommand* command)
 	nextCommand_.clear();
 }
 
-void Editer::Undo(void)
+void Editor::Undo(void)
 {
 	// 戻るコマンドがあるか
 	if (prevCommand_.size() <= 0) { return; }
@@ -90,7 +90,7 @@ void Editer::Undo(void)
 	AddMessage("performed \"Undo\" process");
 }
 
-void Editer::Redo(void)
+void Editor::Redo(void)
 {
 	// 進むコマンドはあるか
 	if (nextCommand_.size() <= 0) { return; }

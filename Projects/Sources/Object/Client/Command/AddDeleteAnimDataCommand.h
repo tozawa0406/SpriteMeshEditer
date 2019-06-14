@@ -1,10 +1,10 @@
-#ifndef _ADD_DELETE_ANIMATION_COMMAND_H_
-#define _ADD_DELETE_ANIMATION_COMMAND_H_
+#ifndef _ADD_DELETE_ANIM_DATA_COMMAND_H_
+#define _ADD_DELETE_ANIM_DATA_COMMAND_H_
 
 #include "ICommand.h"
 #include "../Receiver.h"
-#include "../ModelEditer.h"
-#include "../AnimationEditer.h"
+#include "../ModelEditor.h"
+#include "../AnimationEditor.h"
 
 class AddDeleteAnimDataCommand : public ICommand
 {
@@ -22,12 +22,13 @@ public:
 	virtual void Redo(void)		override;
 
 	/* @brief	アニメーション情報の設定		*/
-	inline void SetAnimationEditer(AnimationEditer* animationEditer) { animationEditer_ = animationEditer; }
+	inline void SetAnimationEditor(AnimationEditor* animationEditor) { animationEditor_ = animationEditor; }
 	/* @brief	フレーム数の設定				*/
 	inline void SetFrame(int frame) { frame_	= frame;	}
 	/* @brief	追加処理か削除処理か			*/
 	inline void SetAdd(bool add)	{ add_		= add;		}
 
+	/* @brief	同じフレームにある前回のアニメーションの取得	*/
 	void GetPrevAnim(void);
 
 private:
@@ -39,13 +40,15 @@ private:
 
 	//! アニメーション情報
 	SPRITE_MESH_ANIMATION	anim_;
+	//! 同フレームの前回のアニメーション
 	SPRITE_MESH_ANIMATION	prevAnim_;
 	//! アニメーションのフレーム数
 	int					frame_;
 	//! 追加処理か削除処理か
 	bool				add_;
 
-	AnimationEditer*	animationEditer_;
+	//! エディタ
+	AnimationEditor*	animationEditor_;
 };
 
-#endif // _ADD_DELETE_ANIMATION_COMMAND_H_
+#endif // _ADD_DELETE_ANIM_DATA_COMMAND_H_

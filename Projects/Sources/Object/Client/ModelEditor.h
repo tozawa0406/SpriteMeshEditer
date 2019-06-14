@@ -1,11 +1,11 @@
 /*
- * @file		ModelEditer.h
+ * @file		ModelEditor.h
  * @brief		モデルエディタ
  * @author		戸澤翔太
  * @data		2019/03/07
  */
-#ifndef _MODEL_EDITER_H_
-#define _MODEL_EDITER_H_
+#ifndef _MODEL_EDITOR_H_
+#define _MODEL_EDITOR_H_
 
 #include "Command/ICommand.h"
 #include <FrameWork/Object/Object.h>
@@ -14,15 +14,15 @@
 
 class Pivot;
 class Receiver;
-class Editer;
-class AnimationEditer;
-class ModelEditer : public Object, public GUI
+class Editor;
+class AnimationEditor;
+class ModelEditor : public Object, public GUI
 {
 public:
 	/* @brief	コンストラクタ		*/
-	ModelEditer(void);
+	ModelEditor(void);
 	/* @brief	デストラクタ		*/
-	virtual ~ModelEditer(void);
+	virtual ~ModelEditor(void);
 
 	/* @brief	初期化処理			*/
 	virtual void Init(void)		override;
@@ -57,8 +57,8 @@ public:
 	/* @brief	セーブ		*/
 	void SaveData(void);
 
-	inline void SetEditer(Editer* editer) { editer_ = editer; }
-	inline Editer* GetEditer(void) { return editer_; }
+	inline void SetEditor(Editor* editor) { editor_ = editor; }
+	inline Editor* GetEditor(void) { return editor_; }
 
 private:
 	/* @brief	インスペクタの描画	*/
@@ -102,9 +102,9 @@ private:
 
 	//! コントローラのポインタ
 	Controller*		ctrl_;
-	Editer*			editer_;
+	Editor*			editor_;
 	//! アニメーション
-	AnimationEditer* animation_;
+	AnimationEditor* animation_;
 };
 
-#endif // _MODEL_EDITER_H_
+#endif // _MODEL_EDITOR_H_

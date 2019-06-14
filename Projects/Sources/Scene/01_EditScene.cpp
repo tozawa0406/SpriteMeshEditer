@@ -3,13 +3,13 @@
 
 #include "../Object/Client/Command/PositionCommand.h"
 
-#include "../Object/Client/Editer.h"
+#include "../Object/Client/Editor.h"
 #include "../Object/Pivot.h"
 
 #include "../Camera/LookCamera.h"
 
 EditScene::EditScene(void) : GUI(Systems::Instance(), nullptr, "SceneEdit")
-	, editer_(nullptr)
+	, editor_(nullptr)
 {
 }
 
@@ -39,11 +39,11 @@ void EditScene::Init(SceneList sceneNum)
 		camera->SetPosition(VECTOR3(0, 0, -100));
 	}
 
-	editer_ = objectManager_->Create<Editer>();
-	if (editer_)
+	editor_ = objectManager_->Create<Editor>();
+	if (editor_)
 	{
-		editer_->SetCtrl(GetCtrl(0));
-		editer_->Setup();
+		editor_->SetCtrl(GetCtrl(0));
+		editor_->Setup();
 	}
 }
 

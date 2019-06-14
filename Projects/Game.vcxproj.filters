@@ -95,20 +95,20 @@
     <ClCompile Include="Sources\Scene\01_EditScene.cpp">
       <Filter>Source\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Sources\Object\Client\ModelEditer.cpp">
-      <Filter>Source\Object\Client</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Object\Client\AnimationEditer.cpp">
-      <Filter>Source\Object\Client</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\Object\Client\Editer.cpp">
-      <Filter>Source\Object\Client</Filter>
-    </ClCompile>
     <ClCompile Include="Sources\Object\Client\Command\RangeCommand.cpp">
       <Filter>Source\Object\Client\Command</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Object\Client\Command\AddDeleteAnimDataCommand.cpp">
       <Filter>Source\Object\Client\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Client\Editor.cpp">
+      <Filter>Source\Object\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Client\ModelEditor.cpp">
+      <Filter>Source\Object\Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object\Client\AnimationEditor.cpp">
+      <Filter>Source\Object\Client</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -193,20 +193,20 @@
     <ClInclude Include="Sources\Scene\01_EditScene.h">
       <Filter>Source\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Object\Client\ModelEditer.h">
-      <Filter>Source\Object\Client</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Object\Client\AnimationEditer.h">
-      <Filter>Source\Object\Client</Filter>
-    </ClInclude>
-    <ClInclude Include="Sources\Object\Client\Editer.h">
-      <Filter>Source\Object\Client</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Object\Client\Command\RangeCommand.h">
       <Filter>Source\Object\Client\Command</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Object\Client\Command\AddDeleteAnimDataCommand.h">
       <Filter>Source\Object\Client\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\Editor.h">
+      <Filter>Source\Object\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\ModelEditor.h">
+      <Filter>Source\Object\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object\Client\AnimationEditor.h">
+      <Filter>Source\Object\Client</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

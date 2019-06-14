@@ -1,32 +1,32 @@
 /*
- * @file		AnimationEditer.h
+ * @file		AnimationEditor.h
  * @brief		アニメーションエディタ
  * @author		戸澤翔太
  * @data		2019/03/07
  */
-#ifndef _ANIMATION_EDITER_H_
-#define _ANIMATION_EDITER_H_
+#ifndef _ANIMATION_Editor_H_
+#define _ANIMATION_Editor_H_
 
 #include "Command/ICommand.h"
 #include <FrameWork/Object/Object.h>
 #include <FrameWork/Systems/DebugSetting/GUI.h>
 #include "SpriteMesh.h"
 
-struct ANIMATION_EDITER_DATA
+struct ANIMATION_Editor_DATA
 {
 	int min;
 	int max;
 };
 
-class Editer;
+class Editor;
 class Receiver;
-class AnimationEditer : public Object, public GUI
+class AnimationEditor : public Object, public GUI
 {
 public:
 	/* @brief	コンストラクタ		*/
-	AnimationEditer(void);
+	AnimationEditor(void);
 	/* @brief	デストラクタ		*/
-	virtual ~AnimationEditer(void);
+	virtual ~AnimationEditor(void);
 
 	/* @brief	初期化処理			*/
 	virtual void Init(void)		override;
@@ -37,13 +37,15 @@ public:
 
 	virtual void GuiUpdate(void) override;
 
+	void Load(void);
+
 	void CreateAnimation(void);
 
-	const ANIMATION_EDITER_DATA& GetAnimationEditerData(void) { return beforeData_; }
-	void SetAnimationEditerData(const ANIMATION_EDITER_DATA& data) { beforeData_ = data; }
+	const ANIMATION_Editor_DATA& GetAnimationEditorData(void) { return beforeData_; }
+	void SetAnimationEditorData(const ANIMATION_Editor_DATA& data) { beforeData_ = data; }
 
 	void SetReceiver(Receiver* receiver)	{ receiver_ = receiver; }
-	void SetEditer(Editer* editer)			{ editer_	= editer;	}
+	void SetEditor(Editor* editor)			{ editor_	= editor;	}
 	void SetCtrl(Controller* ctrl)			{ ctrl_		= ctrl;		}
 
 	inline void SetRange(int range, bool min)	{ (min) ? minFrame_ = range : maxFrame_ = range;	}
@@ -54,7 +56,11 @@ public:
 
 	void HierarchyView(void);
 
+	void SaveData(void);
+
 private:
+	void LoadData(void);
+
 	void ChangeRange(int& range, bool min);
 
 	void GetChildrenAnim(SPRITE_MESH_ANIMATION& tempAnimation, Receiver& receiver);
@@ -65,12 +71,12 @@ private:
 	int				maxFrame_;
 	bool			regeneration_;
 
-	ANIMATION_EDITER_DATA beforeData_;
+	ANIMATION_Editor_DATA beforeData_;
 
 	Receiver*		receiver_;
-	Editer*			editer_;
+	Editor*			editor_;
 
 	Controller*		ctrl_;
 };
 
-#endif // _ANIMATION_EDITER_H_
+#endif // _ANIMATION_Editor_H_

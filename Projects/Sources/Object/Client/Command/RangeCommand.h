@@ -3,8 +3,8 @@
 
 #include "ICommand.h"
 #include "../Receiver.h"
-#include "../ModelEditer.h"
-#include "../AnimationEditer.h"
+#include "../ModelEditor.h"
+#include "../AnimationEditor.h"
 
 class RangeCommand : public ICommand
 {
@@ -22,7 +22,7 @@ public:
 	virtual void Redo(void)		override;
 
 	/* @brief	アニメーション情報の設定		*/
-	void SetAnimationEditer(AnimationEditer* animationEditer) { animationEditer_ = animationEditer; }
+	void SetAnimationEditor(AnimationEditor* animationEditor) { animationEditor_ = animationEditor; }
 	/* @brief	最大値or最小値の設定			*/
 	void SetMin(bool min) { min_ = min; }
 
@@ -31,7 +31,7 @@ private:
 	int		nextRange_;
 	bool	min_;
 
-	AnimationEditer* animationEditer_;
+	AnimationEditor* animationEditor_;
 };
 
 #endif // _RANGE_COMMAND_H_

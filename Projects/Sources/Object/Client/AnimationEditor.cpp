@@ -60,7 +60,6 @@ void AnimationEditor::GuiUpdate(void)
 		if (ImGui::Button(temp.c_str(), ImVec2(48, 38))) { regeneration_ = !regeneration_; }
 		ImGui::SameLine();
 		ImGui::SliderInt("##frame", &currentFrame_, minFrame_, maxFrame_);
-		if (receiver_) { receiver_->Animation(currentFrame_); }
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 		ChangeRange(maxFrame_, false);

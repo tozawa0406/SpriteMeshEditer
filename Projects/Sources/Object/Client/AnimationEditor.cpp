@@ -231,8 +231,6 @@ void AnimationEditor::CreateAnimation(void)
 {
 	if (!receiver_) { return; }
 
-	std::vector<SPRITE_MESH_TRANSFORM> tempAnimData = receiver_->GetAnimTransform();
-
 	SPRITE_MESH_ANIMATION tempAnimation;
 	tempAnimation.animationName = animationName_;
 	tempAnimation.min = minFrame_;

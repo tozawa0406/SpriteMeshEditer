@@ -74,6 +74,7 @@ void LoadSpriteMesh::SetSpriteMeshVer1_0(IOFile& file, const SPRITE_MESH_RESOURC
 {
 	size_t size = spriteMesh.name.size();
 	file.WriteParam(&size, sizeof(size_t));
+
 	file.WriteParam(&spriteMesh.name[0], sizeof(char) * size);
 	file.WriteParam(&spriteMesh.transform.position, sizeof(VECTOR3));
 	file.WriteParam(&spriteMesh.transform.rotation, sizeof(VECTOR3));

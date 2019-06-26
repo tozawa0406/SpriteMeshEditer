@@ -577,7 +577,7 @@ void Receiver::AddAnim(int frame, const SPRITE_MESH_ANIM_DATA& anim, int animNum
 
 void Receiver::CreateAnimation(SPRITE_MESH_ANIMATION& animation)
 {
-	for (auto anim : animation_)
+	for (auto& anim : animation_)
 	{
 		if (anim.animationName == animation.animationName)
 		{

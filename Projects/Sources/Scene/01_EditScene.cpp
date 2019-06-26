@@ -36,7 +36,7 @@ void EditScene::Init(SceneList sceneNum)
 	LookCamera* camera = cameraManager_->Create<LookCamera>();
 	if (camera)
 	{
-		camera->SetPosition(VECTOR3(0, 0, -100));
+		camera->SetPosition(VECTOR3(0, 0, -10));
 	}
 
 	editor_ = objectManager_->Create<Editor>();

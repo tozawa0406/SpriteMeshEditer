@@ -56,8 +56,11 @@ HRESULT DefaultShader::SetParam(const MATRIX& mtx, const COLOR& color, VECTOR4 t
 	}
 
 	const ZTexture* depth = (ZTexture*)manager_->GetShader(Shader::ENUM::ZTEXTURE);
-	cbuf.lightView = depth->GetLightView();
-	cbuf.lightProj = depth->GetLightProj();
+	if (depth)
+	{
+		cbuf.lightView = depth->GetLightView();
+		cbuf.lightProj = depth->GetLightProj();
+	}
 	
 	string temp = "";
 	int size[8] = { sizeof(MATRIX),sizeof(MATRIX), sizeof(MATRIX), sizeof(VECTOR4), sizeof(VECTOR4), sizeof(VECTOR4), sizeof(MATRIX), sizeof(MATRIX) };

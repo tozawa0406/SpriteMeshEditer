@@ -14,6 +14,7 @@ AnimationEditor::AnimationEditor(void) : Object(ObjectTag::STATIC), GUI(Systems:
 	, regeneration_(false)
 	, receiver_(nullptr)
 	, ctrl_(nullptr)
+	, currentPose_(false)
 {
 }
 
@@ -57,16 +58,17 @@ void AnimationEditor::GuiUpdate(void)
 		ImGui::SameLine();
 		string temp = (regeneration_) ? "||" : ">";
 		ImGui::PushItemWidth(400);
-		if (ImGui::Button(temp.c_str(), ImVec2(48, 38))) { regeneration_ = !regeneration_; }
+		if (ImGui::Button(temp.c_str(), ImVec2(48, 22))) { regeneration_ = !regeneration_; }
 		ImGui::SameLine();
 		ImGui::SliderInt("##frame", &currentFrame_, minFrame_, maxFrame_);
+		if (currentPose_) { receiver_->Animation(currentFrame_); }
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
 		ChangeRange(maxFrame_, false);
 
 		if (receiver_)
 		{
-			if (ImGui::Button("Add", ImVec2(68, 38)))
+			if (ImGui::Button("Add", ImVec2(68, 22)))
 			{
 				if (receiver_) 
 				{
@@ -97,7 +99,7 @@ void AnimationEditor::GuiUpdate(void)
 
 				string button = "pose##";
 				button += static_cast<char>(cnt);
-				if (ImGui::Button(button.c_str(), ImVec2(48, 38)))
+				if (ImGui::Button(button.c_str(), ImVec2(48, 22)))
 				{
 					currentFrame_ = a.frame;
 					receiver_->Animation(currentFrame_);
@@ -131,12 +133,33 @@ void AnimationEditor::GuiUpdate(void)
 					}
 				}
 
-				ImGui::TextAlign("    ");
+				if (cnt == 1)
+				{
+					string tempName = (!currentPose_) ? "CrtPose" : "Resume";
+					if (ImGui::Button(tempName.c_str(), ImVec2(68, 22)))
+					{
+						currentPose_ = !currentPose_;
+					}
+					ImGui::SameLine();
+				}
+				else
+				{
+					ImGui::TextAlign("        ");
+				}
 			}
 
 			if (ImGui::Button("CreateAnimation"))
 			{
 				CreateAnimation();
+			}
+
+			if (cnt == 0)
+			{
+				string tempName = (!currentPose_) ? "CrtPose" : "Resume";
+				if (ImGui::Button(tempName.c_str(), ImVec2(68, 22)))
+				{
+					currentPose_ = !currentPose_;
+				}
 			}
 		}
 	}

@@ -56,10 +56,10 @@ HRESULT Dx11RenderTarget::Init(void)
 	hr = CreateShadowmapRenderTarget();
 	if (window->ErrorMessage("シャドウマップの初期化に失敗しました。", "エラー", hr)) { return hr; }
 
-	cascade_ = new CascadeManager;
+//	cascade_ = new CascadeManager;
 	if (cascade_)
 	{
-		cascade_->Init();
+//		cascade_->Init();
 	}
 
 	return S_OK;
@@ -322,7 +322,7 @@ void Dx11RenderTarget::BeginDrawShadow(int i)
 	const auto& context = directX11_->GetDeviceContext();
 	if (!context) { return; }
 
-	if (i == 0) { cascade_->ComputeShadowMatrixPSSM(); }
+//	if (i == 0) { cascade_->ComputeShadowMatrixPSSM(); }
 
 	ID3D11RenderTargetView* pRTV = nullptr;
 	context->OMSetRenderTargets(1, &pRTV, shadowState_.pDSV[i]);

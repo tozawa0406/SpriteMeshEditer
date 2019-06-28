@@ -150,6 +150,7 @@ void ObjectRendererManager::Draw(void)
 
 void ObjectRendererManager::DrawShadow(void)
 {
+	return;
 	const auto& graphics = systems_->GetGraphics();
 	const auto& dev = graphics->GetWrapper();
 

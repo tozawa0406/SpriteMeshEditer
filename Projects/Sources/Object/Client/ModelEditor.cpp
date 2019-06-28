@@ -72,9 +72,9 @@ void ModelEditor::Update(void)
 
 void ModelEditor::GuiUpdate(void)
 {
-	float padding = 50;
-	ImGui::SetNextWindowPos(ImVec2(Windows::WIDTH - padding - 450, padding), ImGuiSetCond_Once);
-	ImGui::SetNextWindowSize(ImVec2(450, 500), ImGuiSetCond_Once);
+	float padding = 30;
+	ImGui::SetNextWindowPos(ImVec2(Windows::WIDTH - padding - 350, padding), ImGuiSetCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(350, 400), ImGuiSetCond_Once);
 
 	if (ImGui::Begin("Inspector"))
 	{
@@ -83,7 +83,7 @@ void ModelEditor::GuiUpdate(void)
 	ImGui::End();
 
 	float w = Windows::WIDTH - padding * 2;
-	float h = 250;
+	float h = 140;
 	ImGui::SetNextWindowPos(ImVec2(Half(Windows::WIDTH) - Half(w), (Windows::HEIGHT - padding) - h), ImGuiSetCond_Once);
 	ImGui::SetNextWindowSize(ImVec2(w, h), ImGuiSetCond_Once);
 
@@ -94,7 +94,7 @@ void ModelEditor::GuiUpdate(void)
 	ImGui::End();
 
 	ImGui::SetNextWindowPos(ImVec2(padding, padding), ImGuiSetCond_Once);
-	ImGui::SetNextWindowSize(ImVec2(450, 700), ImGuiSetCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(350, 500), ImGuiSetCond_Once);
 
 	if (ImGui::Begin("Hierarchy", 0, ImGuiWindowFlags_MenuBar))
 	{
@@ -190,7 +190,7 @@ void ModelEditor::HierarchyView(void)
 
 		// ヒエラルキーにスプライトの一覧描画
 		ImGui::Dummy(ImVec2(0, 5));
-		if (ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(400, 400)))
+		if (ImGui::BeginChild(ImGui::GetID((void*)0), ImVec2(400, 300)))
 		{
 			for (auto& list : receiverList_)
 			{

@@ -56,7 +56,7 @@ HRESULT GuiManager::Init(void)
 	ImGui::StyleColorsDark();
 
 	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontFromFileTTF("Resource/Data/ProggyClean.ttf", 32.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
+	io.Fonts->AddFontFromFileTTF("Resource/Data/ProggyClean.ttf", 16.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
 
 	obj_.clear();
 #endif

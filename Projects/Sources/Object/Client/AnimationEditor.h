@@ -70,6 +70,7 @@ private:
 	int				minFrame_;
 	int				maxFrame_;
 	bool			regeneration_;
+	bool			currentPose_;
 
 	ANIMATION_Editor_DATA beforeData_;
 

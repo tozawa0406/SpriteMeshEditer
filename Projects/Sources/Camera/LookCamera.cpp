@@ -79,8 +79,8 @@ void LookCamera::Input(void)
 // GUI
 void LookCamera::GuiUpdate(void)
 {
-	ImGui::SetNextWindowSize(ImVec2(450, 160), ImGuiSetCond_Once);
-	ImGui::SetNextWindowPos(ImVec2(Windows::WIDTH - 450 - 50.f, Half(Windows::HEIGHT) + 40.f), ImGuiSetCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(350, 100), ImGuiSetCond_Once);
+	ImGui::SetNextWindowPos(ImVec2(Windows::WIDTH - 350 - 30.f, Half(Windows::HEIGHT) + 80.f), ImGuiSetCond_Once);
 	if (ImGui::Begin("camera"))
 	{
 		ImGui::InputFloat3("position", position_);

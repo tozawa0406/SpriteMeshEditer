@@ -33,9 +33,9 @@ public:
 	//! @def	FPSの設定
 	static constexpr int  FPS			= 60;
 	//! @def	ウィンドウ横サイズ
-	static constexpr int  WIDTH			= 1920;
+	static constexpr int  WIDTH			= 1280;
 	//! @def	ウィンドウ縦サイズ
-	static constexpr int  HEIGHT		= 1080;
+	static constexpr int  HEIGHT		= 720;
 
 	/* @brief	コンストラクタ		*/
 	Windows(void);

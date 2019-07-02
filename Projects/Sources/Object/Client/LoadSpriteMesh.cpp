@@ -20,6 +20,10 @@ SPRITE_MESH_RESOURCE LoadSpriteMesh::Load(string fileName, string& version)
 		{
 			GetSpriteMeshVer1_0(file, temp);
 		}
+		else
+		{
+			version = notSupport_ + " " + ver;
+		}
 
 		// èIóπ
 		file.CloseFile();
@@ -118,6 +122,10 @@ SPRITE_MESH_ANIMATION LoadSpriteMesh::LoadAnimation(string fileName, string& ver
 		if (ver == "ver.1.0")
 		{
 			GetSpriteAnimationVer1_0(file, temp.data);
+		}
+		else
+		{
+			version = notSupport_ + " " + ver;
 		}
 
 		// èIóπ

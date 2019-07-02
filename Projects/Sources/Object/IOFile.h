@@ -42,6 +42,9 @@ public:
 private:
 	//! ファイルポインタ
 	std::fstream fs_;
+
+	int current_;
+	int end_;
 };
 
 #endif // _IO_FILE_H_

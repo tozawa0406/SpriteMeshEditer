@@ -11,6 +11,8 @@ static const string SPRITE_MESH_ANIMATION_EXTENSION = "spax";
 class LoadSpriteMesh
 {
 public:
+	inline const string& GetNotSupport(void) { return notSupport_; }
+
 	SPRITE_MESH_RESOURCE Load(string fileName, string& version);
 	void Save(string fileName, const SPRITE_MESH_RESOURCE& resource);
 
@@ -18,6 +20,8 @@ public:
 	void Save(string fileName, const SPRITE_MESH_ANIMATION& animation);
 
 private:
+	string notSupport_ = "Not Support";
+
 	void GetSpriteMeshVer1_0(IOFile& file, SPRITE_MESH_RESOURCE& spriteMesh);
 	void SetSpriteMeshVer1_0(IOFile& file, const SPRITE_MESH_RESOURCE& spriteMesh);
 

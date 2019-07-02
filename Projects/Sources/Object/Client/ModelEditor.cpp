@@ -346,7 +346,7 @@ void ModelEditor::SaveData(void)
 		LoadSpriteMesh loader;
 		loader.Save(directory, temp);
 
-		editor_->AddMessage("\"Create " + name + "." + SPRITE_MESH_EXTENSION + "\"");
+		editor_->AddMessage("Create \"" + name + "." + SPRITE_MESH_EXTENSION + "\"");
 		if (animation_) { animation_->SaveData(); }
 		editor_->AddMessage("\"Save\" is complete");
 	}
@@ -378,16 +378,22 @@ void ModelEditor::LoadData(void)
 	name_.erase(name_.begin() + num);
 	name_.resize(256);
 
+	if (!editor_) { return; }
+
 	LoadSpriteMesh loader;
 
 	string version = "";
 	SPRITE_MESH_RESOURCE temp =  loader.Load(list[0], version);
 
-	CreateReceiver(&temp);
-
-	if (editor_)
+	if (version.find(loader.GetNotSupport()))
 	{
-		editor_->AddMessage("\"Load\" is complete " + version);
+		CreateReceiver(&temp);
+
+		editor_->AddMessage("\"" + list[0] + "\" loading is complete " + version);
+	}
+	else
+	{
+		editor_->AddMessage(list[0] + " is " + version);
 	}
 }
 

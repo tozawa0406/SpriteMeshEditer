@@ -302,7 +302,8 @@ void AnimationEditor::SaveData(void)
 	for (auto animation : receiver_->GetAnimation())
 	{
 		loader.Save("Export/" + animation.animationName + "." + SPRITE_MESH_ANIMATION_EXTENSION, animation);
-		editor_->AddMessage(animation.animationName + " is saved compleate");
+
+		editor_->AddMessage("Create \"" + animation.animationName + "." + SPRITE_MESH_ANIMATION_EXTENSION + "\"");
 	}
 }
 
@@ -316,6 +317,7 @@ void AnimationEditor::LoadData(void)
 	search.Search(directory, SPRITE_MESH_ANIMATION_EXTENSION, list);
 	if (list.size() <= 0) { return; }
 
+	if (!editor_) { return; }
 	for (auto animName : list)
 	{
 		LoadSpriteMesh loader;
@@ -328,10 +330,15 @@ void AnimationEditor::LoadData(void)
 			editor_->AddMessage("Load animation faild, not mesh");
 			return; 
 		}
-		receiver_->CreateAnimation(temp);
-		if (editor_)
+
+		if (version.find(loader.GetNotSupport()))
 		{
-			editor_->AddMessage("\"Load\" animation " + temp.animationName);
+			receiver_->CreateAnimation(temp);
+			editor_->AddMessage("\"" + animName + "\" loading is complete " + version);
+		}
+		else
+		{
+			editor_->AddMessage(animName + " is " + version);
 		}
 	}
 }

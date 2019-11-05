@@ -43,7 +43,7 @@ static constexpr uint UINT_MAX = 0xffffffff;
 #endif
 static constexpr float PI = 3.14f;
 
-static constexpr float LAYER_DIST = -0.005f;
+static constexpr float LAYER_DIST = -0.0001f;
 
 //-----------------------------------------------------------------------------
 //	ç\ë¢ëÃíËã`

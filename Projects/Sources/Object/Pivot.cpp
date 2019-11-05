@@ -16,7 +16,7 @@ void Pivot::Init(void)
 	if (pivot_)
 	{
 		pivot_->Init(static_cast<int>(Resources::Texture::Base::PIVOT), &transform_);
-		transform_.position.z = -1;
+		pivot_->SetLayer(255);
 		transform_.scale = 0.1f;
 
 		MATERIAL m;

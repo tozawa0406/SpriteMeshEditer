@@ -26,7 +26,13 @@ public:
 	virtual void Update(void)	override;
 
 	/* @brief	トランスフォームの設定	*/
-	void SetTransform(const Transform& transform) { transform_.parent = &transform; }
+	void SetTransform(const Transform& transform) 
+	{
+		transform_.parent = &transform;
+		transform_.scale.x = 0.1f / transform.scale.x;
+		transform_.scale.y = 0.1f / transform.scale.y;
+		transform_.scale.z = 0.1f / transform.scale.z;
+	}
 
 private:
 	//! トランスフォーム

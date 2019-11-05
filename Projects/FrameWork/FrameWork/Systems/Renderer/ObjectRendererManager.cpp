@@ -11,6 +11,8 @@
 #include "../../Graphics/DirectX11/DirectX11.h"
 #include "Shader/Default.h"
 #include "Shader/CascadeShadow.h"
+//#include <iostream>
+#include <algorithm>
 
 void ObjectRendererManager::Add(ObjectRenderer* obj)
 {
@@ -20,47 +22,52 @@ void ObjectRendererManager::Add(ObjectRenderer* obj)
 
 void ObjectRendererManager::Sort(void)
 {
-	int size = (int)obj_.size() - 1;
-
-	std::vector<float> wVec;
-	VECTOR3 wPos;
-	VECTOR3 cameraPos;
-	if (!systems_->GetSceneManager()) { return; }
-	if (const auto& scene = systems_->GetSceneManager()->GetScene())
-	{
-		cameraPos = scene->GetCameraManager()->GetMainCamera()->GetPosition();
-	}
-
-	for (auto obj : obj_)
-	{
-		float vecTemp = 0;
-
-		wPos = obj->GetTransform()->position - cameraPos;
-		vecTemp = VecLengthSq(wPos);
-		if (obj->GetType() == ObjectRenderer::RendererType::SPRITE)
+	std::sort(obj_.begin(), obj_.end(), [](const ObjectRenderer* a, const ObjectRenderer* b) 
 		{
-			vecTemp = obj->GetTransform()->position.z - cameraPos.z;
-			vecTemp -= LAYER_DIST * static_cast<SpriteRenderer*>(obj)->GetLayer();
-		}
-		wVec.emplace_back(vecTemp);
-	}
+			return ((const SpriteRenderer*)a)->GetLayer() > ((const SpriteRenderer*)b)->GetLayer();
+		});
 
-	bool sort = false;
-	for (;;)
-	{
-		sort = false;
-		for (int i = 0; i < size; ++i)
-		{
-			if (obj_[i] && !obj_[i]->IsSort()) { continue; }
-			if (wVec[i] < wVec[i + 1])
-			{
-				Swap(obj_[i], obj_[i + 1]);
-				Swap(wVec[i], wVec[i + 1]);
-				sort = true;
-			}
-		}
-		if (!sort) { break; }
-	}
+	//int size = (int)obj_.size() - 1;
+
+	//std::vector<float> wVec;
+	//VECTOR3 wPos;
+	//VECTOR3 cameraPos;
+	//if (!systems_->GetSceneManager()) { return; }
+	//if (const auto& scene = systems_->GetSceneManager()->GetScene())
+	//{
+	//	cameraPos = scene->GetCameraManager()->GetMainCamera()->GetPosition();
+	//}
+
+	//for (auto obj : obj_)
+	//{
+	//	float vecTemp = 0;
+
+	//	wPos = obj->GetTransform()->position - cameraPos;
+	//	vecTemp = VecLengthSq(wPos);
+	//	if (obj->GetType() == ObjectRenderer::RendererType::SPRITE)
+	//	{
+	//		vecTemp = obj->GetTransform()->position.z - cameraPos.z;
+	//		vecTemp -= LAYER_DIST * static_cast<SpriteRenderer*>(obj)->GetLayer();
+	//	}
+	//	wVec.emplace_back(vecTemp);
+	//}
+
+	//bool sort = false;
+	//for (;;)
+	//{
+	//	sort = false;
+	//	for (int i = 0; i < size; ++i)
+	//	{
+	//		if (obj_[i] && !obj_[i]->IsSort()) { continue; }
+	//		if (wVec[i] < wVec[i + 1])
+	//		{
+	//			Swap(obj_[i], obj_[i + 1]);
+	//			Swap(wVec[i], wVec[i + 1]);
+	//			sort = true;
+	//		}
+	//	}
+	//	if (!sort) { break; }
+	//}
 }
 
 void ObjectRendererManager::FastDraw(void)

@@ -163,42 +163,82 @@ MATRIX& MATRIX::Translation(const VECTOR2& t)
 
 MATRIX& MATRIX::Rotation(const VECTOR3& r)
 {
-	MATRIX temp;
-	temp.Identity();
-	temp._11 = cosf(r.y) * cosf(r.z);
-	temp._12 = -cosf(r.y) * sinf(r.z);
-	temp._13 = sinf(r.y);
-	temp._21 = cosf(r.x) * sinf(r.z) + sinf(r.x) * sinf(r.y) * cosf(r.z);
-	temp._22 = cosf(r.x) * cosf(r.z) - sinf(r.x) * sinf(r.y) * sinf(r.z);
-	temp._23 = -sinf(r.x) * cosf(r.y);
-	temp._31 = sinf(r.x) * sinf(r.z) - cosf(r.x) * sinf(r.y) * cosf(r.z);
-	temp._32 = sinf(r.x) * cosf(r.z) + cosf(r.x) * sinf(r.y) * sinf(r.z);
-	temp._33 = cosf(r.x) * cosf(r.y);
-	*this *= temp;
+	MATRIX tempX;
+	tempX.Identity();
+	tempX._22 = cosf(-r.x);
+	tempX._23 = -sinf(-r.x);
+	tempX._32 = sinf(-r.x);
+	tempX._33 = cosf(-r.x);
+
+	MATRIX tempY;
+	tempY.Identity();
+	tempY._11 = cosf(r.y);
+	tempY._13 = sinf(r.y);
+	tempY._31 = -sinf(r.y);
+	tempY._33 = cosf(r.y);
+
+	MATRIX tempZ;
+	tempZ.Identity();
+	tempZ._11 = cosf(r.z);
+	tempZ._12 = -sinf(r.z);
+	tempZ._21 = sinf(r.z);
+	tempZ._22 = cosf(r.z);
+
+
+	//MATRIX temp;
+	//temp.Identity();
+	//temp._11 = cosf(r.y) * cosf(r.z);
+	//temp._12 = -cosf(r.y) * sinf(r.z);
+	//temp._13 = sinf(r.y);
+	//temp._21 = cosf(-r.x) * sinf(r.z) + sinf(-r.x) * sinf(r.y) * cosf(r.z);
+	//temp._22 = cosf(-r.x) * cosf(r.z) - sinf(-r.x) * sinf(r.y) * sinf(r.z);
+	//temp._23 = -sinf(-r.x) * cosf(r.y);
+	//temp._31 = sinf(-r.x) * sinf(r.z) - cosf(-r.x) * sinf(r.y) * cosf(r.z);
+	//temp._32 = sinf(-r.x) * cosf(r.z) + cosf(-r.x) * sinf(r.y) * sinf(r.z);
+	//temp._33 = cosf(-r.x) * cosf(r.y);
+	*this *= tempX * tempY * tempZ;
 
 	return *this;
 }
 
 MATRIX& MATRIX::Rotation(const VECTOR3& r, float angle)
 {
-	MATRIX temp;
-	temp.Identity();
-
 	float cos = cosf(angle);
 	float cosInv = 1.0f - cos;
 	float sin = sinf(angle);
 
-	temp._11 = r.x * r.x * cosInv + cos;
-	temp._12 = r.x * r.y * cosInv - r.z * sin;
-	temp._13 = r.x * r.z * cosInv + r.y * sin;
-	temp._21 = r.x * r.y * cosInv + r.z * sin;
-	temp._22 = r.y * r.y * cosInv + cos;
-	temp._23 = r.y * r.z * cosInv - r.x * sin;
-	temp._31 = r.x * r.z * cosInv - r.y * sin;
-	temp._32 = r.y * r.z * cosInv + r.x * sin;
-	temp._33 = r.z * r.z * cosInv + cos;
+	MATRIX tempX;
+	tempX.Identity();
+	tempX._22 = cos;
+	tempX._23 = -sin;
+	tempX._32 = sin;
+	tempX._33 = cos;
 
-	*this *= temp;
+	MATRIX tempY;
+	tempY.Identity();
+	tempY._11 = cos;
+	tempY._13 = sin;
+	tempY._31 = -sin;
+	tempY._33 = cos;
+
+	MATRIX tempZ;
+	tempZ.Identity();
+	tempZ._11 = cos;
+	tempZ._12 = -sin;
+	tempZ._21 = sin;
+	tempZ._22 = cos;
+
+	//temp._11 = r.x * r.x * cosInv + cos;
+	//temp._12 = r.x * r.y * cosInv - r.z * sin;
+	//temp._13 = r.x * r.z * cosInv + r.y * sin;
+	//temp._21 = r.x * r.y * cosInv + r.z * sin;
+	//temp._22 = r.y * r.y * cosInv + cos;
+	//temp._23 = r.y * r.z * cosInv - r.x * sin;
+	//temp._31 = r.x * r.z * cosInv - r.y * sin;
+	//temp._32 = r.y * r.z * cosInv + r.x * sin;
+	//temp._33 = r.z * r.z * cosInv + cos;
+
+	*this *= tempX * tempY * tempZ;
 
 	return *this;
 }

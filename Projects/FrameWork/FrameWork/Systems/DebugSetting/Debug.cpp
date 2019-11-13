@@ -21,7 +21,6 @@ Debug::~Debug(void)
  * @return	初期化に成功したかどうかをHRESULTで返す		*/
 HRESULT Debug::Init(void)
 {
-#ifdef _SELF_DEBUG
 	// guiのマネージャーの生成
 	gui_ = new GuiManager;
 	if (gui_)
@@ -32,7 +31,6 @@ HRESULT Debug::Init(void)
 			return E_FAIL;
 		}
 	}
-#endif
 
 	return S_OK; 
 }
@@ -43,9 +41,7 @@ HRESULT Debug::Init(void)
  * @return	なし					*/
 void Debug::Uninit(void)
 {
-#ifdef _SELF_DEBUG
 	UninitDeletePtr(gui_);
-#endif
 }
 
 /* @fn		Update
@@ -78,8 +74,6 @@ void Debug::Draw(void)
  * @return	なし					*/
 void Debug::On(void)
 {
-#ifdef _SELF_DEBUG
 	//フラグの反転
 	debug_ = !debug_;
-#endif
 }

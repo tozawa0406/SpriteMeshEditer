@@ -10,7 +10,6 @@
 
 GUI::GUI(Systems* systems, Object* obj, string name) : guiManager(nullptr)
 {
-#ifdef _SELF_DEBUG
 	this->obj  = obj;
 	this->name = name;
 	this->tag  = name;
@@ -20,16 +19,10 @@ GUI::GUI(Systems* systems, Object* obj, string name) : guiManager(nullptr)
 		this->guiManager = systems->GetDebug()->GetGuiManager();
 		guiManager->Add(this);
 	}
-#else
-	UNREFERENCED_PARAMETER(systems);
-	UNREFERENCED_PARAMETER(obj);
-#endif
 }
 
 //デストラクタ
 GUI::~GUI(void)
 {
-#ifdef _SELF_DEBUG
 	guiManager->Remove(this);
-#endif
 }

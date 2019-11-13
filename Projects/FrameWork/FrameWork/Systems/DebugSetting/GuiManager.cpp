@@ -36,7 +36,6 @@ GuiManager::~GuiManager(void)
 HRESULT GuiManager::Init(void)
 {
 	assert(debug_);
-#ifdef _SELF_DEBUG
 	const auto& window = systems_->GetWindow();
 	if (!window) { return E_FAIL; }
 
@@ -59,7 +58,6 @@ HRESULT GuiManager::Init(void)
 	io.Fonts->AddFontFromFileTTF("Resource/Data/ProggyClean.ttf", 16.0f, nullptr, io.Fonts->GetGlyphRangesJapanese());
 
 	obj_.clear();
-#endif
 	return S_OK;
 }
 
@@ -69,7 +67,6 @@ HRESULT GuiManager::Init(void)
  * @return	なし					*/
 void GuiManager::Uninit(void)
 {
-#ifdef _SELF_DEBUG
 	// オブジェクトリストのクリア
 	for (int i = 0; i < static_cast<int>(obj_.size());)
 	{
@@ -83,7 +80,6 @@ void GuiManager::Uninit(void)
 	}
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
-#endif
 }
 
 /* @fn		GuiUpdate
@@ -96,7 +92,7 @@ void GuiManager::GuiUpdate(void)
 	const auto& window = systems_->GetWindow();
 	if (!window) { return; }
 
-#ifdef _SELF_DEBUG
+
 	// 描画していないなら更新しない(ImGuiがエラーになる)
 	if (!draw_) { return; }
 
@@ -122,12 +118,10 @@ void GuiManager::GuiUpdate(void)
 			obj->GuiUpdate();
 		}
 	}
-#endif
 }
 
 void GuiManager::Update(void)
 {
-#ifdef _SELF_DEBUG
 	GuiUpdate();
 	if (frame_ > 0)
 	{
@@ -137,7 +131,6 @@ void GuiManager::Update(void)
 			frame_ = 0;
 		}
 	}
-#endif
 }
 
 const VECTOR3* GuiManager::GetSelect(void)
@@ -157,7 +150,6 @@ const VECTOR3* GuiManager::GetSelect(void)
 
 void GuiManager::Draw(void)
 {
-#ifdef _SELF_DEBUG
 	if (draw_) { return; }
 	draw_ = true;
 
@@ -172,5 +164,4 @@ void GuiManager::Draw(void)
 		ImGui::Render();
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	}
-#endif
 }

@@ -13,7 +13,6 @@
 //ƒ|ƒŠƒSƒ“•`‰æˆ—
 void ColliderRendererManager::Draw(void)
 {
-#ifdef _SELF_DEBUG
 	if (!systems_->GetDebug()->GetDebug()) { return; }
 
 	const auto& dev = systems_->GetGraphics()->GetWrapper();
@@ -27,7 +26,6 @@ void ColliderRendererManager::Draw(void)
 		}
 	}
 	dev->EndDrawRenderer();
-#endif
 }
 
 
@@ -43,7 +41,6 @@ ColliderRenderer::ColliderRenderer(void) : enable(false), vertexBuffer(0), vnum(
 
 ColliderRenderer::~ColliderRenderer(void)
 {
-#ifdef _SELF_DEBUG
 	if (systems)
 	{
 		ReleasePtr(vertexBuffer);
@@ -52,7 +49,6 @@ ColliderRenderer::~ColliderRenderer(void)
 			manager->Remove(this);
 		}
 	}
-#endif
 }
 
 void ColliderRenderer::Update(const Collider3DBase* col)
@@ -76,7 +72,6 @@ void ColliderRenderer::Update(const Collider2DBase* col)
 
 void ColliderRenderer::ColliderRectangle(const Collider2DBase* col)
 {
-#ifdef _SELF_DEBUG
 	const int vn = 5;
 
 	VECTOR3 p[vn - 1] =
@@ -109,14 +104,10 @@ void ColliderRenderer::ColliderRectangle(const Collider2DBase* col)
 	dev->CreateBuffer(&vertexBuffer, v, sizeof(v[0]), vnum);
 	this->vnum = vnum;
 	systems->GetColliderRendererManager()->Add(this);
-#else
-	UNREFERENCED_PARAMETER(col);
-#endif
 }
 
 void ColliderRenderer::ColliderCircle(const Collider2DBase* col)
 {
-#ifdef _SELF_DEBUG
 	float theta = 0.0f;
 
 	float r = col->size_.x * 0.5f;
@@ -148,15 +139,12 @@ void ColliderRenderer::ColliderCircle(const Collider2DBase* col)
 	dev->CreateBuffer(&vertexBuffer, v, sizeof(v[0]), vnum);
 	this->vnum = vnum;
 	systems->GetColliderRendererManager()->Add(this);
-#else
-	UNREFERENCED_PARAMETER(col);
-#endif
 }
 
 void ColliderRenderer::ColliderSegment(const Collider3DBase* col)
 {
 	this->systems = col->systems_;
-#ifdef _SELF_DEBUG
+
 	VECTOR3 p[2] =
 	{
 		{              - 0.5f,              - 0.5f,              - 0.5f},
@@ -181,15 +169,12 @@ void ColliderRenderer::ColliderSegment(const Collider3DBase* col)
 	dev->CreateBuffer(&vertexBuffer, v, sizeof(v[0]), vnum);
 	this->vnum = vnum;
 	systems->GetColliderRendererManager()->Add(this);
-#else
-	UNREFERENCED_PARAMETER(col);
-#endif
 }
 
 void ColliderRenderer::ColliderSphere(const Collider3DBase* col, bool second)
 {
 	this->systems = col->systems_;
-#ifdef _SELF_DEBUG
+
 	float theta = 0.0f;
 
 	float r = col->size_.x * 0.5f;
@@ -228,9 +213,6 @@ void ColliderRenderer::ColliderSphere(const Collider3DBase* col, bool second)
 	dev->CreateBuffer(&vertexBuffer, v, sizeof(v[0]), vnum);
 	this->vnum = vnum;
 	systems->GetColliderRendererManager()->Add(this);
-#else
-	UNREFERENCED_PARAMETER(second);
-#endif
 }
 
 void ColliderRenderer::ColliderOBB(const Collider3DBase* col)

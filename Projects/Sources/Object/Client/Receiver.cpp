@@ -470,23 +470,26 @@ void Receiver::Animation(int frame)
 	size_t size = (animTransform_.size()) - 1;
 	for (size_t i = 0; i < size; ++i)
 	{
-		if (animTransform_[i].frame <= frame && frame <= animTransform_[i + 1].frame)
+		if (animTransform_[i].frame <= frame && frame < animTransform_[i + 1].frame)
 		{
 			animCnt_ = static_cast<int>(i);
 		}
 	}
+	if (animTransform_[size].frame <= frame) { animCnt_ = static_cast<int>(size); }
 
 	int next = animCnt_ + 1;
 	if (next >= static_cast<int>(animTransform_.size())) { next = 0; }
 
 	int diff = animTransform_[next].frame - animTransform_[animCnt_].frame;
-	if (diff <= 0) { return; }
+	if (diff <= 0) { diff = 1; }
 	float rate = (frame - animTransform_[animCnt_].frame) / static_cast<float>(diff);
 	rate = min(1, rate);
 
 	transform_.position = animTransform_[animCnt_].position * (1 - rate) + animTransform_[next].position * rate;
 	transform_.rotation = animTransform_[animCnt_].rotation * (1 - rate) + animTransform_[next].rotation * rate;
 	transform_.scale	= animTransform_[animCnt_].scale	* (1 - rate) + animTransform_[next].scale    * rate;
+
+	spriteRenderer_->SetTexture(loadAdd_->SetTexture(animTransform_[animCnt_].textureName));
 
 	for (auto& child : child_)
 	{

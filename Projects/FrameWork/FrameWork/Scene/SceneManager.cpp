@@ -200,10 +200,8 @@ void SceneManager::ChangeActual(void)
 
 void SceneManager::ForceSceneChange(void)
 {
-#ifdef _SELF_DEBUG
 	if(systems_->GetInput()->GetCtrl(0)->Press(Input::GAMEPAD_HOME, DIK_F5))
 	{
 		Change(); 
 	}
-#endif
 }

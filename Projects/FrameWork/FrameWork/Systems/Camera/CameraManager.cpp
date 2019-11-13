@@ -71,9 +71,8 @@ void CameraManager::DebugMove(void)
 	}
 	if (!guiManager) { return; }
 
-#ifdef _SELF_DEBUG
+
 	selectObj = guiManager->GetSelect();
-#endif
 	if (!guiManager->GetLookObject())
 	{
 		selectObj = nullptr;
